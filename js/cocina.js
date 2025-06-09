@@ -239,48 +239,130 @@ function inicializarBotones() {
             return;
         }
         
-        // Obtener los datos directamente del botón
-        const estado = boton.getAttribute('data-estado');
-        let codPedido = boton.getAttribute('data-cod-pedido');
-        let codProducto = boton.getAttribute('data-cod-producto');
-        const numMesa = boton.getAttribute('data-num-mesa');
+        // Función para obtener atributos con diferentes formatos
+        const getDataAttribute = (element, keys) => {
+            for (const key of keys) {
+                const value = element.getAttribute(key);
+                if (value) return value;
+                
+                // Probar con prefijos de datos
+                const dataKey = key.startsWith('data-') ? key : `data-${key}`;
+                const dataValue = element.getAttribute(dataKey);
+                if (dataValue) return dataValue;
+                
+                // Probar con camelCase
+                const camelCaseKey = key.replace(/-(.)/g, (_, char) => char.toUpperCase());
+                const camelCaseValue = element.getAttribute(camelCaseKey);
+                if (camelCaseValue) return camelCaseValue;
+            }
+            return null;
+        };
         
-        console.log('Inicializando botón:', { estado, codPedido, codProducto, numMesa });
+        // Obtener los datos del botón con múltiples formatos posibles
+        const estado = getDataAttribute(boton, ['data-estado', 'estado']);
+        let codPedido = getDataAttribute(boton, ['data-cod-pedido', 'codPedido', 'pedido-id', 'data-pedido-id']);
+        let codProducto = getDataAttribute(boton, ['data-cod-producto', 'codProducto', 'producto-id', 'data-producto-id']);
+        let numMesa = getDataAttribute(boton, ['data-num-mesa', 'numMesa', 'mesa', 'data-mesa']);
+        
+        console.log('Datos iniciales del botón:', { estado, codPedido, codProducto, numMesa });
+        
+        // Intentar obtener los datos del DOM si no están en el botón o son inválidos
+        const producto = boton.closest('.producto');
+        if (producto) {
+            console.log('Producto encontrado:', producto);
+            
+            // Obtener el ID del producto del contenedor del producto
+            const productoId = getDataAttribute(producto, ['data-cod-producto', 'codProducto', 'producto-id', 'data-producto-id']);
+            console.log('ID de producto del contenedor:', productoId);
+            
+            // Obtener el ID del pedido del contenedor del pedido
+            const pedidoElement = producto.closest('.pedido-card');
+            console.log('Elemento de pedido encontrado:', pedidoElement);
+            
+            const pedidoId = pedidoElement ? getDataAttribute(pedidoElement, ['data-cod-pedido', 'codPedido', 'pedido-id', 'data-pedido-id']) : null;
+            console.log('ID de pedido del contenedor:', pedidoId);
+            
+            // Obtener número de mesa del contenedor del pedido si no está en el botón
+            if (pedidoElement && !numMesa) {
+                numMesa = pedidoElement.getAttribute('data-num-mesa') || 
+                          pedidoElement.closest('.mb-8')?.querySelector('h2')?.textContent?.match(/Mesa\s*(\d+)/i)?.[1] ||
+                          '0';
+            }
+            
+            // Actualizar valores si se encontraron en el DOM
+            if (pedidoId && (!codPedido || codPedido === '0')) {
+                codPedido = pedidoId;
+                boton.setAttribute('data-cod-pedido', codPedido);
+            }
+            
+            if (productoId && (!codProducto || codProducto === '0' || codProducto === 'undefined')) {
+                codProducto = productoId;
+                boton.setAttribute('data-cod-producto', codProducto);
+            }
+            
+            if (!numMesa) {
+                numMesa = '0';
+                boton.setAttribute('data-num-mesa', numMesa);
+            }
+        }
+        
+        console.log('Inicializando botón con datos:', { 
+            estado, 
+            codPedido, 
+            codProducto, 
+            numMesa,
+            html: boton.outerHTML 
+        });
         
         // Verificar que los datos requeridos estén presentes
-        if (!codPedido || codPedido === '0' || !codProducto || codProducto === '0') {
-            console.error('Datos faltantes en el botón:', { 
+        if (!codPedido || codPedido === '0' || !codProducto || codProducto === '0' || codProducto === 'undefined') {
+            console.error('Datos faltantes o inválidos en el botón:', { 
                 html: boton.outerHTML,
-                codPedido,
-                codProducto,
-                numMesa
+                dataAttributes: {
+                    'data-estado': boton.getAttribute('data-estado'),
+                    'data-cod-pedido': boton.getAttribute('data-cod-pedido'),
+                    'data-cod-producto': boton.getAttribute('data-cod-producto'),
+                    'data-num-mesa': boton.getAttribute('data-num-mesa')
+                },
+                valoresObtenidos: {
+                    codPedido,
+                    codProducto,
+                    numMesa
+                },
+                parentElement: boton.parentElement ? {
+                    tagName: boton.parentElement.tagName,
+                    className: boton.parentElement.className,
+                    dataset: Object.fromEntries(
+                        Object.entries(boton.parentElement.dataset).map(([key, value]) => [key, value])
+                    )
+                } : null,
+                closestProducto: producto ? {
+                    attributes: Array.from(producto.attributes).map(attr => ({
+                        name: attr.name,
+                        value: attr.value
+                    }))
+                } : null
             });
             
-            // Intentar obtener los datos del DOM si no están en el botón
-            const producto = boton.closest('.producto');
-            if (producto) {
-                const productoId = producto.getAttribute('data-cod-producto');
-                const pedidoElement = producto.closest('.pedido-card');
-                const pedidoId = pedidoElement ? pedidoElement.getAttribute('data-cod-pedido') : null;
-                
-                if (pedidoId && productoId) {
-                    console.log('Obteniendo datos del DOM:', { pedidoId, productoId });
-                    codPedido = pedidoId;
-                    codProducto = productoId;
-                    
-                    // Actualizar los atributos del botón
-                    boton.setAttribute('data-cod-pedido', codPedido);
-                    boton.setAttribute('data-cod-producto', codProducto);
-                }
-            }
+            // Mostrar más información en la consola
+            console.group('Información adicional del botón con error');
+            console.log('Elemento botón:', boton);
+            console.log('Padre del botón:', boton.parentElement);
+            console.log('Producto más cercano:', producto);
+            console.log('Árbol DOM del botón:', boton.closest('.producto, .pedido-card'));
+            console.groupEnd();
             
-            // Si aún faltan datos, mostrar error y deshabilitar el botón
-            if (!codPedido || !codProducto) {
-                console.error('No se pudieron obtener los datos necesarios para el botón');
-                boton.disabled = true;
-                boton.classList.add('opacity-50', 'cursor-not-allowed');
-                return;
-            }
+            boton.disabled = true;
+            boton.title = 'Error: Faltan datos del pedido o producto';
+            return;
+        }
+            
+        // Si aún faltan datos, mostrar error y deshabilitar el botón
+        if (!codPedido || !codProducto) {
+            console.error('No se pudieron obtener los datos necesarios para el botón');
+            boton.disabled = true;
+            boton.classList.add('opacity-50', 'cursor-not-allowed');
+            return;
         }
         
         // Configurar el evento click
@@ -319,8 +401,8 @@ function inicializarBotones() {
         boton.setAttribute('data-inicializado', 'true');
         
         // Actualizar estado visual del botón
-        const producto = boton.closest('.producto');
-        const estadoActual = producto ? producto.getAttribute('data-estado') || 'pendiente' : 'pendiente';
+        const productoElemento = boton.closest('.producto');
+        const estadoActual = productoElemento ? productoElemento.getAttribute('data-estado') || 'pendiente' : 'pendiente';
         const estadoBoton = boton.getAttribute('data-estado');
         
         if (estadoBoton === 'preparando' && estadoActual === 'preparando') {
@@ -646,28 +728,42 @@ function renderizarPedidos(pedidos) {
                     const productoClase = estadoProducto === 'preparando' ? 'bg-yellow-50' : 
                                         estadoProducto === 'listo' ? 'bg-green-50' : 'bg-gray-50';
                     
+                    // Asegurarse de que los IDs de pedido y producto sean válidos
+                    const pedidoId = pedido.codPedido || pedido.cod || '0';
+                    const productoId = producto.codProducto || producto.cod || '0';
+                    
+                    // Asegurarse de que numMesa sea un valor válido
+                    const mesaId = numMesa && numMesa !== 'undefined' ? numMesa : '0';
+                    
                     html += `
                             <div class="producto ${productoClase} p-3 rounded border border-gray-100" 
-                                 data-cod-producto="${producto.codProducto}">
+                                 data-cod-producto="${productoId}"
+                                 data-producto-id="${productoId}">
                                 <div class="flex justify-between items-start">
                                     <div>
-                                        <div class="font-medium text-gray-800">${producto.nombre}</div>
+                                        <div class="font-medium text-gray-800">${producto.nombre || 'Producto sin nombre'}</div>
                                         <div class="text-sm text-gray-500">Cant: ${producto.cantidad || 1}</div>
                                     </div>
                                     <div class="flex space-x-2">
                                         <button class="btn-estado btn-preparar px-2 py-1 text-xs rounded ${estadoProducto === 'preparando' ? 'bg-yellow-100 text-yellow-800' : 'bg-gray-100 text-gray-800'} ${estadoProducto === 'listo' ? 'opacity-50 cursor-not-allowed' : ''}" 
                                                 data-estado="preparando" 
-                                                data-cod-pedido="${pedido.codPedido}" 
-                                                data-cod-producto="${producto.codProducto}" 
-                                                data-num-mesa="${numMesa}"
+                                                data-cod-pedido="${pedidoId}" 
+                                                data-pedido-id="${pedidoId}" 
+                                                data-cod-producto="${productoId}" 
+                                                data-producto-id="${productoId}" 
+                                                data-num-mesa="${mesaId}" 
+                                                data-mesa="${mesaId}"
                                                 ${estadoProducto === 'listo' ? 'disabled' : ''}>
                                             <span class="material-symbols-outlined" style="font-size: 1rem;">cooking</span>
                                         </button>
                                         <button class="btn-estado btn-listo px-2 py-1 text-xs rounded ${estadoProducto === 'listo' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}" 
                                                 data-estado="listo" 
-                                                data-cod-pedido="${pedido.codPedido}" 
-                                                data-cod-producto="${producto.codProducto}" 
-                                                data-num-mesa="${numMesa}">
+                                                data-cod-pedido="${pedidoId}" 
+                                                data-pedido-id="${pedidoId}" 
+                                                data-cod-producto="${productoId}" 
+                                                data-producto-id="${productoId}" 
+                                                data-num-mesa="${mesaId}" 
+                                                data-mesa="${mesaId}">
                                             <span class="material-symbols-outlined" style="font-size: 1rem;">check_circle</span>
                                         </button>
                                     </div>
@@ -679,11 +775,14 @@ function renderizarPedidos(pedidos) {
             }
             
             // Cerrar el pedido
+            const codigoPedido = pedido.codPedido || pedido.cod || 'N/A';
+            const fechaPedido = pedido.Fecha || pedido.fecha || new Date().toISOString();
+            
             html += `
                         </div>
                         <div class="mt-3 pt-3 border-t border-gray-100 flex justify-between items-center">
-                            <span class="text-xs font-medium text-gray-600">Pedido #${pedido.codPedido}</span>
-                            <span class="text-xs text-gray-500">${formatearFechaHora(pedido.Fecha || pedido.fecha || new Date().toISOString())}</span>
+                            <span class="text-xs font-medium text-gray-600">Pedido #${codigoPedido}</span>
+                            <span class="text-xs text-gray-500">${formatearFechaHora(fechaPedido)}</span>
                         </div>
                     </div>`;
         });

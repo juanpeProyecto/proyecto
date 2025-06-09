@@ -303,6 +303,7 @@ function obtenerPedidosPendientesArea($area = '') {
             // Convertimos a camelCase para la respuesta JSON
             $pedido = [
                 'cod' => (int)$fila['codPedido'],
+                'codPedido' => (int)$fila['codPedido'], // Añadido para compatibilidad
                 'numMesa' => $fila['numMesa'],
                 'fecha' => $fila['Fecha'],
                 'observaciones' => $fila['Observaciones'],
