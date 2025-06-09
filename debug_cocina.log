@@ -1,0 +1,1688 @@
+[09-Jun-2025 10:06:34 Europe/Berlin] Obteniendo pedidos pendientes para área: cocina
+[09-Jun-2025 10:06:59 Europe/Berlin] Obteniendo pedidos pendientes para área: cocina
+[09-Jun-2025 10:17:38 Europe/Berlin] Obteniendo pedidos pendientes para área: cocina
+[09-Jun-2025 10:17:43 Europe/Berlin] JSON recibido: {"codPedido":"88","codProducto":"12","estado":"preparando","area":"cocina","codEmpleado":1,"numMesa":"4"}
+[09-Jun-2025 10:17:43 Europe/Berlin] Procesando actualización para pedido: 88, producto: 12, estado: preparando, area: cocina, numMesa: 4
+[09-Jun-2025 10:17:43 Europe/Berlin] Conexión nula en actualizarEstadoProductoCompleto, intentando reconectar
+[09-Jun-2025 10:17:45 Europe/Berlin] Notificación WebSocket enviada correctamente: {"tipo":"actualizacionEstadoProducto","codPedido":88,"codProducto":12,"estado":"preparando","area":"cocina","numMesa":"4"}
+[09-Jun-2025 10:17:45 Europe/Berlin] Notificación WebSocket enviada: {"tipo":"actualizacionEstadoProducto","codPedido":88,"codProducto":12,"estado":"preparando","area":"cocina","numMesa":"4"}
+[09-Jun-2025 10:17:45 Europe/Berlin] Enviando notificación de respaldo desde cocina.php: {"tipo":"actualizacionEstadoProducto","codPedido":88,"codProducto":12,"estado":"preparando","area":"cocina","numMesa":"4"}
+[09-Jun-2025 10:17:47 Europe/Berlin] Notificación WebSocket enviada correctamente: {"tipo":"actualizacionEstadoProducto","codPedido":88,"codProducto":12,"estado":"preparando","area":"cocina","numMesa":"4"}
+[09-Jun-2025 10:17:47 Europe/Berlin] Resultado de actualización: Array
+(
+    [success] => 1
+    [mensaje] => Estado actualizado correctamente
+    [estadoPedido] => preparando
+    [estadoProducto] => preparando
+    [pedidoCompleto] => 
+    [numMesa] => 4
+    [conteos] => Array
+        (
+            [pendiente] => 0
+            [preparando] => 2
+            [listos] => 0
+            [total] => 2
+        )
+
+    [conexion] => mysqli Object
+        (
+            [affected_rows] => -1
+            [client_info] => mysqlnd 8.2.12
+            [client_version] => 80212
+            [connect_errno] => 0
+            [connect_error] => 
+            [errno] => 0
+            [error] => 
+            [error_list] => Array
+                (
+                )
+
+            [field_count] => 0
+            [host_info] => localhost via TCP/IP
+            [info] => 
+            [insert_id] => 0
+            [server_info] => 10.4.32-MariaDB
+            [server_version] => 100432
+            [sqlstate] => 00000
+            [protocol_version] => 10
+            [thread_id] => 53
+            [warning_count] => 0
+        )
+
+)
+
+[09-Jun-2025 10:17:54 Europe/Berlin] JSON recibido: {"codPedido":"88","codProducto":"11","estado":"listo","area":"cocina","codEmpleado":1,"numMesa":"4"}
+[09-Jun-2025 10:17:54 Europe/Berlin] Procesando actualización para pedido: 88, producto: 11, estado: listo, area: cocina, numMesa: 4
+[09-Jun-2025 10:17:54 Europe/Berlin] Conexión nula en actualizarEstadoProductoCompleto, intentando reconectar
+[09-Jun-2025 10:17:56 Europe/Berlin] Notificación WebSocket enviada correctamente: {"tipo":"actualizacionEstadoProducto","codPedido":88,"codProducto":11,"estado":"listo","area":"cocina","numMesa":"4"}
+[09-Jun-2025 10:17:56 Europe/Berlin] Notificación WebSocket enviada: {"tipo":"actualizacionEstadoProducto","codPedido":88,"codProducto":11,"estado":"listo","area":"cocina","numMesa":"4"}
+[09-Jun-2025 10:17:56 Europe/Berlin] Enviando notificación de respaldo desde cocina.php: {"tipo":"actualizacionEstadoProducto","codPedido":88,"codProducto":11,"estado":"listo","area":"cocina","numMesa":"4"}
+[09-Jun-2025 10:17:58 Europe/Berlin] Notificación WebSocket enviada correctamente: {"tipo":"actualizacionEstadoProducto","codPedido":88,"codProducto":11,"estado":"listo","area":"cocina","numMesa":"4"}
+[09-Jun-2025 10:17:58 Europe/Berlin] Resultado de actualización: Array
+(
+    [success] => 1
+    [mensaje] => Estado actualizado correctamente
+    [estadoPedido] => preparando
+    [estadoProducto] => listo
+    [pedidoCompleto] => 
+    [numMesa] => 4
+    [conteos] => Array
+        (
+            [pendiente] => 0
+            [preparando] => 1
+            [listos] => 1
+            [total] => 2
+        )
+
+    [conexion] => mysqli Object
+        (
+            [affected_rows] => -1
+            [client_info] => mysqlnd 8.2.12
+            [client_version] => 80212
+            [connect_errno] => 0
+            [connect_error] => 
+            [errno] => 0
+            [error] => 
+            [error_list] => Array
+                (
+                )
+
+            [field_count] => 0
+            [host_info] => localhost via TCP/IP
+            [info] => 
+            [insert_id] => 0
+            [server_info] => 10.4.32-MariaDB
+            [server_version] => 100432
+            [sqlstate] => 00000
+            [protocol_version] => 10
+            [thread_id] => 54
+            [warning_count] => 0
+        )
+
+)
+
+[09-Jun-2025 10:19:46 Europe/Berlin] JSON recibido: {"codPedido":"88","codProducto":"12","estado":"listo","area":"cocina","codEmpleado":1,"numMesa":"4"}
+[09-Jun-2025 10:19:46 Europe/Berlin] Procesando actualización para pedido: 88, producto: 12, estado: listo, area: cocina, numMesa: 4
+[09-Jun-2025 10:19:46 Europe/Berlin] Conexión nula en actualizarEstadoProductoCompleto, intentando reconectar
+[09-Jun-2025 10:19:48 Europe/Berlin] Notificación WebSocket enviada correctamente: {"tipo":"actualizacionEstadoProducto","codPedido":88,"codProducto":12,"estado":"listo","area":"cocina","numMesa":"4"}
+[09-Jun-2025 10:19:48 Europe/Berlin] Notificación WebSocket enviada: {"tipo":"actualizacionEstadoProducto","codPedido":88,"codProducto":12,"estado":"listo","area":"cocina","numMesa":"4"}
+[09-Jun-2025 10:19:48 Europe/Berlin] Enviando notificación de respaldo desde cocina.php: {"tipo":"actualizacionEstadoProducto","codPedido":88,"codProducto":12,"estado":"listo","area":"cocina","numMesa":"4"}
+[09-Jun-2025 10:19:50 Europe/Berlin] Notificación WebSocket enviada correctamente: {"tipo":"actualizacionEstadoProducto","codPedido":88,"codProducto":12,"estado":"listo","area":"cocina","numMesa":"4"}
+[09-Jun-2025 10:19:50 Europe/Berlin] Resultado de actualización: Array
+(
+    [success] => 1
+    [mensaje] => Estado actualizado correctamente
+    [estadoPedido] => listo
+    [estadoProducto] => listo
+    [pedidoCompleto] => 1
+    [numMesa] => 4
+    [conteos] => Array
+        (
+            [pendiente] => 0
+            [preparando] => 0
+            [listos] => 2
+            [total] => 2
+        )
+
+    [conexion] => mysqli Object
+        (
+            [affected_rows] => -1
+            [client_info] => mysqlnd 8.2.12
+            [client_version] => 80212
+            [connect_errno] => 0
+            [connect_error] => 
+            [errno] => 0
+            [error] => 
+            [error_list] => Array
+                (
+                )
+
+            [field_count] => 0
+            [host_info] => localhost via TCP/IP
+            [info] => 
+            [insert_id] => 0
+            [server_info] => 10.4.32-MariaDB
+            [server_version] => 100432
+            [sqlstate] => 00000
+            [protocol_version] => 10
+            [thread_id] => 8
+            [warning_count] => 0
+        )
+
+)
+
+[09-Jun-2025 10:20:29 Europe/Berlin] Obteniendo pedidos pendientes para área: cocina
+[09-Jun-2025 10:20:48 Europe/Berlin] Obteniendo pedidos pendientes para área: cocina
+[09-Jun-2025 10:20:50 Europe/Berlin] JSON recibido: {"codPedido":"91","codProducto":"11","estado":"preparando","area":"cocina","codEmpleado":1,"numMesa":"4"}
+[09-Jun-2025 10:20:50 Europe/Berlin] Procesando actualización para pedido: 91, producto: 11, estado: preparando, area: cocina, numMesa: 4
+[09-Jun-2025 10:20:50 Europe/Berlin] Conexión nula en actualizarEstadoProductoCompleto, intentando reconectar
+[09-Jun-2025 10:20:52 Europe/Berlin] JSON recibido: {"codPedido":"91","codProducto":"12","estado":"preparando","area":"cocina","codEmpleado":1,"numMesa":"4"}
+[09-Jun-2025 10:20:52 Europe/Berlin] Procesando actualización para pedido: 91, producto: 12, estado: preparando, area: cocina, numMesa: 4
+[09-Jun-2025 10:20:52 Europe/Berlin] Conexión nula en actualizarEstadoProductoCompleto, intentando reconectar
+[09-Jun-2025 10:20:52 Europe/Berlin] Notificación WebSocket enviada correctamente: {"tipo":"actualizacionEstadoProducto","codPedido":91,"codProducto":11,"estado":"preparando","area":"cocina","numMesa":"4"}
+[09-Jun-2025 10:20:52 Europe/Berlin] Notificación WebSocket enviada: {"tipo":"actualizacionEstadoProducto","codPedido":91,"codProducto":11,"estado":"preparando","area":"cocina","numMesa":"4"}
+[09-Jun-2025 10:20:52 Europe/Berlin] Enviando notificación de respaldo desde cocina.php: {"tipo":"actualizacionEstadoProducto","codPedido":91,"codProducto":11,"estado":"preparando","area":"cocina","numMesa":"4"}
+[09-Jun-2025 10:20:53 Europe/Berlin] JSON recibido: {"codPedido":"91","codProducto":"11","estado":"listo","area":"cocina","codEmpleado":1,"numMesa":"4"}
+[09-Jun-2025 10:20:53 Europe/Berlin] Procesando actualización para pedido: 91, producto: 11, estado: listo, area: cocina, numMesa: 4
+[09-Jun-2025 10:20:53 Europe/Berlin] Conexión nula en actualizarEstadoProductoCompleto, intentando reconectar
+[09-Jun-2025 10:20:54 Europe/Berlin] Notificación WebSocket enviada correctamente: {"tipo":"actualizacionEstadoProducto","codPedido":91,"codProducto":12,"estado":"preparando","area":"cocina","numMesa":"4"}
+[09-Jun-2025 10:20:54 Europe/Berlin] Notificación WebSocket enviada: {"tipo":"actualizacionEstadoProducto","codPedido":91,"codProducto":12,"estado":"preparando","area":"cocina","numMesa":"4"}
+[09-Jun-2025 10:20:54 Europe/Berlin] Enviando notificación de respaldo desde cocina.php: {"tipo":"actualizacionEstadoProducto","codPedido":91,"codProducto":12,"estado":"preparando","area":"cocina","numMesa":"4"}
+[09-Jun-2025 10:20:54 Europe/Berlin] Notificación WebSocket enviada correctamente: {"tipo":"actualizacionEstadoProducto","codPedido":91,"codProducto":11,"estado":"preparando","area":"cocina","numMesa":"4"}
+[09-Jun-2025 10:20:54 Europe/Berlin] Resultado de actualización: Array
+(
+    [success] => 1
+    [mensaje] => Estado actualizado correctamente
+    [estadoPedido] => pendiente
+    [estadoProducto] => preparando
+    [pedidoCompleto] => 
+    [numMesa] => 4
+    [conteos] => Array
+        (
+            [pendiente] => 1
+            [preparando] => 1
+            [listos] => 0
+            [total] => 2
+        )
+
+    [conexion] => mysqli Object
+        (
+            [affected_rows] => -1
+            [client_info] => mysqlnd 8.2.12
+            [client_version] => 80212
+            [connect_errno] => 0
+            [connect_error] => 
+            [errno] => 0
+            [error] => 
+            [error_list] => Array
+                (
+                )
+
+            [field_count] => 0
+            [host_info] => localhost via TCP/IP
+            [info] => 
+            [insert_id] => 0
+            [server_info] => 10.4.32-MariaDB
+            [server_version] => 100432
+            [sqlstate] => 00000
+            [protocol_version] => 10
+            [thread_id] => 19
+            [warning_count] => 0
+        )
+
+)
+
+[09-Jun-2025 10:20:56 Europe/Berlin] Notificación WebSocket enviada correctamente: {"tipo":"actualizacionEstadoProducto","codPedido":91,"codProducto":11,"estado":"listo","area":"cocina","numMesa":"4"}
+[09-Jun-2025 10:20:56 Europe/Berlin] Notificación WebSocket enviada: {"tipo":"actualizacionEstadoProducto","codPedido":91,"codProducto":11,"estado":"listo","area":"cocina","numMesa":"4"}
+[09-Jun-2025 10:20:56 Europe/Berlin] Enviando notificación de respaldo desde cocina.php: {"tipo":"actualizacionEstadoProducto","codPedido":91,"codProducto":11,"estado":"listo","area":"cocina","numMesa":"4"}
+[09-Jun-2025 10:20:56 Europe/Berlin] Notificación WebSocket enviada correctamente: {"tipo":"actualizacionEstadoProducto","codPedido":91,"codProducto":12,"estado":"preparando","area":"cocina","numMesa":"4"}
+[09-Jun-2025 10:20:56 Europe/Berlin] Resultado de actualización: Array
+(
+    [success] => 1
+    [mensaje] => Estado actualizado correctamente
+    [estadoPedido] => preparando
+    [estadoProducto] => preparando
+    [pedidoCompleto] => 
+    [numMesa] => 4
+    [conteos] => Array
+        (
+            [pendiente] => 0
+            [preparando] => 2
+            [listos] => 0
+            [total] => 2
+        )
+
+    [conexion] => mysqli Object
+        (
+            [affected_rows] => -1
+            [client_info] => mysqlnd 8.2.12
+            [client_version] => 80212
+            [connect_errno] => 0
+            [connect_error] => 
+            [errno] => 0
+            [error] => 
+            [error_list] => Array
+                (
+                )
+
+            [field_count] => 0
+            [host_info] => localhost via TCP/IP
+            [info] => 
+            [insert_id] => 0
+            [server_info] => 10.4.32-MariaDB
+            [server_version] => 100432
+            [sqlstate] => 00000
+            [protocol_version] => 10
+            [thread_id] => 20
+            [warning_count] => 0
+        )
+
+)
+
+[09-Jun-2025 10:20:58 Europe/Berlin] Notificación WebSocket enviada correctamente: {"tipo":"actualizacionEstadoProducto","codPedido":91,"codProducto":11,"estado":"listo","area":"cocina","numMesa":"4"}
+[09-Jun-2025 10:20:58 Europe/Berlin] Resultado de actualización: Array
+(
+    [success] => 1
+    [mensaje] => Estado actualizado correctamente
+    [estadoPedido] => preparando
+    [estadoProducto] => listo
+    [pedidoCompleto] => 
+    [numMesa] => 4
+    [conteos] => Array
+        (
+            [pendiente] => 0
+            [preparando] => 1
+            [listos] => 1
+            [total] => 2
+        )
+
+    [conexion] => mysqli Object
+        (
+            [affected_rows] => -1
+            [client_info] => mysqlnd 8.2.12
+            [client_version] => 80212
+            [connect_errno] => 0
+            [connect_error] => 
+            [errno] => 0
+            [error] => 
+            [error_list] => Array
+                (
+                )
+
+            [field_count] => 0
+            [host_info] => localhost via TCP/IP
+            [info] => 
+            [insert_id] => 0
+            [server_info] => 10.4.32-MariaDB
+            [server_version] => 100432
+            [sqlstate] => 00000
+            [protocol_version] => 10
+            [thread_id] => 21
+            [warning_count] => 0
+        )
+
+)
+
+[09-Jun-2025 10:26:51 Europe/Berlin] Obteniendo pedidos pendientes para área: cocina
+[09-Jun-2025 10:27:23 Europe/Berlin] Obteniendo pedidos pendientes para área: cocina
+[09-Jun-2025 10:27:25 Europe/Berlin] JSON recibido: {"codPedido":"92","codProducto":"11","estado":"preparando","area":"cocina","codEmpleado":1,"numMesa":"4"}
+[09-Jun-2025 10:27:25 Europe/Berlin] Procesando actualización para pedido: 92, producto: 11, estado: preparando, area: cocina, numMesa: 4
+[09-Jun-2025 10:27:25 Europe/Berlin] Conexión nula en actualizarEstadoProductoCompleto, intentando reconectar
+[09-Jun-2025 10:27:27 Europe/Berlin] Notificación WebSocket enviada correctamente: {"tipo":"actualizacionEstadoProducto","codPedido":92,"codProducto":11,"estado":"preparando","area":"cocina","numMesa":"4"}
+[09-Jun-2025 10:27:27 Europe/Berlin] Notificación WebSocket enviada: {"tipo":"actualizacionEstadoProducto","codPedido":92,"codProducto":11,"estado":"preparando","area":"cocina","numMesa":"4"}
+[09-Jun-2025 10:27:27 Europe/Berlin] Enviando notificación de respaldo desde cocina.php: {"tipo":"actualizacionEstadoProducto","codPedido":92,"codProducto":11,"estado":"preparando","area":"cocina","numMesa":"4"}
+[09-Jun-2025 10:27:29 Europe/Berlin] JSON recibido: {"codPedido":"92","codProducto":"11","estado":"listo","area":"cocina","codEmpleado":1,"numMesa":"4"}
+[09-Jun-2025 10:27:29 Europe/Berlin] Procesando actualización para pedido: 92, producto: 11, estado: listo, area: cocina, numMesa: 4
+[09-Jun-2025 10:27:29 Europe/Berlin] Conexión nula en actualizarEstadoProductoCompleto, intentando reconectar
+[09-Jun-2025 10:27:30 Europe/Berlin] Notificación WebSocket enviada correctamente: {"tipo":"actualizacionEstadoProducto","codPedido":92,"codProducto":11,"estado":"preparando","area":"cocina","numMesa":"4"}
+[09-Jun-2025 10:27:30 Europe/Berlin] Resultado de actualización: Array
+(
+    [success] => 1
+    [mensaje] => Estado actualizado correctamente
+    [estadoPedido] => preparando
+    [estadoProducto] => preparando
+    [pedidoCompleto] => 
+    [numMesa] => 4
+    [conteos] => Array
+        (
+            [pendiente] => 0
+            [preparando] => 1
+            [listos] => 0
+            [total] => 1
+        )
+
+    [conexion] => mysqli Object
+        (
+            [affected_rows] => -1
+            [client_info] => mysqlnd 8.2.12
+            [client_version] => 80212
+            [connect_errno] => 0
+            [connect_error] => 
+            [errno] => 0
+            [error] => 
+            [error_list] => Array
+                (
+                )
+
+            [field_count] => 0
+            [host_info] => localhost via TCP/IP
+            [info] => 
+            [insert_id] => 0
+            [server_info] => 10.4.32-MariaDB
+            [server_version] => 100432
+            [sqlstate] => 00000
+            [protocol_version] => 10
+            [thread_id] => 40
+            [warning_count] => 0
+        )
+
+)
+
+[09-Jun-2025 10:27:31 Europe/Berlin] Notificación WebSocket enviada correctamente: {"tipo":"actualizacionEstadoProducto","codPedido":92,"codProducto":11,"estado":"listo","area":"cocina","numMesa":"4"}
+[09-Jun-2025 10:27:31 Europe/Berlin] Notificación WebSocket enviada: {"tipo":"actualizacionEstadoProducto","codPedido":92,"codProducto":11,"estado":"listo","area":"cocina","numMesa":"4"}
+[09-Jun-2025 10:27:31 Europe/Berlin] Enviando notificación de respaldo desde cocina.php: {"tipo":"actualizacionEstadoProducto","codPedido":92,"codProducto":11,"estado":"listo","area":"cocina","numMesa":"4"}
+[09-Jun-2025 10:27:33 Europe/Berlin] Notificación WebSocket enviada correctamente: {"tipo":"actualizacionEstadoProducto","codPedido":92,"codProducto":11,"estado":"listo","area":"cocina","numMesa":"4"}
+[09-Jun-2025 10:27:33 Europe/Berlin] Resultado de actualización: Array
+(
+    [success] => 1
+    [mensaje] => Estado actualizado correctamente
+    [estadoPedido] => listo
+    [estadoProducto] => listo
+    [pedidoCompleto] => 1
+    [numMesa] => 4
+    [conteos] => Array
+        (
+            [pendiente] => 0
+            [preparando] => 0
+            [listos] => 1
+            [total] => 1
+        )
+
+    [conexion] => mysqli Object
+        (
+            [affected_rows] => -1
+            [client_info] => mysqlnd 8.2.12
+            [client_version] => 80212
+            [connect_errno] => 0
+            [connect_error] => 
+            [errno] => 0
+            [error] => 
+            [error_list] => Array
+                (
+                )
+
+            [field_count] => 0
+            [host_info] => localhost via TCP/IP
+            [info] => 
+            [insert_id] => 0
+            [server_info] => 10.4.32-MariaDB
+            [server_version] => 100432
+            [sqlstate] => 00000
+            [protocol_version] => 10
+            [thread_id] => 41
+            [warning_count] => 0
+        )
+
+)
+
+[09-Jun-2025 10:29:59 Europe/Berlin] Obteniendo pedidos pendientes para área: cocina
+[09-Jun-2025 10:32:32 Europe/Berlin] Obteniendo pedidos pendientes para área: cocina
+[09-Jun-2025 10:35:23 Europe/Berlin] Obteniendo pedidos pendientes para área: cocina
+[09-Jun-2025 10:35:37 Europe/Berlin] Obteniendo pedidos pendientes para área: cocina
+[09-Jun-2025 10:35:39 Europe/Berlin] JSON recibido: {"action":"actualizar_estado_producto","codPedido":"93","codProducto":"11","estado":"preparando","area":"cocina","codEmpleado":1,"numMesa":"4"}
+[09-Jun-2025 10:35:39 Europe/Berlin] Procesando actualización para pedido: 93, producto: 11, estado: preparando, area: cocina, numMesa: 4
+[09-Jun-2025 10:35:39 Europe/Berlin] Conexión nula en actualizarEstadoProductoCompleto, intentando reconectar
+[09-Jun-2025 10:35:41 Europe/Berlin] Notificación WebSocket enviada correctamente: {"tipo":"actualizacionEstadoProducto","codPedido":93,"codProducto":11,"estado":"preparando","area":"cocina","numMesa":"4"}
+[09-Jun-2025 10:35:41 Europe/Berlin] Notificación WebSocket enviada: {"tipo":"actualizacionEstadoProducto","codPedido":93,"codProducto":11,"estado":"preparando","area":"cocina","numMesa":"4"}
+[09-Jun-2025 10:35:41 Europe/Berlin] Enviando notificación de respaldo desde cocina.php: {"tipo":"actualizacionEstadoProducto","codPedido":93,"codProducto":11,"estado":"preparando","area":"cocina","numMesa":"4"}
+[09-Jun-2025 10:35:41 Europe/Berlin] JSON recibido: {"action":"actualizar_estado_producto","codPedido":"93","codProducto":"11","estado":"listo","area":"cocina","codEmpleado":1,"numMesa":"4"}
+[09-Jun-2025 10:35:41 Europe/Berlin] Procesando actualización para pedido: 93, producto: 11, estado: listo, area: cocina, numMesa: 4
+[09-Jun-2025 10:35:41 Europe/Berlin] Conexión nula en actualizarEstadoProductoCompleto, intentando reconectar
+[09-Jun-2025 10:35:43 Europe/Berlin] Notificación WebSocket enviada correctamente: {"tipo":"actualizacionEstadoProducto","codPedido":93,"codProducto":11,"estado":"preparando","area":"cocina","numMesa":"4"}
+[09-Jun-2025 10:35:43 Europe/Berlin] Resultado de actualización: Array
+(
+    [success] => 1
+    [mensaje] => Estado actualizado correctamente
+    [estadoPedido] => preparando
+    [estadoProducto] => preparando
+    [pedidoCompleto] => 
+    [numMesa] => 4
+    [conteos] => Array
+        (
+            [pendiente] => 0
+            [preparando] => 1
+            [listos] => 0
+            [total] => 1
+        )
+
+    [conexion] => mysqli Object
+        (
+            [affected_rows] => -1
+            [client_info] => mysqlnd 8.2.12
+            [client_version] => 80212
+            [connect_errno] => 0
+            [connect_error] => 
+            [errno] => 0
+            [error] => 
+            [error_list] => Array
+                (
+                )
+
+            [field_count] => 0
+            [host_info] => localhost via TCP/IP
+            [info] => 
+            [insert_id] => 0
+            [server_info] => 10.4.32-MariaDB
+            [server_version] => 100432
+            [sqlstate] => 00000
+            [protocol_version] => 10
+            [thread_id] => 58
+            [warning_count] => 0
+        )
+
+)
+
+[09-Jun-2025 10:35:43 Europe/Berlin] Notificación WebSocket enviada correctamente: {"tipo":"actualizacionEstadoProducto","codPedido":93,"codProducto":11,"estado":"listo","area":"cocina","numMesa":"4"}
+[09-Jun-2025 10:35:43 Europe/Berlin] Notificación WebSocket enviada: {"tipo":"actualizacionEstadoProducto","codPedido":93,"codProducto":11,"estado":"listo","area":"cocina","numMesa":"4"}
+[09-Jun-2025 10:35:43 Europe/Berlin] Enviando notificación de respaldo desde cocina.php: {"tipo":"actualizacionEstadoProducto","codPedido":93,"codProducto":11,"estado":"listo","area":"cocina","numMesa":"4"}
+[09-Jun-2025 10:35:45 Europe/Berlin] Notificación WebSocket enviada correctamente: {"tipo":"actualizacionEstadoProducto","codPedido":93,"codProducto":11,"estado":"listo","area":"cocina","numMesa":"4"}
+[09-Jun-2025 10:35:45 Europe/Berlin] Resultado de actualización: Array
+(
+    [success] => 1
+    [mensaje] => Estado actualizado correctamente
+    [estadoPedido] => listo
+    [estadoProducto] => listo
+    [pedidoCompleto] => 1
+    [numMesa] => 4
+    [conteos] => Array
+        (
+            [pendiente] => 0
+            [preparando] => 0
+            [listos] => 1
+            [total] => 1
+        )
+
+    [conexion] => mysqli Object
+        (
+            [affected_rows] => -1
+            [client_info] => mysqlnd 8.2.12
+            [client_version] => 80212
+            [connect_errno] => 0
+            [connect_error] => 
+            [errno] => 0
+            [error] => 
+            [error_list] => Array
+                (
+                )
+
+            [field_count] => 0
+            [host_info] => localhost via TCP/IP
+            [info] => 
+            [insert_id] => 0
+            [server_info] => 10.4.32-MariaDB
+            [server_version] => 100432
+            [sqlstate] => 00000
+            [protocol_version] => 10
+            [thread_id] => 59
+            [warning_count] => 0
+        )
+
+)
+
+[09-Jun-2025 10:37:25 Europe/Berlin] Obteniendo pedidos pendientes para área: cocina
+[09-Jun-2025 10:37:40 Europe/Berlin] Obteniendo pedidos pendientes para área: cocina
+[09-Jun-2025 10:39:08 Europe/Berlin] Obteniendo pedidos pendientes para área: cocina
+[09-Jun-2025 10:40:05 Europe/Berlin] Obteniendo pedidos pendientes para área: cocina
+[09-Jun-2025 10:40:06 Europe/Berlin] JSON recibido: {"action":"actualizar_estado_producto","codPedido":"94","codProducto":"1","estado":"preparando","area":"cocina","codEmpleado":1,"numMesa":"4"}
+[09-Jun-2025 10:40:06 Europe/Berlin] Procesando actualización para pedido: 94, producto: 1, estado: preparando, area: cocina, numMesa: 4
+[09-Jun-2025 10:40:06 Europe/Berlin] Conexión nula en actualizarEstadoProductoCompleto, intentando reconectar
+[09-Jun-2025 10:40:08 Europe/Berlin] Notificación WebSocket enviada correctamente: {"tipo":"actualizacionEstadoProducto","codPedido":94,"codProducto":1,"estado":"preparando","area":"cocina","numMesa":"4"}
+[09-Jun-2025 10:40:08 Europe/Berlin] Notificación WebSocket enviada: {"tipo":"actualizacionEstadoProducto","codPedido":94,"codProducto":1,"estado":"preparando","area":"cocina","numMesa":"4"}
+[09-Jun-2025 10:40:08 Europe/Berlin] Enviando notificación de respaldo desde cocina.php: {"tipo":"actualizacionEstadoProducto","codPedido":94,"codProducto":1,"estado":"preparando","area":"cocina","numMesa":"4"}
+[09-Jun-2025 10:40:10 Europe/Berlin] Notificación WebSocket enviada correctamente: {"tipo":"actualizacionEstadoProducto","codPedido":94,"codProducto":1,"estado":"preparando","area":"cocina","numMesa":"4"}
+[09-Jun-2025 10:40:10 Europe/Berlin] Resultado de actualización: Array
+(
+    [success] => 1
+    [mensaje] => Estado actualizado correctamente
+    [estadoPedido] => preparando
+    [estadoProducto] => preparando
+    [pedidoCompleto] => 
+    [numMesa] => 4
+    [conteos] => Array
+        (
+            [pendiente] => 0
+            [preparando] => 1
+            [listos] => 0
+            [total] => 1
+        )
+
+    [conexion] => mysqli Object
+        (
+            [affected_rows] => -1
+            [client_info] => mysqlnd 8.2.12
+            [client_version] => 80212
+            [connect_errno] => 0
+            [connect_error] => 
+            [errno] => 0
+            [error] => 
+            [error_list] => Array
+                (
+                )
+
+            [field_count] => 0
+            [host_info] => localhost via TCP/IP
+            [info] => 
+            [insert_id] => 0
+            [server_info] => 10.4.32-MariaDB
+            [server_version] => 100432
+            [sqlstate] => 00000
+            [protocol_version] => 10
+            [thread_id] => 74
+            [warning_count] => 0
+        )
+
+)
+
+[09-Jun-2025 10:40:15 Europe/Berlin] JSON recibido: {"action":"actualizar_estado_producto","codPedido":"94","codProducto":"1","estado":"listo","area":"cocina","codEmpleado":1,"numMesa":"4"}
+[09-Jun-2025 10:40:15 Europe/Berlin] Procesando actualización para pedido: 94, producto: 1, estado: listo, area: cocina, numMesa: 4
+[09-Jun-2025 10:40:15 Europe/Berlin] Conexión nula en actualizarEstadoProductoCompleto, intentando reconectar
+[09-Jun-2025 10:40:17 Europe/Berlin] Notificación WebSocket enviada correctamente: {"tipo":"actualizacionEstadoProducto","codPedido":94,"codProducto":1,"estado":"listo","area":"cocina","numMesa":"4"}
+[09-Jun-2025 10:40:17 Europe/Berlin] Notificación WebSocket enviada: {"tipo":"actualizacionEstadoProducto","codPedido":94,"codProducto":1,"estado":"listo","area":"cocina","numMesa":"4"}
+[09-Jun-2025 10:40:17 Europe/Berlin] Enviando notificación de respaldo desde cocina.php: {"tipo":"actualizacionEstadoProducto","codPedido":94,"codProducto":1,"estado":"listo","area":"cocina","numMesa":"4"}
+[09-Jun-2025 10:40:19 Europe/Berlin] Notificación WebSocket enviada correctamente: {"tipo":"actualizacionEstadoProducto","codPedido":94,"codProducto":1,"estado":"listo","area":"cocina","numMesa":"4"}
+[09-Jun-2025 10:40:19 Europe/Berlin] Resultado de actualización: Array
+(
+    [success] => 1
+    [mensaje] => Estado actualizado correctamente
+    [estadoPedido] => listo
+    [estadoProducto] => listo
+    [pedidoCompleto] => 1
+    [numMesa] => 4
+    [conteos] => Array
+        (
+            [pendiente] => 0
+            [preparando] => 0
+            [listos] => 1
+            [total] => 1
+        )
+
+    [conexion] => mysqli Object
+        (
+            [affected_rows] => -1
+            [client_info] => mysqlnd 8.2.12
+            [client_version] => 80212
+            [connect_errno] => 0
+            [connect_error] => 
+            [errno] => 0
+            [error] => 
+            [error_list] => Array
+                (
+                )
+
+            [field_count] => 0
+            [host_info] => localhost via TCP/IP
+            [info] => 
+            [insert_id] => 0
+            [server_info] => 10.4.32-MariaDB
+            [server_version] => 100432
+            [sqlstate] => 00000
+            [protocol_version] => 10
+            [thread_id] => 75
+            [warning_count] => 0
+        )
+
+)
+
+[09-Jun-2025 11:14:48 Europe/Berlin] Obteniendo pedidos pendientes para área: cocina
+[09-Jun-2025 11:15:06 Europe/Berlin] Obteniendo pedidos pendientes para área: cocina
+[09-Jun-2025 11:15:09 Europe/Berlin] JSON recibido: {"action":"actualizar_estado_producto","codPedido":"95","codProducto":"11","estado":"preparando","area":"cocina","codEmpleado":1,"numMesa":"4"}
+[09-Jun-2025 11:15:09 Europe/Berlin] Procesando actualización para pedido: 95, producto: 11, estado: preparando, area: cocina, numMesa: 4
+[09-Jun-2025 11:15:09 Europe/Berlin] Conexión nula en actualizarEstadoProductoCompleto, intentando reconectar
+[09-Jun-2025 11:15:11 Europe/Berlin] Notificación WebSocket enviada correctamente: {"tipo":"actualizacionEstadoProducto","codPedido":95,"codProducto":11,"estado":"preparando","area":"cocina","numMesa":"4"}
+[09-Jun-2025 11:15:11 Europe/Berlin] Notificación WebSocket enviada: {"tipo":"actualizacionEstadoProducto","codPedido":95,"codProducto":11,"estado":"preparando","area":"cocina","numMesa":"4"}
+[09-Jun-2025 11:15:11 Europe/Berlin] Enviando notificación de respaldo desde cocina.php: {"tipo":"actualizacionEstadoProducto","codPedido":95,"codProducto":11,"estado":"preparando","area":"cocina","numMesa":"4"}
+[09-Jun-2025 11:15:13 Europe/Berlin] Notificación WebSocket enviada correctamente: {"tipo":"actualizacionEstadoProducto","codPedido":95,"codProducto":11,"estado":"preparando","area":"cocina","numMesa":"4"}
+[09-Jun-2025 11:15:13 Europe/Berlin] Resultado de actualización: Array
+(
+    [success] => 1
+    [mensaje] => Estado actualizado correctamente
+    [estadoPedido] => preparando
+    [estadoProducto] => preparando
+    [pedidoCompleto] => 
+    [numMesa] => 4
+    [conteos] => Array
+        (
+            [pendiente] => 0
+            [preparando] => 1
+            [listos] => 0
+            [total] => 1
+        )
+
+    [conexion] => mysqli Object
+        (
+            [affected_rows] => -1
+            [client_info] => mysqlnd 8.2.12
+            [client_version] => 80212
+            [connect_errno] => 0
+            [connect_error] => 
+            [errno] => 0
+            [error] => 
+            [error_list] => Array
+                (
+                )
+
+            [field_count] => 0
+            [host_info] => localhost via TCP/IP
+            [info] => 
+            [insert_id] => 0
+            [server_info] => 10.4.32-MariaDB
+            [server_version] => 100432
+            [sqlstate] => 00000
+            [protocol_version] => 10
+            [thread_id] => 86
+            [warning_count] => 0
+        )
+
+)
+
+[09-Jun-2025 11:15:17 Europe/Berlin] JSON recibido: {"action":"actualizar_estado_producto","codPedido":"95","codProducto":"11","estado":"listo","area":"cocina","codEmpleado":1,"numMesa":"4"}
+[09-Jun-2025 11:15:17 Europe/Berlin] Procesando actualización para pedido: 95, producto: 11, estado: listo, area: cocina, numMesa: 4
+[09-Jun-2025 11:15:17 Europe/Berlin] Conexión nula en actualizarEstadoProductoCompleto, intentando reconectar
+[09-Jun-2025 11:15:19 Europe/Berlin] Notificación WebSocket enviada correctamente: {"tipo":"actualizacionEstadoProducto","codPedido":95,"codProducto":11,"estado":"listo","area":"cocina","numMesa":"4"}
+[09-Jun-2025 11:15:19 Europe/Berlin] Notificación WebSocket enviada: {"tipo":"actualizacionEstadoProducto","codPedido":95,"codProducto":11,"estado":"listo","area":"cocina","numMesa":"4"}
+[09-Jun-2025 11:15:19 Europe/Berlin] Enviando notificación de respaldo desde cocina.php: {"tipo":"actualizacionEstadoProducto","codPedido":95,"codProducto":11,"estado":"listo","area":"cocina","numMesa":"4"}
+[09-Jun-2025 11:15:21 Europe/Berlin] Notificación WebSocket enviada correctamente: {"tipo":"actualizacionEstadoProducto","codPedido":95,"codProducto":11,"estado":"listo","area":"cocina","numMesa":"4"}
+[09-Jun-2025 11:15:21 Europe/Berlin] Resultado de actualización: Array
+(
+    [success] => 1
+    [mensaje] => Estado actualizado correctamente
+    [estadoPedido] => listo
+    [estadoProducto] => listo
+    [pedidoCompleto] => 1
+    [numMesa] => 4
+    [conteos] => Array
+        (
+            [pendiente] => 0
+            [preparando] => 0
+            [listos] => 1
+            [total] => 1
+        )
+
+    [conexion] => mysqli Object
+        (
+            [affected_rows] => -1
+            [client_info] => mysqlnd 8.2.12
+            [client_version] => 80212
+            [connect_errno] => 0
+            [connect_error] => 
+            [errno] => 0
+            [error] => 
+            [error_list] => Array
+                (
+                )
+
+            [field_count] => 0
+            [host_info] => localhost via TCP/IP
+            [info] => 
+            [insert_id] => 0
+            [server_info] => 10.4.32-MariaDB
+            [server_version] => 100432
+            [sqlstate] => 00000
+            [protocol_version] => 10
+            [thread_id] => 87
+            [warning_count] => 0
+        )
+
+)
+
+[09-Jun-2025 11:21:41 Europe/Berlin] Obteniendo pedidos pendientes para área: cocina
+[09-Jun-2025 11:22:15 Europe/Berlin] Obteniendo pedidos pendientes para área: cocina
+[09-Jun-2025 11:22:17 Europe/Berlin] JSON recibido: {"action":"actualizar_estado_producto","codPedido":"96","codProducto":"11","estado":"preparando","area":"cocina","codEmpleado":1,"numMesa":"4"}
+[09-Jun-2025 11:22:17 Europe/Berlin] Procesando actualización para pedido: 96, producto: 11, estado: preparando, area: cocina, numMesa: 4
+[09-Jun-2025 11:22:17 Europe/Berlin] Conexión nula en actualizarEstadoProductoCompleto, intentando reconectar
+[09-Jun-2025 11:22:19 Europe/Berlin] Notificación WebSocket enviada correctamente: {"tipo":"actualizacionEstadoProducto","codPedido":96,"codProducto":11,"estado":"preparando","area":"cocina","numMesa":"4"}
+[09-Jun-2025 11:22:19 Europe/Berlin] Notificación WebSocket enviada: {"tipo":"actualizacionEstadoProducto","codPedido":96,"codProducto":11,"estado":"preparando","area":"cocina","numMesa":"4"}
+[09-Jun-2025 11:22:19 Europe/Berlin] Enviando notificación de respaldo desde cocina.php: {"tipo":"actualizacionEstadoProducto","codPedido":96,"codProducto":11,"estado":"preparando","area":"cocina","numMesa":"4"}
+[09-Jun-2025 11:22:21 Europe/Berlin] Notificación WebSocket enviada correctamente: {"tipo":"actualizacionEstadoProducto","codPedido":96,"codProducto":11,"estado":"preparando","area":"cocina","numMesa":"4"}
+[09-Jun-2025 11:22:21 Europe/Berlin] Resultado de actualización: Array
+(
+    [success] => 1
+    [mensaje] => Estado actualizado correctamente
+    [estadoPedido] => preparando
+    [estadoProducto] => preparando
+    [pedidoCompleto] => 
+    [numMesa] => 4
+    [conteos] => Array
+        (
+            [pendiente] => 0
+            [preparando] => 1
+            [listos] => 0
+            [total] => 1
+        )
+
+    [conexion] => mysqli Object
+        (
+            [affected_rows] => -1
+            [client_info] => mysqlnd 8.2.12
+            [client_version] => 80212
+            [connect_errno] => 0
+            [connect_error] => 
+            [errno] => 0
+            [error] => 
+            [error_list] => Array
+                (
+                )
+
+            [field_count] => 0
+            [host_info] => localhost via TCP/IP
+            [info] => 
+            [insert_id] => 0
+            [server_info] => 10.4.32-MariaDB
+            [server_version] => 100432
+            [sqlstate] => 00000
+            [protocol_version] => 10
+            [thread_id] => 98
+            [warning_count] => 0
+        )
+
+)
+
+[09-Jun-2025 11:22:28 Europe/Berlin] JSON recibido: {"action":"actualizar_estado_producto","codPedido":"96","codProducto":"11","estado":"listo","area":"cocina","codEmpleado":1,"numMesa":"4"}
+[09-Jun-2025 11:22:28 Europe/Berlin] Procesando actualización para pedido: 96, producto: 11, estado: listo, area: cocina, numMesa: 4
+[09-Jun-2025 11:22:28 Europe/Berlin] Conexión nula en actualizarEstadoProductoCompleto, intentando reconectar
+[09-Jun-2025 11:22:30 Europe/Berlin] Notificación WebSocket enviada correctamente: {"tipo":"actualizacionEstadoProducto","codPedido":96,"codProducto":11,"estado":"listo","area":"cocina","numMesa":"4"}
+[09-Jun-2025 11:22:30 Europe/Berlin] Notificación WebSocket enviada: {"tipo":"actualizacionEstadoProducto","codPedido":96,"codProducto":11,"estado":"listo","area":"cocina","numMesa":"4"}
+[09-Jun-2025 11:22:30 Europe/Berlin] Enviando notificación de respaldo desde cocina.php: {"tipo":"actualizacionEstadoProducto","codPedido":96,"codProducto":11,"estado":"listo","area":"cocina","numMesa":"4"}
+[09-Jun-2025 11:22:32 Europe/Berlin] Notificación WebSocket enviada correctamente: {"tipo":"actualizacionEstadoProducto","codPedido":96,"codProducto":11,"estado":"listo","area":"cocina","numMesa":"4"}
+[09-Jun-2025 11:22:32 Europe/Berlin] Resultado de actualización: Array
+(
+    [success] => 1
+    [mensaje] => Estado actualizado correctamente
+    [estadoPedido] => listo
+    [estadoProducto] => listo
+    [pedidoCompleto] => 1
+    [numMesa] => 4
+    [conteos] => Array
+        (
+            [pendiente] => 0
+            [preparando] => 0
+            [listos] => 1
+            [total] => 1
+        )
+
+    [conexion] => mysqli Object
+        (
+            [affected_rows] => -1
+            [client_info] => mysqlnd 8.2.12
+            [client_version] => 80212
+            [connect_errno] => 0
+            [connect_error] => 
+            [errno] => 0
+            [error] => 
+            [error_list] => Array
+                (
+                )
+
+            [field_count] => 0
+            [host_info] => localhost via TCP/IP
+            [info] => 
+            [insert_id] => 0
+            [server_info] => 10.4.32-MariaDB
+            [server_version] => 100432
+            [sqlstate] => 00000
+            [protocol_version] => 10
+            [thread_id] => 99
+            [warning_count] => 0
+        )
+
+)
+
+[09-Jun-2025 11:26:58 Europe/Berlin] Obteniendo pedidos pendientes para área: cocina
+[09-Jun-2025 11:30:01 Europe/Berlin] Obteniendo pedidos pendientes para área: cocina
+[09-Jun-2025 11:30:23 Europe/Berlin] Obteniendo pedidos pendientes para área: cocina
+[09-Jun-2025 11:30:26 Europe/Berlin] JSON recibido: {"action":"actualizar_estado_producto","codPedido":"97","codProducto":"12","estado":"preparando","area":"cocina","codEmpleado":1,"numMesa":"4"}
+[09-Jun-2025 11:30:26 Europe/Berlin] Procesando actualización para pedido: 97, producto: 12, estado: preparando, area: cocina, numMesa: 4
+[09-Jun-2025 11:30:26 Europe/Berlin] Conexión nula en actualizarEstadoProductoCompleto, intentando reconectar
+[09-Jun-2025 11:30:28 Europe/Berlin] Notificación WebSocket enviada correctamente: {"tipo":"actualizacionEstadoProducto","codPedido":97,"codProducto":12,"estado":"preparando","area":"cocina","numMesa":"4"}
+[09-Jun-2025 11:30:28 Europe/Berlin] Notificación WebSocket enviada: {"tipo":"actualizacionEstadoProducto","codPedido":97,"codProducto":12,"estado":"preparando","area":"cocina","numMesa":"4"}
+[09-Jun-2025 11:30:28 Europe/Berlin] Enviando notificación de respaldo desde cocina.php: {"tipo":"actualizacionEstadoProducto","codPedido":97,"codProducto":12,"estado":"preparando","area":"cocina","numMesa":"4"}
+[09-Jun-2025 11:30:30 Europe/Berlin] Notificación WebSocket enviada correctamente: {"tipo":"actualizacionEstadoProducto","codPedido":97,"codProducto":12,"estado":"preparando","area":"cocina","numMesa":"4"}
+[09-Jun-2025 11:30:30 Europe/Berlin] Resultado de actualización: Array
+(
+    [success] => 1
+    [mensaje] => Estado actualizado correctamente
+    [estadoPedido] => preparando
+    [estadoProducto] => preparando
+    [pedidoCompleto] => 
+    [numMesa] => 4
+    [conteos] => Array
+        (
+            [pendiente] => 0
+            [preparando] => 1
+            [listos] => 0
+            [total] => 1
+        )
+
+    [conexion] => mysqli Object
+        (
+            [affected_rows] => -1
+            [client_info] => mysqlnd 8.2.12
+            [client_version] => 80212
+            [connect_errno] => 0
+            [connect_error] => 
+            [errno] => 0
+            [error] => 
+            [error_list] => Array
+                (
+                )
+
+            [field_count] => 0
+            [host_info] => localhost via TCP/IP
+            [info] => 
+            [insert_id] => 0
+            [server_info] => 10.4.32-MariaDB
+            [server_version] => 100432
+            [sqlstate] => 00000
+            [protocol_version] => 10
+            [thread_id] => 115
+            [warning_count] => 0
+        )
+
+)
+
+[09-Jun-2025 11:30:35 Europe/Berlin] JSON recibido: {"action":"actualizar_estado_producto","codPedido":"97","codProducto":"12","estado":"listo","area":"cocina","codEmpleado":1,"numMesa":"4"}
+[09-Jun-2025 11:30:35 Europe/Berlin] Procesando actualización para pedido: 97, producto: 12, estado: listo, area: cocina, numMesa: 4
+[09-Jun-2025 11:30:35 Europe/Berlin] Conexión nula en actualizarEstadoProductoCompleto, intentando reconectar
+[09-Jun-2025 11:30:37 Europe/Berlin] Notificación WebSocket enviada correctamente: {"tipo":"actualizacionEstadoProducto","codPedido":97,"codProducto":12,"estado":"listo","area":"cocina","numMesa":"4"}
+[09-Jun-2025 11:30:37 Europe/Berlin] Notificación WebSocket enviada: {"tipo":"actualizacionEstadoProducto","codPedido":97,"codProducto":12,"estado":"listo","area":"cocina","numMesa":"4"}
+[09-Jun-2025 11:30:37 Europe/Berlin] Enviando notificación de respaldo desde cocina.php: {"tipo":"actualizacionEstadoProducto","codPedido":97,"codProducto":12,"estado":"listo","area":"cocina","numMesa":"4"}
+[09-Jun-2025 11:30:39 Europe/Berlin] Notificación WebSocket enviada correctamente: {"tipo":"actualizacionEstadoProducto","codPedido":97,"codProducto":12,"estado":"listo","area":"cocina","numMesa":"4"}
+[09-Jun-2025 11:30:39 Europe/Berlin] Resultado de actualización: Array
+(
+    [success] => 1
+    [mensaje] => Estado actualizado correctamente
+    [estadoPedido] => listo
+    [estadoProducto] => listo
+    [pedidoCompleto] => 1
+    [numMesa] => 4
+    [conteos] => Array
+        (
+            [pendiente] => 0
+            [preparando] => 0
+            [listos] => 1
+            [total] => 1
+        )
+
+    [conexion] => mysqli Object
+        (
+            [affected_rows] => -1
+            [client_info] => mysqlnd 8.2.12
+            [client_version] => 80212
+            [connect_errno] => 0
+            [connect_error] => 
+            [errno] => 0
+            [error] => 
+            [error_list] => Array
+                (
+                )
+
+            [field_count] => 0
+            [host_info] => localhost via TCP/IP
+            [info] => 
+            [insert_id] => 0
+            [server_info] => 10.4.32-MariaDB
+            [server_version] => 100432
+            [sqlstate] => 00000
+            [protocol_version] => 10
+            [thread_id] => 116
+            [warning_count] => 0
+        )
+
+)
+
+[09-Jun-2025 11:32:50 Europe/Berlin] Obteniendo pedidos pendientes para área: cocina
+[09-Jun-2025 11:33:05 Europe/Berlin] Obteniendo pedidos pendientes para área: cocina
+[09-Jun-2025 11:35:41 Europe/Berlin] Obteniendo pedidos pendientes para área: cocina
+[09-Jun-2025 11:35:42 Europe/Berlin] JSON recibido: {"action":"actualizar_estado_producto","codPedido":"98","codProducto":"11","estado":"preparando","area":"cocina","codEmpleado":1,"numMesa":"4"}
+[09-Jun-2025 11:35:42 Europe/Berlin] Procesando actualización para pedido: 98, producto: 11, estado: preparando, area: cocina, numMesa: 4
+[09-Jun-2025 11:35:42 Europe/Berlin] Conexión nula en actualizarEstadoProductoCompleto, intentando reconectar
+[09-Jun-2025 11:35:44 Europe/Berlin] Notificación WebSocket enviada correctamente: {"tipo":"actualizacionEstadoProducto","codPedido":98,"codProducto":11,"estado":"preparando","area":"cocina","numMesa":"4"}
+[09-Jun-2025 11:35:44 Europe/Berlin] Notificación WebSocket enviada: {"tipo":"actualizacionEstadoProducto","codPedido":98,"codProducto":11,"estado":"preparando","area":"cocina","numMesa":"4"}
+[09-Jun-2025 11:35:44 Europe/Berlin] Enviando notificación de respaldo desde cocina.php: {"tipo":"actualizacionEstadoProducto","codPedido":98,"codProducto":11,"estado":"preparando","area":"cocina","numMesa":"4"}
+[09-Jun-2025 11:35:46 Europe/Berlin] Notificación WebSocket enviada correctamente: {"tipo":"actualizacionEstadoProducto","codPedido":98,"codProducto":11,"estado":"preparando","area":"cocina","numMesa":"4"}
+[09-Jun-2025 11:35:46 Europe/Berlin] Resultado de actualización: Array
+(
+    [success] => 1
+    [mensaje] => Estado actualizado correctamente
+    [estadoPedido] => preparando
+    [estadoProducto] => preparando
+    [pedidoCompleto] => 
+    [numMesa] => 4
+    [conteos] => Array
+        (
+            [pendiente] => 0
+            [preparando] => 1
+            [listos] => 0
+            [total] => 1
+        )
+
+    [conexion] => mysqli Object
+        (
+            [affected_rows] => -1
+            [client_info] => mysqlnd 8.2.12
+            [client_version] => 80212
+            [connect_errno] => 0
+            [connect_error] => 
+            [errno] => 0
+            [error] => 
+            [error_list] => Array
+                (
+                )
+
+            [field_count] => 0
+            [host_info] => localhost via TCP/IP
+            [info] => 
+            [insert_id] => 0
+            [server_info] => 10.4.32-MariaDB
+            [server_version] => 100432
+            [sqlstate] => 00000
+            [protocol_version] => 10
+            [thread_id] => 139
+            [warning_count] => 0
+        )
+
+)
+
+[09-Jun-2025 11:35:52 Europe/Berlin] JSON recibido: {"action":"actualizar_estado_producto","codPedido":"98","codProducto":"11","estado":"listo","area":"cocina","codEmpleado":1,"numMesa":"4"}
+[09-Jun-2025 11:35:52 Europe/Berlin] Procesando actualización para pedido: 98, producto: 11, estado: listo, area: cocina, numMesa: 4
+[09-Jun-2025 11:35:52 Europe/Berlin] Conexión nula en actualizarEstadoProductoCompleto, intentando reconectar
+[09-Jun-2025 11:35:54 Europe/Berlin] Notificación WebSocket enviada correctamente: {"tipo":"actualizacionEstadoProducto","codPedido":98,"codProducto":11,"estado":"listo","area":"cocina","numMesa":"4"}
+[09-Jun-2025 11:35:54 Europe/Berlin] Notificación WebSocket enviada: {"tipo":"actualizacionEstadoProducto","codPedido":98,"codProducto":11,"estado":"listo","area":"cocina","numMesa":"4"}
+[09-Jun-2025 11:35:54 Europe/Berlin] Enviando notificación de respaldo desde cocina.php: {"tipo":"actualizacionEstadoProducto","codPedido":98,"codProducto":11,"estado":"listo","area":"cocina","numMesa":"4"}
+[09-Jun-2025 11:35:56 Europe/Berlin] Notificación WebSocket enviada correctamente: {"tipo":"actualizacionEstadoProducto","codPedido":98,"codProducto":11,"estado":"listo","area":"cocina","numMesa":"4"}
+[09-Jun-2025 11:35:56 Europe/Berlin] Resultado de actualización: Array
+(
+    [success] => 1
+    [mensaje] => Estado actualizado correctamente
+    [estadoPedido] => listo
+    [estadoProducto] => listo
+    [pedidoCompleto] => 1
+    [numMesa] => 4
+    [conteos] => Array
+        (
+            [pendiente] => 0
+            [preparando] => 0
+            [listos] => 1
+            [total] => 1
+        )
+
+    [conexion] => mysqli Object
+        (
+            [affected_rows] => -1
+            [client_info] => mysqlnd 8.2.12
+            [client_version] => 80212
+            [connect_errno] => 0
+            [connect_error] => 
+            [errno] => 0
+            [error] => 
+            [error_list] => Array
+                (
+                )
+
+            [field_count] => 0
+            [host_info] => localhost via TCP/IP
+            [info] => 
+            [insert_id] => 0
+            [server_info] => 10.4.32-MariaDB
+            [server_version] => 100432
+            [sqlstate] => 00000
+            [protocol_version] => 10
+            [thread_id] => 140
+            [warning_count] => 0
+        )
+
+)
+
+[09-Jun-2025 11:36:02 Europe/Berlin] Obteniendo pedidos pendientes para área: cocina
+[09-Jun-2025 11:36:24 Europe/Berlin] Obteniendo pedidos pendientes para área: cocina
+[09-Jun-2025 11:36:27 Europe/Berlin] JSON recibido: {"action":"actualizar_estado_producto","codPedido":"99","codProducto":"11","estado":"preparando","area":"cocina","codEmpleado":1,"numMesa":"4"}
+[09-Jun-2025 11:36:27 Europe/Berlin] Procesando actualización para pedido: 99, producto: 11, estado: preparando, area: cocina, numMesa: 4
+[09-Jun-2025 11:36:27 Europe/Berlin] Conexión nula en actualizarEstadoProductoCompleto, intentando reconectar
+[09-Jun-2025 11:36:29 Europe/Berlin] Notificación WebSocket enviada correctamente: {"tipo":"actualizacionEstadoProducto","codPedido":99,"codProducto":11,"estado":"preparando","area":"cocina","numMesa":"4"}
+[09-Jun-2025 11:36:29 Europe/Berlin] Notificación WebSocket enviada: {"tipo":"actualizacionEstadoProducto","codPedido":99,"codProducto":11,"estado":"preparando","area":"cocina","numMesa":"4"}
+[09-Jun-2025 11:36:29 Europe/Berlin] Enviando notificación de respaldo desde cocina.php: {"tipo":"actualizacionEstadoProducto","codPedido":99,"codProducto":11,"estado":"preparando","area":"cocina","numMesa":"4"}
+[09-Jun-2025 11:36:31 Europe/Berlin] Notificación WebSocket enviada correctamente: {"tipo":"actualizacionEstadoProducto","codPedido":99,"codProducto":11,"estado":"preparando","area":"cocina","numMesa":"4"}
+[09-Jun-2025 11:36:31 Europe/Berlin] Resultado de actualización: Array
+(
+    [success] => 1
+    [mensaje] => Estado actualizado correctamente
+    [estadoPedido] => preparando
+    [estadoProducto] => preparando
+    [pedidoCompleto] => 
+    [numMesa] => 4
+    [conteos] => Array
+        (
+            [pendiente] => 0
+            [preparando] => 1
+            [listos] => 0
+            [total] => 1
+        )
+
+    [conexion] => mysqli Object
+        (
+            [affected_rows] => -1
+            [client_info] => mysqlnd 8.2.12
+            [client_version] => 80212
+            [connect_errno] => 0
+            [connect_error] => 
+            [errno] => 0
+            [error] => 
+            [error_list] => Array
+                (
+                )
+
+            [field_count] => 0
+            [host_info] => localhost via TCP/IP
+            [info] => 
+            [insert_id] => 0
+            [server_info] => 10.4.32-MariaDB
+            [server_version] => 100432
+            [sqlstate] => 00000
+            [protocol_version] => 10
+            [thread_id] => 157
+            [warning_count] => 0
+        )
+
+)
+
+[09-Jun-2025 11:38:42 Europe/Berlin] Obteniendo pedidos pendientes para área: cocina
+[09-Jun-2025 11:38:57 Europe/Berlin] Obteniendo pedidos pendientes para área: cocina
+[09-Jun-2025 11:39:00 Europe/Berlin] JSON recibido: {"action":"actualizar_estado_producto","codPedido":"100","codProducto":"11","estado":"preparando","area":"cocina","codEmpleado":1,"numMesa":"4"}
+[09-Jun-2025 11:39:00 Europe/Berlin] Procesando actualización para pedido: 100, producto: 11, estado: preparando, area: cocina, numMesa: 4
+[09-Jun-2025 11:39:00 Europe/Berlin] Conexión nula en actualizarEstadoProductoCompleto, intentando reconectar
+[09-Jun-2025 11:39:02 Europe/Berlin] Notificación WebSocket enviada correctamente: {"tipo":"actualizacionEstadoProducto","codPedido":100,"codProducto":11,"estado":"preparando","area":"cocina","numMesa":"4"}
+[09-Jun-2025 11:39:02 Europe/Berlin] Notificación WebSocket enviada: {"tipo":"actualizacionEstadoProducto","codPedido":100,"codProducto":11,"estado":"preparando","area":"cocina","numMesa":"4"}
+[09-Jun-2025 11:39:02 Europe/Berlin] Enviando notificación de respaldo desde cocina.php: {"tipo":"actualizacionEstadoProducto","codPedido":100,"codProducto":11,"estado":"preparando","area":"cocina","numMesa":"4"}
+[09-Jun-2025 11:39:04 Europe/Berlin] Notificación WebSocket enviada correctamente: {"tipo":"actualizacionEstadoProducto","codPedido":100,"codProducto":11,"estado":"preparando","area":"cocina","numMesa":"4"}
+[09-Jun-2025 11:39:04 Europe/Berlin] Resultado de actualización: Array
+(
+    [success] => 1
+    [mensaje] => Estado actualizado correctamente
+    [estadoPedido] => preparando
+    [estadoProducto] => preparando
+    [pedidoCompleto] => 
+    [numMesa] => 4
+    [conteos] => Array
+        (
+            [pendiente] => 0
+            [preparando] => 1
+            [listos] => 0
+            [total] => 1
+        )
+
+    [conexion] => mysqli Object
+        (
+            [affected_rows] => -1
+            [client_info] => mysqlnd 8.2.12
+            [client_version] => 80212
+            [connect_errno] => 0
+            [connect_error] => 
+            [errno] => 0
+            [error] => 
+            [error_list] => Array
+                (
+                )
+
+            [field_count] => 0
+            [host_info] => localhost via TCP/IP
+            [info] => 
+            [insert_id] => 0
+            [server_info] => 10.4.32-MariaDB
+            [server_version] => 100432
+            [sqlstate] => 00000
+            [protocol_version] => 10
+            [thread_id] => 168
+            [warning_count] => 0
+        )
+
+)
+
+[09-Jun-2025 11:39:08 Europe/Berlin] JSON recibido: {"action":"actualizar_estado_producto","codPedido":"100","codProducto":"11","estado":"listo","area":"cocina","codEmpleado":1,"numMesa":"4"}
+[09-Jun-2025 11:39:08 Europe/Berlin] Procesando actualización para pedido: 100, producto: 11, estado: listo, area: cocina, numMesa: 4
+[09-Jun-2025 11:39:08 Europe/Berlin] Conexión nula en actualizarEstadoProductoCompleto, intentando reconectar
+[09-Jun-2025 11:39:10 Europe/Berlin] Notificación WebSocket enviada correctamente: {"tipo":"actualizacionEstadoProducto","codPedido":100,"codProducto":11,"estado":"listo","area":"cocina","numMesa":"4"}
+[09-Jun-2025 11:39:10 Europe/Berlin] Notificación WebSocket enviada: {"tipo":"actualizacionEstadoProducto","codPedido":100,"codProducto":11,"estado":"listo","area":"cocina","numMesa":"4"}
+[09-Jun-2025 11:39:10 Europe/Berlin] Enviando notificación de respaldo desde cocina.php: {"tipo":"actualizacionEstadoProducto","codPedido":100,"codProducto":11,"estado":"listo","area":"cocina","numMesa":"4"}
+[09-Jun-2025 11:39:12 Europe/Berlin] Notificación WebSocket enviada correctamente: {"tipo":"actualizacionEstadoProducto","codPedido":100,"codProducto":11,"estado":"listo","area":"cocina","numMesa":"4"}
+[09-Jun-2025 11:39:12 Europe/Berlin] Resultado de actualización: Array
+(
+    [success] => 1
+    [mensaje] => Estado actualizado correctamente
+    [estadoPedido] => listo
+    [estadoProducto] => listo
+    [pedidoCompleto] => 1
+    [numMesa] => 4
+    [conteos] => Array
+        (
+            [pendiente] => 0
+            [preparando] => 0
+            [listos] => 1
+            [total] => 1
+        )
+
+    [conexion] => mysqli Object
+        (
+            [affected_rows] => -1
+            [client_info] => mysqlnd 8.2.12
+            [client_version] => 80212
+            [connect_errno] => 0
+            [connect_error] => 
+            [errno] => 0
+            [error] => 
+            [error_list] => Array
+                (
+                )
+
+            [field_count] => 0
+            [host_info] => localhost via TCP/IP
+            [info] => 
+            [insert_id] => 0
+            [server_info] => 10.4.32-MariaDB
+            [server_version] => 100432
+            [sqlstate] => 00000
+            [protocol_version] => 10
+            [thread_id] => 169
+            [warning_count] => 0
+        )
+
+)
+
+[09-Jun-2025 11:39:37 Europe/Berlin] Obteniendo pedidos pendientes para área: cocina
+[09-Jun-2025 11:40:02 Europe/Berlin] Obteniendo pedidos pendientes para área: cocina
+[09-Jun-2025 11:40:04 Europe/Berlin] JSON recibido: {"action":"actualizar_estado_producto","codPedido":"102","codProducto":"11","estado":"preparando","area":"cocina","codEmpleado":1,"numMesa":"4"}
+[09-Jun-2025 11:40:04 Europe/Berlin] Procesando actualización para pedido: 102, producto: 11, estado: preparando, area: cocina, numMesa: 4
+[09-Jun-2025 11:40:04 Europe/Berlin] Conexión nula en actualizarEstadoProductoCompleto, intentando reconectar
+[09-Jun-2025 11:40:05 Europe/Berlin] JSON recibido: {"action":"actualizar_estado_producto","codPedido":"102","codProducto":"12","estado":"preparando","area":"cocina","codEmpleado":1,"numMesa":"4"}
+[09-Jun-2025 11:40:05 Europe/Berlin] Procesando actualización para pedido: 102, producto: 12, estado: preparando, area: cocina, numMesa: 4
+[09-Jun-2025 11:40:05 Europe/Berlin] Conexión nula en actualizarEstadoProductoCompleto, intentando reconectar
+[09-Jun-2025 11:40:06 Europe/Berlin] Notificación WebSocket enviada correctamente: {"tipo":"actualizacionEstadoProducto","codPedido":102,"codProducto":11,"estado":"preparando","area":"cocina","numMesa":"4"}
+[09-Jun-2025 11:40:06 Europe/Berlin] Notificación WebSocket enviada: {"tipo":"actualizacionEstadoProducto","codPedido":102,"codProducto":11,"estado":"preparando","area":"cocina","numMesa":"4"}
+[09-Jun-2025 11:40:06 Europe/Berlin] Enviando notificación de respaldo desde cocina.php: {"tipo":"actualizacionEstadoProducto","codPedido":102,"codProducto":11,"estado":"preparando","area":"cocina","numMesa":"4"}
+[09-Jun-2025 11:40:07 Europe/Berlin] Notificación WebSocket enviada correctamente: {"tipo":"actualizacionEstadoProducto","codPedido":102,"codProducto":12,"estado":"preparando","area":"cocina","numMesa":"4"}
+[09-Jun-2025 11:40:07 Europe/Berlin] Notificación WebSocket enviada: {"tipo":"actualizacionEstadoProducto","codPedido":102,"codProducto":12,"estado":"preparando","area":"cocina","numMesa":"4"}
+[09-Jun-2025 11:40:07 Europe/Berlin] Enviando notificación de respaldo desde cocina.php: {"tipo":"actualizacionEstadoProducto","codPedido":102,"codProducto":12,"estado":"preparando","area":"cocina","numMesa":"4"}
+[09-Jun-2025 11:40:09 Europe/Berlin] Notificación WebSocket enviada correctamente: {"tipo":"actualizacionEstadoProducto","codPedido":102,"codProducto":11,"estado":"preparando","area":"cocina","numMesa":"4"}
+[09-Jun-2025 11:40:09 Europe/Berlin] Resultado de actualización: Array
+(
+    [success] => 1
+    [mensaje] => Estado actualizado correctamente
+    [estadoPedido] => pendiente
+    [estadoProducto] => preparando
+    [pedidoCompleto] => 
+    [numMesa] => 4
+    [conteos] => Array
+        (
+            [pendiente] => 1
+            [preparando] => 1
+            [listos] => 0
+            [total] => 2
+        )
+
+    [conexion] => mysqli Object
+        (
+            [affected_rows] => -1
+            [client_info] => mysqlnd 8.2.12
+            [client_version] => 80212
+            [connect_errno] => 0
+            [connect_error] => 
+            [errno] => 0
+            [error] => 
+            [error_list] => Array
+                (
+                )
+
+            [field_count] => 0
+            [host_info] => localhost via TCP/IP
+            [info] => 
+            [insert_id] => 0
+            [server_info] => 10.4.32-MariaDB
+            [server_version] => 100432
+            [sqlstate] => 00000
+            [protocol_version] => 10
+            [thread_id] => 186
+            [warning_count] => 0
+        )
+
+)
+
+[09-Jun-2025 11:40:10 Europe/Berlin] Notificación WebSocket enviada correctamente: {"tipo":"actualizacionEstadoProducto","codPedido":102,"codProducto":12,"estado":"preparando","area":"cocina","numMesa":"4"}
+[09-Jun-2025 11:40:10 Europe/Berlin] Resultado de actualización: Array
+(
+    [success] => 1
+    [mensaje] => Estado actualizado correctamente
+    [estadoPedido] => preparando
+    [estadoProducto] => preparando
+    [pedidoCompleto] => 
+    [numMesa] => 4
+    [conteos] => Array
+        (
+            [pendiente] => 0
+            [preparando] => 2
+            [listos] => 0
+            [total] => 2
+        )
+
+    [conexion] => mysqli Object
+        (
+            [affected_rows] => -1
+            [client_info] => mysqlnd 8.2.12
+            [client_version] => 80212
+            [connect_errno] => 0
+            [connect_error] => 
+            [errno] => 0
+            [error] => 
+            [error_list] => Array
+                (
+                )
+
+            [field_count] => 0
+            [host_info] => localhost via TCP/IP
+            [info] => 
+            [insert_id] => 0
+            [server_info] => 10.4.32-MariaDB
+            [server_version] => 100432
+            [sqlstate] => 00000
+            [protocol_version] => 10
+            [thread_id] => 187
+            [warning_count] => 0
+        )
+
+)
+
+[09-Jun-2025 11:40:15 Europe/Berlin] JSON recibido: {"action":"actualizar_estado_producto","codPedido":"102","codProducto":"11","estado":"listo","area":"cocina","codEmpleado":1,"numMesa":"4"}
+[09-Jun-2025 11:40:15 Europe/Berlin] Procesando actualización para pedido: 102, producto: 11, estado: listo, area: cocina, numMesa: 4
+[09-Jun-2025 11:40:15 Europe/Berlin] Conexión nula en actualizarEstadoProductoCompleto, intentando reconectar
+[09-Jun-2025 11:40:17 Europe/Berlin] Notificación WebSocket enviada correctamente: {"tipo":"actualizacionEstadoProducto","codPedido":102,"codProducto":11,"estado":"listo","area":"cocina","numMesa":"4"}
+[09-Jun-2025 11:40:17 Europe/Berlin] Notificación WebSocket enviada: {"tipo":"actualizacionEstadoProducto","codPedido":102,"codProducto":11,"estado":"listo","area":"cocina","numMesa":"4"}
+[09-Jun-2025 11:40:17 Europe/Berlin] Enviando notificación de respaldo desde cocina.php: {"tipo":"actualizacionEstadoProducto","codPedido":102,"codProducto":11,"estado":"listo","area":"cocina","numMesa":"4"}
+[09-Jun-2025 11:40:19 Europe/Berlin] Notificación WebSocket enviada correctamente: {"tipo":"actualizacionEstadoProducto","codPedido":102,"codProducto":11,"estado":"listo","area":"cocina","numMesa":"4"}
+[09-Jun-2025 11:40:19 Europe/Berlin] Resultado de actualización: Array
+(
+    [success] => 1
+    [mensaje] => Estado actualizado correctamente
+    [estadoPedido] => preparando
+    [estadoProducto] => listo
+    [pedidoCompleto] => 
+    [numMesa] => 4
+    [conteos] => Array
+        (
+            [pendiente] => 0
+            [preparando] => 1
+            [listos] => 1
+            [total] => 2
+        )
+
+    [conexion] => mysqli Object
+        (
+            [affected_rows] => -1
+            [client_info] => mysqlnd 8.2.12
+            [client_version] => 80212
+            [connect_errno] => 0
+            [connect_error] => 
+            [errno] => 0
+            [error] => 
+            [error_list] => Array
+                (
+                )
+
+            [field_count] => 0
+            [host_info] => localhost via TCP/IP
+            [info] => 
+            [insert_id] => 0
+            [server_info] => 10.4.32-MariaDB
+            [server_version] => 100432
+            [sqlstate] => 00000
+            [protocol_version] => 10
+            [thread_id] => 188
+            [warning_count] => 0
+        )
+
+)
+
+[09-Jun-2025 11:40:25 Europe/Berlin] JSON recibido: {"action":"actualizar_estado_producto","codPedido":"101","codProducto":"12","estado":"listo","area":"cocina","codEmpleado":1,"numMesa":"4"}
+[09-Jun-2025 11:40:25 Europe/Berlin] Procesando actualización para pedido: 101, producto: 12, estado: listo, area: cocina, numMesa: 4
+[09-Jun-2025 11:40:25 Europe/Berlin] Conexión nula en actualizarEstadoProductoCompleto, intentando reconectar
+[09-Jun-2025 11:40:27 Europe/Berlin] Notificación WebSocket enviada correctamente: {"tipo":"actualizacionEstadoProducto","codPedido":101,"codProducto":12,"estado":"listo","area":"cocina","numMesa":"4"}
+[09-Jun-2025 11:40:27 Europe/Berlin] Notificación WebSocket enviada: {"tipo":"actualizacionEstadoProducto","codPedido":101,"codProducto":12,"estado":"listo","area":"cocina","numMesa":"4"}
+[09-Jun-2025 11:40:27 Europe/Berlin] Enviando notificación de respaldo desde cocina.php: {"tipo":"actualizacionEstadoProducto","codPedido":101,"codProducto":12,"estado":"listo","area":"cocina","numMesa":"4"}
+[09-Jun-2025 11:40:29 Europe/Berlin] Notificación WebSocket enviada correctamente: {"tipo":"actualizacionEstadoProducto","codPedido":101,"codProducto":12,"estado":"listo","area":"cocina","numMesa":"4"}
+[09-Jun-2025 11:40:29 Europe/Berlin] Resultado de actualización: Array
+(
+    [success] => 1
+    [mensaje] => Estado actualizado correctamente
+    [estadoPedido] => listo
+    [estadoProducto] => listo
+    [pedidoCompleto] => 1
+    [numMesa] => 4
+    [conteos] => Array
+        (
+            [pendiente] => 0
+            [preparando] => 0
+            [listos] => 1
+            [total] => 1
+        )
+
+    [conexion] => mysqli Object
+        (
+            [affected_rows] => -1
+            [client_info] => mysqlnd 8.2.12
+            [client_version] => 80212
+            [connect_errno] => 0
+            [connect_error] => 
+            [errno] => 0
+            [error] => 
+            [error_list] => Array
+                (
+                )
+
+            [field_count] => 0
+            [host_info] => localhost via TCP/IP
+            [info] => 
+            [insert_id] => 0
+            [server_info] => 10.4.32-MariaDB
+            [server_version] => 100432
+            [sqlstate] => 00000
+            [protocol_version] => 10
+            [thread_id] => 189
+            [warning_count] => 0
+        )
+
+)
+
+[09-Jun-2025 11:41:46 Europe/Berlin] Obteniendo pedidos pendientes para área: cocina
+[09-Jun-2025 11:42:26 Europe/Berlin] Obteniendo pedidos pendientes para área: cocina
+[09-Jun-2025 11:42:41 Europe/Berlin] Obteniendo pedidos pendientes para área: cocina
+[09-Jun-2025 11:42:53 Europe/Berlin] JSON recibido: {"action":"actualizar_estado_producto","codPedido":"103","codProducto":"12","estado":"preparando","area":"cocina","codEmpleado":1,"numMesa":"1"}
+[09-Jun-2025 11:42:53 Europe/Berlin] Procesando actualización para pedido: 103, producto: 12, estado: preparando, area: cocina, numMesa: 1
+[09-Jun-2025 11:42:53 Europe/Berlin] Conexión nula en actualizarEstadoProductoCompleto, intentando reconectar
+[09-Jun-2025 11:42:55 Europe/Berlin] Notificación WebSocket enviada correctamente: {"tipo":"actualizacionEstadoProducto","codPedido":103,"codProducto":12,"estado":"preparando","area":"cocina","numMesa":"1"}
+[09-Jun-2025 11:42:55 Europe/Berlin] Notificación WebSocket enviada: {"tipo":"actualizacionEstadoProducto","codPedido":103,"codProducto":12,"estado":"preparando","area":"cocina","numMesa":"1"}
+[09-Jun-2025 11:42:55 Europe/Berlin] Enviando notificación de respaldo desde cocina.php: {"tipo":"actualizacionEstadoProducto","codPedido":103,"codProducto":12,"estado":"preparando","area":"cocina","numMesa":"1"}
+[09-Jun-2025 11:42:57 Europe/Berlin] Notificación WebSocket enviada correctamente: {"tipo":"actualizacionEstadoProducto","codPedido":103,"codProducto":12,"estado":"preparando","area":"cocina","numMesa":"1"}
+[09-Jun-2025 11:42:57 Europe/Berlin] Resultado de actualización: Array
+(
+    [success] => 1
+    [mensaje] => Estado actualizado correctamente
+    [estadoPedido] => pendiente
+    [estadoProducto] => preparando
+    [pedidoCompleto] => 
+    [numMesa] => 1
+    [conteos] => Array
+        (
+            [pendiente] => 1
+            [preparando] => 1
+            [listos] => 0
+            [total] => 2
+        )
+
+    [conexion] => mysqli Object
+        (
+            [affected_rows] => -1
+            [client_info] => mysqlnd 8.2.12
+            [client_version] => 80212
+            [connect_errno] => 0
+            [connect_error] => 
+            [errno] => 0
+            [error] => 
+            [error_list] => Array
+                (
+                )
+
+            [field_count] => 0
+            [host_info] => localhost via TCP/IP
+            [info] => 
+            [insert_id] => 0
+            [server_info] => 10.4.32-MariaDB
+            [server_version] => 100432
+            [sqlstate] => 00000
+            [protocol_version] => 10
+            [thread_id] => 217
+            [warning_count] => 0
+        )
+
+)
+
+[09-Jun-2025 11:43:00 Europe/Berlin] JSON recibido: {"action":"actualizar_estado_producto","codPedido":"103","codProducto":"12","estado":"listo","area":"cocina","codEmpleado":1,"numMesa":"1"}
+[09-Jun-2025 11:43:00 Europe/Berlin] Procesando actualización para pedido: 103, producto: 12, estado: listo, area: cocina, numMesa: 1
+[09-Jun-2025 11:43:00 Europe/Berlin] Conexión nula en actualizarEstadoProductoCompleto, intentando reconectar
+[09-Jun-2025 11:43:02 Europe/Berlin] Notificación WebSocket enviada correctamente: {"tipo":"actualizacionEstadoProducto","codPedido":103,"codProducto":12,"estado":"listo","area":"cocina","numMesa":"1"}
+[09-Jun-2025 11:43:02 Europe/Berlin] Notificación WebSocket enviada: {"tipo":"actualizacionEstadoProducto","codPedido":103,"codProducto":12,"estado":"listo","area":"cocina","numMesa":"1"}
+[09-Jun-2025 11:43:02 Europe/Berlin] Enviando notificación de respaldo desde cocina.php: {"tipo":"actualizacionEstadoProducto","codPedido":103,"codProducto":12,"estado":"listo","area":"cocina","numMesa":"1"}
+[09-Jun-2025 11:43:04 Europe/Berlin] Notificación WebSocket enviada correctamente: {"tipo":"actualizacionEstadoProducto","codPedido":103,"codProducto":12,"estado":"listo","area":"cocina","numMesa":"1"}
+[09-Jun-2025 11:43:04 Europe/Berlin] Resultado de actualización: Array
+(
+    [success] => 1
+    [mensaje] => Estado actualizado correctamente
+    [estadoPedido] => pendiente
+    [estadoProducto] => listo
+    [pedidoCompleto] => 
+    [numMesa] => 1
+    [conteos] => Array
+        (
+            [pendiente] => 1
+            [preparando] => 0
+            [listos] => 1
+            [total] => 2
+        )
+
+    [conexion] => mysqli Object
+        (
+            [affected_rows] => -1
+            [client_info] => mysqlnd 8.2.12
+            [client_version] => 80212
+            [connect_errno] => 0
+            [connect_error] => 
+            [errno] => 0
+            [error] => 
+            [error_list] => Array
+                (
+                )
+
+            [field_count] => 0
+            [host_info] => localhost via TCP/IP
+            [info] => 
+            [insert_id] => 0
+            [server_info] => 10.4.32-MariaDB
+            [server_version] => 100432
+            [sqlstate] => 00000
+            [protocol_version] => 10
+            [thread_id] => 218
+            [warning_count] => 0
+        )
+
+)
+
+[09-Jun-2025 13:14:00 Europe/Berlin] Obteniendo pedidos pendientes para área: cocina
+[09-Jun-2025 13:18:22 Europe/Berlin] Obteniendo pedidos pendientes para área: cocina
+[09-Jun-2025 13:18:26 Europe/Berlin] Obteniendo pedidos pendientes para área: cocina
+[09-Jun-2025 13:18:28 Europe/Berlin] JSON recibido: {"action":"actualizar_estado_producto","codPedido":"107","codProducto":"12","estado":"preparando","area":"cocina","codEmpleado":1,"numMesa":"3"}
+[09-Jun-2025 13:18:28 Europe/Berlin] Procesando actualización para pedido: 107, producto: 12, estado: preparando, area: cocina, numMesa: 3
+[09-Jun-2025 13:18:28 Europe/Berlin] Conexión nula en actualizarEstadoProductoCompleto, intentando reconectar
+[09-Jun-2025 13:18:30 Europe/Berlin] Notificación WebSocket enviada correctamente: {"tipo":"actualizacionEstadoProducto","codPedido":107,"codProducto":12,"estado":"preparando","area":"cocina","numMesa":"3"}
+[09-Jun-2025 13:18:30 Europe/Berlin] Notificación WebSocket enviada: {"tipo":"actualizacionEstadoProducto","codPedido":107,"codProducto":12,"estado":"preparando","area":"cocina","numMesa":"3"}
+[09-Jun-2025 13:18:30 Europe/Berlin] Enviando notificación de respaldo desde cocina.php: {"tipo":"actualizacionEstadoProducto","codPedido":107,"codProducto":12,"estado":"preparando","area":"cocina","numMesa":"3"}
+[09-Jun-2025 13:18:32 Europe/Berlin] Notificación WebSocket enviada correctamente: {"tipo":"actualizacionEstadoProducto","codPedido":107,"codProducto":12,"estado":"preparando","area":"cocina","numMesa":"3"}
+[09-Jun-2025 13:18:32 Europe/Berlin] Resultado de actualización: Array
+(
+    [success] => 1
+    [mensaje] => Estado actualizado correctamente
+    [estadoPedido] => pendiente
+    [estadoProducto] => preparando
+    [pedidoCompleto] => 
+    [numMesa] => 3
+    [conteos] => Array
+        (
+            [pendiente] => 1
+            [preparando] => 1
+            [listos] => 0
+            [total] => 2
+        )
+
+    [conexion] => mysqli Object
+        (
+            [affected_rows] => -1
+            [client_info] => mysqlnd 8.2.12
+            [client_version] => 80212
+            [connect_errno] => 0
+            [connect_error] => 
+            [errno] => 0
+            [error] => 
+            [error_list] => Array
+                (
+                )
+
+            [field_count] => 0
+            [host_info] => localhost via TCP/IP
+            [info] => 
+            [insert_id] => 0
+            [server_info] => 10.4.32-MariaDB
+            [server_version] => 100432
+            [sqlstate] => 00000
+            [protocol_version] => 10
+            [thread_id] => 16
+            [warning_count] => 0
+        )
+
+)
+
+[09-Jun-2025 13:18:34 Europe/Berlin] JSON recibido: {"action":"actualizar_estado_producto","codPedido":"107","codProducto":"11","estado":"preparando","area":"cocina","codEmpleado":1,"numMesa":"3"}
+[09-Jun-2025 13:18:34 Europe/Berlin] Procesando actualización para pedido: 107, producto: 11, estado: preparando, area: cocina, numMesa: 3
+[09-Jun-2025 13:18:34 Europe/Berlin] Conexión nula en actualizarEstadoProductoCompleto, intentando reconectar
+[09-Jun-2025 13:18:36 Europe/Berlin] Notificación WebSocket enviada correctamente: {"tipo":"actualizacionEstadoProducto","codPedido":107,"codProducto":11,"estado":"preparando","area":"cocina","numMesa":"3"}
+[09-Jun-2025 13:18:36 Europe/Berlin] Notificación WebSocket enviada: {"tipo":"actualizacionEstadoProducto","codPedido":107,"codProducto":11,"estado":"preparando","area":"cocina","numMesa":"3"}
+[09-Jun-2025 13:18:36 Europe/Berlin] Enviando notificación de respaldo desde cocina.php: {"tipo":"actualizacionEstadoProducto","codPedido":107,"codProducto":11,"estado":"preparando","area":"cocina","numMesa":"3"}
+[09-Jun-2025 13:18:38 Europe/Berlin] Notificación WebSocket enviada correctamente: {"tipo":"actualizacionEstadoProducto","codPedido":107,"codProducto":11,"estado":"preparando","area":"cocina","numMesa":"3"}
+[09-Jun-2025 13:18:38 Europe/Berlin] Resultado de actualización: Array
+(
+    [success] => 1
+    [mensaje] => Estado actualizado correctamente
+    [estadoPedido] => preparando
+    [estadoProducto] => preparando
+    [pedidoCompleto] => 
+    [numMesa] => 3
+    [conteos] => Array
+        (
+            [pendiente] => 0
+            [preparando] => 2
+            [listos] => 0
+            [total] => 2
+        )
+
+    [conexion] => mysqli Object
+        (
+            [affected_rows] => -1
+            [client_info] => mysqlnd 8.2.12
+            [client_version] => 80212
+            [connect_errno] => 0
+            [connect_error] => 
+            [errno] => 0
+            [error] => 
+            [error_list] => Array
+                (
+                )
+
+            [field_count] => 0
+            [host_info] => localhost via TCP/IP
+            [info] => 
+            [insert_id] => 0
+            [server_info] => 10.4.32-MariaDB
+            [server_version] => 100432
+            [sqlstate] => 00000
+            [protocol_version] => 10
+            [thread_id] => 17
+            [warning_count] => 0
+        )
+
+)
+
+[09-Jun-2025 13:18:40 Europe/Berlin] JSON recibido: {"action":"actualizar_estado_producto","codPedido":"107","codProducto":"12","estado":"listo","area":"cocina","codEmpleado":1,"numMesa":"3"}
+[09-Jun-2025 13:18:40 Europe/Berlin] Procesando actualización para pedido: 107, producto: 12, estado: listo, area: cocina, numMesa: 3
+[09-Jun-2025 13:18:40 Europe/Berlin] Conexión nula en actualizarEstadoProductoCompleto, intentando reconectar
+[09-Jun-2025 13:18:42 Europe/Berlin] Notificación WebSocket enviada correctamente: {"tipo":"actualizacionEstadoProducto","codPedido":107,"codProducto":12,"estado":"listo","area":"cocina","numMesa":"3"}
+[09-Jun-2025 13:18:42 Europe/Berlin] Notificación WebSocket enviada: {"tipo":"actualizacionEstadoProducto","codPedido":107,"codProducto":12,"estado":"listo","area":"cocina","numMesa":"3"}
+[09-Jun-2025 13:18:42 Europe/Berlin] Enviando notificación de respaldo desde cocina.php: {"tipo":"actualizacionEstadoProducto","codPedido":107,"codProducto":12,"estado":"listo","area":"cocina","numMesa":"3"}
+[09-Jun-2025 13:18:44 Europe/Berlin] Notificación WebSocket enviada correctamente: {"tipo":"actualizacionEstadoProducto","codPedido":107,"codProducto":12,"estado":"listo","area":"cocina","numMesa":"3"}
+[09-Jun-2025 13:18:44 Europe/Berlin] Resultado de actualización: Array
+(
+    [success] => 1
+    [mensaje] => Estado actualizado correctamente
+    [estadoPedido] => preparando
+    [estadoProducto] => listo
+    [pedidoCompleto] => 
+    [numMesa] => 3
+    [conteos] => Array
+        (
+            [pendiente] => 0
+            [preparando] => 1
+            [listos] => 1
+            [total] => 2
+        )
+
+    [conexion] => mysqli Object
+        (
+            [affected_rows] => -1
+            [client_info] => mysqlnd 8.2.12
+            [client_version] => 80212
+            [connect_errno] => 0
+            [connect_error] => 
+            [errno] => 0
+            [error] => 
+            [error_list] => Array
+                (
+                )
+
+            [field_count] => 0
+            [host_info] => localhost via TCP/IP
+            [info] => 
+            [insert_id] => 0
+            [server_info] => 10.4.32-MariaDB
+            [server_version] => 100432
+            [sqlstate] => 00000
+            [protocol_version] => 10
+            [thread_id] => 18
+            [warning_count] => 0
+        )
+
+)
+
+[09-Jun-2025 13:18:46 Europe/Berlin] JSON recibido: {"action":"actualizar_estado_producto","codPedido":"107","codProducto":"11","estado":"listo","area":"cocina","codEmpleado":1,"numMesa":"3"}
+[09-Jun-2025 13:18:46 Europe/Berlin] Procesando actualización para pedido: 107, producto: 11, estado: listo, area: cocina, numMesa: 3
+[09-Jun-2025 13:18:46 Europe/Berlin] Conexión nula en actualizarEstadoProductoCompleto, intentando reconectar
+[09-Jun-2025 13:18:48 Europe/Berlin] Notificación WebSocket enviada correctamente: {"tipo":"actualizacionEstadoProducto","codPedido":107,"codProducto":11,"estado":"listo","area":"cocina","numMesa":"3"}
+[09-Jun-2025 13:18:48 Europe/Berlin] Notificación WebSocket enviada: {"tipo":"actualizacionEstadoProducto","codPedido":107,"codProducto":11,"estado":"listo","area":"cocina","numMesa":"3"}
+[09-Jun-2025 13:18:48 Europe/Berlin] Enviando notificación de respaldo desde cocina.php: {"tipo":"actualizacionEstadoProducto","codPedido":107,"codProducto":11,"estado":"listo","area":"cocina","numMesa":"3"}
+[09-Jun-2025 13:18:50 Europe/Berlin] Notificación WebSocket enviada correctamente: {"tipo":"actualizacionEstadoProducto","codPedido":107,"codProducto":11,"estado":"listo","area":"cocina","numMesa":"3"}
+[09-Jun-2025 13:18:50 Europe/Berlin] Resultado de actualización: Array
+(
+    [success] => 1
+    [mensaje] => Estado actualizado correctamente
+    [estadoPedido] => listo
+    [estadoProducto] => listo
+    [pedidoCompleto] => 1
+    [numMesa] => 3
+    [conteos] => Array
+        (
+            [pendiente] => 0
+            [preparando] => 0
+            [listos] => 2
+            [total] => 2
+        )
+
+    [conexion] => mysqli Object
+        (
+            [affected_rows] => -1
+            [client_info] => mysqlnd 8.2.12
+            [client_version] => 80212
+            [connect_errno] => 0
+            [connect_error] => 
+            [errno] => 0
+            [error] => 
+            [error_list] => Array
+                (
+                )
+
+            [field_count] => 0
+            [host_info] => localhost via TCP/IP
+            [info] => 
+            [insert_id] => 0
+            [server_info] => 10.4.32-MariaDB
+            [server_version] => 100432
+            [sqlstate] => 00000
+            [protocol_version] => 10
+            [thread_id] => 19
+            [warning_count] => 0
+        )
+
+)
+
+[09-Jun-2025 13:19:11 Europe/Berlin] Obteniendo pedidos pendientes para área: cocina

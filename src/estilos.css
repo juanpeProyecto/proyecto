@@ -1,0 +1,17 @@
+.fondo1
+{    
+    background: url(../img/fondo1.jpg);
+    background-size: cover;
+    background-position: center; 
+    background-repeat: no-repeat;
+    height: 270px;
+}
+
+.fondo2
+{    
+    background: url(../img/fondo2.jpg);
+    background-size: cover;
+    background-position: center; 
+    background-repeat: no-repeat;
+    height: 170px;
+}

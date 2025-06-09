@@ -1,0 +1,5 @@
+[09-Jun-2025 09:42:12 Europe/Berlin] PHP Fatal error:  Uncaught ArgumentCountError: Too few arguments to function enviarNotificacionWebSocket(), 1 passed in C:\xampp\htdocs\proyecto\proyectoFinal\test_conexion.php on line 43 and exactly 2 expected in C:\xampp\htdocs\proyecto\proyectoFinal\funciones.php:707
+Stack trace:
+#0 C:\xampp\htdocs\proyecto\proyectoFinal\test_conexion.php(43): enviarNotificacionWebSocket(Array)
+#1 {main}
+  thrown in C:\xampp\htdocs\proyecto\proyectoFinal\funciones.php on line 707
