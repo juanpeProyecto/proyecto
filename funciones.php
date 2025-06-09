@@ -91,15 +91,35 @@ function actualizarEstadoProductoCompleto($codPedido, $codProducto, $estado, $ar
         // 1. Actualizamos el estado del producto
         error_log("Actualizando estado del producto - Pedido: $codPedido, Producto: $codProducto, Estado: $estado, Área: $area");
         
-        // Primero verificamos si el registro existe
-        $sqlCheck = "SELECT COUNT(*) as existe FROM DetallePedidos WHERE codPedido = ? AND codProducto = ?";
+        // Primero verificamos si el registro existe y obtenemos su área
+        $sqlCheck = "SELECT dp.*, p.QuienLoAtiende as area FROM DetallePedidos dp 
+                    JOIN Productos p ON dp.codProducto = p.codProducto 
+                    WHERE dp.codPedido = ? AND dp.codProducto = ?";
         $stmtCheck = $conexion->prepare($sqlCheck);
         $stmtCheck->bind_param("ii", $codPedido, $codProducto);
         $stmtCheck->execute();
         $resultadoCheck = $stmtCheck->get_result()->fetch_assoc();
         
-        if ($resultadoCheck['existe'] == 0) {
+        if (!$resultadoCheck) {
             throw new Exception("No se encontró el producto $codProducto en el pedido $codPedido");
+        }
+        
+        // Mapeo de áreas a roles
+        $areaToRole = [
+            'cocina' => 'cocinero',  // Área cocina mapea a rol 'cocinero'
+            'barra' => 'barra',
+            'mesa' => 'camarero'
+        ];
+        
+        // Verificamos que el producto pertenezca al área correcta
+        $rolEsperado = $areaToRole[strtolower($area)] ?? $area;
+        if (strtolower($resultadoCheck['area']) != strtolower($rolEsperado)) {
+            // Si el área es 'cocina' pero el rol es 'cocinero', lo permitimos
+            if (strtolower($area) === 'cocina' && strtolower($resultadoCheck['area']) === 'cocinero') {
+                // Permitir la actualización
+            } else {
+                throw new Exception("El producto está asignado a '{$resultadoCheck['area']}' pero se intentó actualizar desde '$area'");
+            }
         }
         
         $sqlUpdateProducto = "UPDATE DetallePedidos SET estado = ? WHERE codPedido = ? AND codProducto = ?";
@@ -280,14 +300,15 @@ function obtenerPedidosPendientesArea($area = '') {
                     
         // Filtrar por área si se especifica
         if ($area === 'cocina') {
-            // Para cocina, mostrar solo pedidos con productos pendientes o en preparación para cocina
+            // Para cocina, mostrar todos los pedidos que tengan al menos un producto pendiente o en preparación
             $consulta = "SELECT DISTINCT p.codPedido, p.numMesa, p.Fecha, p.Observaciones, p.Estado, p.Total 
                         FROM Pedidos p
                         JOIN DetallePedidos d ON p.codPedido = d.codPedido
                         JOIN Productos pr ON d.codProducto = pr.codProducto
-                        WHERE p.Estado IN ('pendiente', 'preparando')
-                        AND d.estado IN ('pendiente', 'preparando')
+                        WHERE d.estado IN ('pendiente', 'preparando')
                         AND pr.QuienLoAtiende = 'cocinero'
+                        AND p.Estado != 'listo'
+                        GROUP BY p.codPedido
                         ORDER BY p.Fecha DESC";
         } else {
             // Ordenar por fecha
@@ -317,30 +338,59 @@ function obtenerPedidosPendientesArea($area = '') {
                                 JOIN Productos p ON d.codProducto = p.codProducto
                                 WHERE d.codPedido = ?";
                                 
-            // Filtrar por área si es necesario
+            // Filtrar por área
             if ($area === 'cocina') {
                 $consultaProductos .= " AND p.QuienLoAtiende = 'cocinero'";
             } else if ($area === 'barra') {
                 $consultaProductos .= " AND p.QuienLoAtiende = 'camarero'";
             }
             
-            $stmtProductos = $conexion->prepare($consultaProductos);
-            $stmtProductos->bind_param("i", $fila['codPedido']);
-            $stmtProductos->execute();
-            $resultadoProductos = $stmtProductos->get_result();
+            // Primero, obtener todos los productos del pedido para verificar estados
+            $consultaTodosProductos = "SELECT d.codProducto, d.cantidad, d.estado, p.Nombre, p.Descripcion, p.Precio, p.QuienLoAtiende, p.Foto AS Imagen 
+                                    FROM DetallePedidos d
+                                    JOIN Productos p ON d.codProducto = p.codProducto
+                                    WHERE d.codPedido = ?";
             
+            if ($area === 'cocina') {
+                $consultaTodosProductos .= " AND p.QuienLoAtiende = 'cocinero'";
+            } else if ($area === 'barra') {
+                $consultaTodosProductos .= " AND p.QuienLoAtiende = 'camarero'";
+            }
+            
+            $stmtTodosProductos = $conexion->prepare($consultaTodosProductos);
+            $stmtTodosProductos->bind_param("i", $fila['codPedido']);
+            $stmtTodosProductos->execute();
+            $resultadoTodosProductos = $stmtTodosProductos->get_result();
+            
+            $todosProductos = [];
+            $todosListos = true;
+            while ($producto = $resultadoTodosProductos->fetch_assoc()) {
+                if ($producto['estado'] !== 'listo') {
+                    $todosListos = false;
+                }
+                $todosProductos[] = $producto;
+            }
+            
+            // Si todos los productos están listos, no incluimos el pedido
+            if ($todosListos) {
+                continue;
+            }
+            
+            // Filtrar solo los productos pendientes o en preparación para mostrar
             $productos = [];
-            while ($filaProducto = $resultadoProductos->fetch_assoc()) {
-                $productos[] = [
-                    'cod' => (int)$filaProducto['codProducto'],
-                    'cantidad' => (int)$filaProducto['cantidad'], 
-                    'nombre' => $filaProducto['Nombre'],
-                    'descripcion' => $filaProducto['Descripcion'],
-                    'precio' => (float)$filaProducto['Precio'],
-                    'tipo' => $filaProducto['QuienLoAtiende'],
-                    'imagen' => $filaProducto['Imagen'],
-                    'estado' => $filaProducto['estado']
-                ];
+            foreach ($todosProductos as $filaProducto) {
+                if (in_array($filaProducto['estado'], ['pendiente', 'preparando'])) {
+                    $productos[] = [
+                        'cod' => (int)$filaProducto['codProducto'],
+                        'cantidad' => (int)$filaProducto['cantidad'], 
+                        'nombre' => $filaProducto['Nombre'],
+                        'descripcion' => $filaProducto['Descripcion'],
+                        'precio' => (float)$filaProducto['Precio'],
+                        'tipo' => $filaProducto['QuienLoAtiende'],
+                        'imagen' => $filaProducto['Imagen'],
+                        'estado' => $filaProducto['estado']
+                    ];
+                }
             }
             
             $pedido['productos'] = $productos;

@@ -1,5 +1,46 @@
 "use strict";
 
+// Función para mostrar notificaciones al usuario
+function mostrarNotificacion(tipo, mensaje) {
+    // Crear el contenedor de notificaciones si no existe
+    let notificaciones = document.getElementById('notificaciones');
+    if (!notificaciones) {
+        notificaciones = document.createElement('div');
+        notificaciones.id = 'notificaciones';
+        notificaciones.style.position = 'fixed';
+        notificaciones.style.top = '20px';
+        notificaciones.style.right = '20px';
+        notificaciones.style.zIndex = '1000';
+        document.body.appendChild(notificaciones);
+    }
+    
+    // Crear la notificación
+    const notificacion = document.createElement('div');
+    notificacion.className = `p-4 mb-2 rounded-lg shadow-lg ${tipo === 'error' ? 'bg-red-100 text-red-800 border-l-4 border-red-500' : 
+                             tipo === 'success' ? 'bg-green-100 text-green-800 border-l-4 border-green-500' :
+                             'bg-blue-100 text-blue-800 border-l-4 border-blue-500'}`;
+    notificacion.innerHTML = `
+        <div class="flex items-center">
+            <span class="mr-2">${mensaje}</span>
+            <button class="ml-auto text-gray-500 hover:text-gray-700" onclick="this.parentElement.parentElement.remove()">
+                &times;
+            </button>
+        </div>
+    `;
+    
+    // Añadir la notificación al contenedor
+    notificaciones.appendChild(notificacion);
+    
+    // Eliminar automáticamente después de 5 segundos
+    setTimeout(() => {
+        if (notificacion.parentNode) {
+            notificacion.style.opacity = '0';
+            notificacion.style.transition = 'opacity 0.5s';
+            setTimeout(() => notificacion.remove(), 500);
+        }
+    }, 5000);
+}
+
 // Función para formatear fechas en un formato legible
 function formatearFechaHora(fechaString) {
     try {
@@ -76,185 +117,209 @@ function actualizarEstadoProducto(boton, estado, codPedido, codProducto, numMesa
     const elementoPedido = boton.closest('.pedido-card');
     
     if (!elementoProducto || !elementoPedido) {
-        console.error('No se pudo encontrar el contenedor del producto o pedido', boton);
-        return;
+        const error = new Error('No se pudo encontrar el contenedor del producto o pedido');
+        console.error(error.message, boton);
+        return Promise.reject(error);
     }
     
-    // Mostrar estado en consola
-    console.log('Actualizando estado del producto:', {codPedido, codProducto, estado, numMesa});
+    // Obtener el estado actual del producto
+    const estadoActual = elementoProducto.getAttribute('data-estado') || 'pendiente';
     
-    // Actualizar el atributo data-estado del producto
-    elementoProducto.setAttribute('data-estado', estado);
-    
-    // Actualizar la clase del producto según el estado
-    elementoProducto.className = 'producto p-3 rounded border ';
-    if (estado === 'preparando') {
-        elementoProducto.classList.add('bg-yellow-50', 'border-yellow-200');
-    } else if (estado === 'listo') {
-        elementoProducto.classList.add('bg-green-50', 'border-green-200');
-    } else {
-        elementoProducto.classList.add('bg-gray-50', 'border-gray-200');
+    // Si el estado no cambia, no hacemos nada
+    if (estado === estadoActual) {
+        console.log('El estado no ha cambiado, ignorando...');
+        return Promise.resolve({ success: true, mensaje: 'El estado ya estaba actualizado' });
     }
     
-    // Actualizar el botón que se hizo clic
+    console.log(`Actualizando producto ${codProducto} del pedido ${codPedido} a estado: ${estado}`);
+    
+    // Guardar el HTML original del botón para restaurarlo en caso de error
+    const botonHTML = boton.innerHTML;
+    const botonClases = boton.className;
+    
+    // Mostrar indicador de carga en el botón
+    boton.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
     boton.disabled = true;
-    boton.classList.remove('bg-gray-100', 'text-gray-800');
     
-    if (estado === 'preparando') {
-        boton.classList.add('bg-yellow-500', 'text-white');
-    } else if (estado === 'listo') {
-        boton.classList.add('bg-green-500', 'text-white');
-    }
+    // Actualizar la interfaz inmediatamente para mejor experiencia de usuario
+    actualizarEstadoProductoUI(codProducto, estado);
     
-    // Guardar el HTML original del botón para restaurar en caso de error
-    const htmlOriginalBoton = boton.outerHTML;
+    // Crear una promesa para manejar la actualización
+    return new Promise((resolve, reject) => {
+        // Función para restaurar el botón a su estado original
+        const restaurarBoton = () => {
+            boton.innerHTML = botonHTML;
+            boton.className = botonClases;
+            boton.disabled = false;
+        };
 
-    // Preparar datos para enviar al servidor
-    const datos = {
-        action: 'actualizar_estado_producto',
-        codPedido: codPedido,
-        codProducto: codProducto,
-        estado: estado,
-        area: 'cocina',
-        codEmpleado: 1, // Debería venir de la sesión
-        numMesa: numMesa
-    };
-    
-    console.log('Enviando actualización de estado:', datos);
-    
-    // Mostrar indicador de carga
-    mostrarCarga();
-    
-    // Realizar la petición AJAX
-    fetch('cocina.php', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(datos)
-    })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error(`Error HTTP: ${response.status}`);
-        }
-        return response.json();
-    })
-    .then(data => {
-        console.log('Respuesta del servidor:', data);
-        
-        if (data.success) {
-            // Actualizar el estado visual del producto
-            const estadoProducto = data.estadoProducto || estado;
+        // Enviar la solicitud al servidor
+        fetch('cocina.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                action: 'actualizar_estado_producto',
+                codPedido: codPedido,
+                codProducto: codProducto,
+                estado: estado,
+                area: 'cocina',
+                codEmpleado: 1, // Debería venir de la sesión
+                numMesa: numMesa || '0',
+                estadoAnterior: estadoActual // Usar el estado actual como referencia
+            })
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`Error HTTP: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (!data) {
+                throw new Error('No se recibió respuesta del servidor');
+            }
+
+            console.log('Respuesta del servidor:', data);
             
-            // Actualizar el atributo data-estado del producto
-            elementoProducto.setAttribute('data-estado', estadoProducto);
-            
-            // Actualizar la clase del producto según el estado
-            elementoProducto.className = 'producto p-3 rounded border ';
-            if (estadoProducto === 'preparando') {
-                elementoProducto.classList.add('bg-yellow-50', 'border-yellow-200');
-            } else if (estadoProducto === 'listo') {
-                elementoProducto.classList.add('bg-green-50', 'border-green-200');
-                
-                // Si el producto está listo, deshabilitar el botón de preparar
-                const btnPreparar = elementoProducto.querySelector('.btn-preparar');
-                if (btnPreparar) {
-                    btnPreparar.disabled = true;
-                    btnPreparar.classList.add('opacity-50', 'cursor-not-allowed');
-                }
-            } else {
-                elementoProducto.classList.add('bg-gray-50', 'border-gray-200');
+            // Verificar si el estado no cambió en el servidor
+            if (data.mensaje && data.mensaje.includes('no se afectaron filas')) {
+                console.log('El estado no cambió en el servidor, recargando datos...');
+                // Recargamos los pedidos para sincronizar con el servidor
+                return cargarPedidosCocina().then(() => {
+                    restaurarBoton();
+                    return resolve({ success: true, mensaje: 'Estado sincronizado con el servidor' });
+                }).catch(error => {
+                    console.error('Error al sincronizar estados:', error);
+                    restaurarBoton();
+                    return resolve({ success: true, mensaje: 'El estado ya estaba actualizado' });
+                });
             }
             
-            // Actualizar el estado del pedido si es necesario
-            if (data.estadoPedido && elementoPedido) {
-                const estadoPedidoElement = elementoPedido.querySelector('.estado-pedido');
-                if (estadoPedidoElement) {
-                    estadoPedidoElement.textContent = data.estadoPedido.charAt(0).toUpperCase() + data.estadoPedido.slice(1);
-                    estadoPedidoElement.className = 'px-2 py-1 text-xs font-medium rounded-full ';
+            if (data.success) {
+                console.log('Estado actualizado correctamente:', data);
+                
+                // Verificar primero si el pedido está completo (todos los productos listos)
+                if (data.pedidoCompleto === 1 || data.estadoPedido === 'listo') {
+                    console.log('Pedido completo, actualizando interfaz...');
+                    // Actualizar la interfaz con los nuevos datos
+                    actualizarEstadoProductoUI(codProducto, 'listo');
                     
-                    if (data.estadoPedido === 'preparando') {
-                        estadoPedidoElement.classList.add('bg-yellow-100', 'text-yellow-800');
-                        elementoPedido.classList.add('border-yellow-500');
-                        elementoPedido.classList.remove('border-blue-500');
-                    } else if (data.estadoPedido === 'listo') {
-                        estadoPedidoElement.classList.add('bg-green-100', 'text-green-800');
-                        elementoPedido.classList.add('border-green-500');
-                        elementoPedido.classList.remove('border-blue-500', 'border-yellow-500');
-                    } else {
-                        estadoPedidoElement.classList.add('bg-blue-100', 'text-blue-800');
-                        elementoPedido.classList.add('border-blue-500');
-                        elementoPedido.classList.remove('border-yellow-500', 'border-green-500');
+                    // Si el pedido está listo, eliminarlo de la interfaz después de un breve retraso
+                    setTimeout(() => {
+                        if (elementoPedido && elementoPedido.parentNode) {
+                            elementoPedido.remove();
+                            actualizarContadores();
+                            mostrarNotificacion('success', '¡Pedido completado! Se ha eliminado de la lista.');
+                        }
+                    }, 500);
+                } else {
+                    // Si el pedido no está completo, actualizar la interfaz normalmente
+                    actualizarEstadoProductoUI(codProducto, estado);
+                    
+                    // Actualizar la UI del estado del pedido
+                    if (elementoPedido) {
+                        const estadoPedidoElement = elementoPedido.querySelector('.estado-pedido');
+                        
+                        if (data.estadoPedido && estadoPedidoElement) {
+                            estadoPedidoElement.textContent = data.estadoPedido.charAt(0).toUpperCase() + data.estadoPedido.slice(1);
+                            estadoPedidoElement.className = 'px-2 py-1 text-xs font-medium rounded-full ';
+                            
+                            if (data.estadoPedido === 'preparando') {
+                                estadoPedidoElement.classList.add('bg-yellow-100', 'text-yellow-800');
+                                elementoPedido.classList.add('border-yellow-500');
+                                elementoPedido.classList.remove('border-blue-500');
+                            } else {
+                                estadoPedidoElement.classList.add('bg-blue-100', 'text-blue-800');
+                                elementoPedido.classList.add('border-blue-500');
+                                elementoPedido.classList.remove('border-yellow-500', 'border-green-500');
+                            }
+                        }
                     }
                 }
+                
+                // Actualizar contadores
+                actualizarContadores();
+                
+                // Mostrar notificación de éxito
+                mostrarNotificacion('success', 'Estado actualizado correctamente');
+                
+                // Resolver la promesa con los datos de la respuesta
+                resolve(data);
+            } else {
+                // Si hay un mensaje específico, usarlo, de lo contrario mensaje genérico
+                const errorMsg = data.mensaje || 'Error desconocido al actualizar el estado';
+                throw new Error(errorMsg);
             }
+        })
+        .catch(error => {
+            console.error('Error al actualizar el estado del producto:', error);
             
-            // Actualizar contadores
-            actualizarContadores();
+            // Restaurar el botón a su estado original
+            restaurarBoton();
             
-            // Si el pedido está completo, recargar la lista después de un breve retraso
-            if (data.pedidoCompleto) {
-                setTimeout(() => {
-                    cargarPedidosCocina();
-                }, 1000);
-            }
-        } else {
-            throw new Error(data.mensaje || 'Error desconocido del servidor');
-        }
-    })
-    .catch(error => {
-        console.error('Error al actualizar estado:', error);
-        
-        // Mostrar mensaje de error
-        alert(`Error al actualizar el estado: ${error.message}`);
-        
-        // Restaurar el botón a su estado original
-        if (boton) {
-            boton.outerHTML = htmlOriginalBoton;
-        }
-        
-        // Volver a inicializar los botones
-        inicializarBotones();
-    })
-    .finally(() => {
-        // Ocultar indicador de carga
-        ocultarCarga();
+            // Mostrar notificación de error
+            mostrarNotificacion('error', 'Error al actualizar el estado del producto: ' + (error.message || 'Error desconocido'));
+            
+            // Rechazar la promesa con el error
+            reject(error);
+        });
     });
 }
 
 // Inicializar los botones de cambio de estado de todos los productos
 function inicializarBotones() {
-    console.log('Inicializando botones de estado...');
-    
+    console.log('Inicializando botones...');
     // Inicializar botones de completar pedido
     inicializarBotonesCompletarPedido();
     
     // Seleccionar todos los botones de estado
     const botones = document.querySelectorAll('.btn-estado');
     
+    // Eliminar manejadores de eventos anteriores para evitar duplicados
     botones.forEach(boton => {
-        // Verificar si el botón ya tiene un manejador de eventos
-        if (boton.hasAttribute('data-inicializado')) {
-            console.log('Botón ya inicializado, omitiendo...', boton);
-            return;
-        }
-        
+        const newBoton = boton.cloneNode(true);
+        boton.parentNode.replaceChild(newBoton, boton);
+    });
+    
+    // Volver a seleccionar los botones después del clonado
+    const botonesActualizados = document.querySelectorAll('.btn-estado');
+    
+    botonesActualizados.forEach(boton => {
         // Función para obtener atributos con diferentes formatos
         const getDataAttribute = (element, keys) => {
+            if (!element) return null;
+            
             for (const key of keys) {
-                const value = element.getAttribute(key);
-                if (value) return value;
-                
-                // Probar con prefijos de datos
-                const dataKey = key.startsWith('data-') ? key : `data-${key}`;
-                const dataValue = element.getAttribute(dataKey);
-                if (dataValue) return dataValue;
-                
-                // Probar con camelCase
-                const camelCaseKey = key.replace(/-(.)/g, (_, char) => char.toUpperCase());
-                const camelCaseValue = element.getAttribute(camelCaseKey);
-                if (camelCaseValue) return camelCaseValue;
+                try {
+                    // Probar con prefijos de datos
+                    const dataKey = key.startsWith('data-') ? key : `data-${key}`;
+                    let value = element.getAttribute(dataKey);
+                    if (value !== null && value !== '' && value !== 'undefined') {
+                        console.log(`Atributo encontrado: ${dataKey} = ${value}`);
+                        return value;
+                    }
+                    
+                    // Probar sin prefijo
+                    value = element.getAttribute(key);
+                    if (value !== null && value !== '' && value !== 'undefined') {
+                        console.log(`Atributo encontrado: ${key} = ${value}`);
+                        return value;
+                    }
+                    
+                    // Probar con camelCase
+                    const camelCaseKey = key.replace(/-([a-z])/g, (_, char) => char.toUpperCase());
+                    value = element.getAttribute(camelCaseKey);
+                    if (value !== null && value !== '' && value !== 'undefined') {
+                        console.log(`Atributo encontrado: ${camelCaseKey} = ${value}`);
+                        return value;
+                    }
+                } catch (error) {
+                    console.error(`Error al obtener atributo ${key}:`, error);
+                }
             }
+            console.error('No se pudo encontrar ningún atributo válido para las claves:', keys, 'en el elemento:', element);
             return null;
         };
         
@@ -264,7 +329,13 @@ function inicializarBotones() {
         let codProducto = getDataAttribute(boton, ['data-cod-producto', 'codProducto', 'producto-id', 'data-producto-id']);
         let numMesa = getDataAttribute(boton, ['data-num-mesa', 'numMesa', 'mesa', 'data-mesa']);
         
-        console.log('Datos iniciales del botón:', { estado, codPedido, codProducto, numMesa });
+        console.log('Datos iniciales del botón:', { 
+            estado, 
+            codPedido, 
+            codProducto, 
+            numMesa,
+            html: boton.outerHTML 
+        });
         
         // Intentar obtener los datos del DOM si no están en el botón o son inválidos
         const producto = boton.closest('.producto');
@@ -283,26 +354,30 @@ function inicializarBotones() {
             console.log('ID de pedido del contenedor:', pedidoId);
             
             // Obtener número de mesa del contenedor del pedido si no está en el botón
-            if (pedidoElement && !numMesa) {
-                numMesa = pedidoElement.getAttribute('data-num-mesa') || 
-                          pedidoElement.closest('.mb-8')?.querySelector('h2')?.textContent?.match(/Mesa\s*(\d+)/i)?.[1] ||
-                          '0';
+            if (pedidoElement && (!numMesa || numMesa === '0' || numMesa === 'undefined')) {
+                numMesa = getDataAttribute(pedidoElement, ['data-num-mesa', 'numMesa', 'mesa', 'data-mesa']) ||
+                         (pedidoElement.closest('.mb-8')?.querySelector('h2')?.textContent?.match(/Mesa\s*(\d+)/i)?.[1]) ||
+                         '0';
+                console.log('Número de mesa obtenido del DOM:', numMesa);
             }
             
             // Actualizar valores si se encontraron en el DOM
-            if (pedidoId && (!codPedido || codPedido === '0')) {
+            if (pedidoId && (!codPedido || codPedido === '0' || codPedido === 'undefined')) {
                 codPedido = pedidoId;
                 boton.setAttribute('data-cod-pedido', codPedido);
+                console.log('Actualizado codPedido desde el DOM:', codPedido);
             }
             
             if (productoId && (!codProducto || codProducto === '0' || codProducto === 'undefined')) {
                 codProducto = productoId;
                 boton.setAttribute('data-cod-producto', codProducto);
+                console.log('Actualizado codProducto desde el DOM:', codProducto);
             }
             
-            if (!numMesa) {
+            if (!numMesa || numMesa === '0' || numMesa === 'undefined') {
                 numMesa = '0';
                 boton.setAttribute('data-num-mesa', numMesa);
+                console.log('Establecido numMesa por defecto:', numMesa);
             }
         }
         
@@ -315,8 +390,12 @@ function inicializarBotones() {
         });
         
         // Verificar que los datos requeridos estén presentes
-        if (!codPedido || codPedido === '0' || !codProducto || codProducto === '0' || codProducto === 'undefined') {
-            console.error('Datos faltantes o inválidos en el botón:', { 
+        const datosFaltantes = [];
+        if (!codPedido || codPedido === '0' || codPedido === 'undefined') datosFaltantes.push('codPedido');
+        if (!codProducto || codProducto === '0' || codProducto === 'undefined') datosFaltantes.push('codProducto');
+        
+        if (datosFaltantes.length > 0) {
+            const errorInfo = { 
                 html: boton.outerHTML,
                 dataAttributes: {
                     'data-estado': boton.getAttribute('data-estado'),
@@ -327,40 +406,47 @@ function inicializarBotones() {
                 valoresObtenidos: {
                     codPedido,
                     codProducto,
-                    numMesa
+                    numMesa: numMesa || 'No definido',
+                    estado: estado || 'No definido'
                 },
+                datosFaltantes,
                 parentElement: boton.parentElement ? {
                     tagName: boton.parentElement.tagName,
                     className: boton.parentElement.className,
-                    dataset: Object.fromEntries(
-                        Object.entries(boton.parentElement.dataset).map(([key, value]) => [key, value])
-                    )
+                    outerHTML: boton.parentElement.outerHTML
                 } : null,
                 closestProducto: producto ? {
+                    tagName: producto.tagName,
+                    className: producto.className,
                     attributes: Array.from(producto.attributes).map(attr => ({
                         name: attr.name,
                         value: attr.value
                     }))
                 } : null
+            };
+            
+            console.error('Datos faltantes o inválidos en el botón:', errorInfo);
+            
+            // Deshabilitar el botón si faltan datos críticos
+            boton.disabled = true;
+            boton.classList.add('opacity-50', 'cursor-not-allowed');
+            boton.title = `Error: Faltan datos (${datosFaltantes.join(', ')})`;
+            
+            // Mostrar un mensaje de error en la consola con más detalles
+            console.error('No se pudo inicializar el botón. Datos faltantes:', {
+                boton: boton.outerHTML,
+                datosFaltantes,
+                valoresActuales: errorInfo.valoresObtenidos
             });
             
-            // Mostrar más información en la consola
-            console.group('Información adicional del botón con error');
-            console.log('Elemento botón:', boton);
-            console.log('Padre del botón:', boton.parentElement);
-            console.log('Producto más cercano:', producto);
-            console.log('Árbol DOM del botón:', boton.closest('.producto, .pedido-card'));
-            console.groupEnd();
-            
-            boton.disabled = true;
-            boton.title = 'Error: Faltan datos del pedido o producto';
-            return;
+            return; // No continuar con la inicialización de este botón
         }
-            
-        // Si aún faltan datos, mostrar error y deshabilitar el botón
+        
+        // Validar que los datos requeridos estén presentes
         if (!codPedido || !codProducto) {
             console.error('No se pudieron obtener los datos necesarios para el botón');
             boton.disabled = true;
+            boton.title = 'Error: Faltan datos del pedido o producto';
             boton.classList.add('opacity-50', 'cursor-not-allowed');
             return;
         }
@@ -370,10 +456,11 @@ function inicializarBotones() {
             e.preventDefault();
             e.stopPropagation();
             
-            const estado = this.getAttribute('data-estado');
-            const codPedido = this.getAttribute('data-cod-pedido');
-            const codProducto = this.getAttribute('data-cod-producto');
-            const numMesa = this.getAttribute('data-num-mesa');
+            // Obtener los datos del botón usando la función getDataAttribute para mayor robustez
+            const estado = getDataAttribute(this, ['data-estado', 'estado']);
+            const codPedido = getDataAttribute(this, ['data-cod-pedido', 'codPedido', 'pedido-id', 'data-pedido-id']);
+            const codProducto = getDataAttribute(this, ['data-cod-producto', 'codProducto', 'producto-id', 'data-producto-id']);
+            const numMesa = getDataAttribute(this, ['data-num-mesa', 'numMesa', 'mesa', 'data-mesa']) || '0';
             
             console.log('Botón clickeado:', { 
                 estado, 
@@ -383,22 +470,61 @@ function inicializarBotones() {
                 html: this.outerHTML 
             });
             
+            // Validar que los datos requeridos estén presentes
             if (!codPedido || !codProducto) {
                 console.error('Faltan datos requeridos para actualizar el estado', {
                     codPedido,
                     codProducto,
-                    html: this.outerHTML
+                    numMesa,
+                    estado,
+                    html: this.outerHTML,
+                    dataAttributes: {
+                        'data-estado': this.getAttribute('data-estado'),
+                        'data-cod-pedido': this.getAttribute('data-cod-pedido'),
+                        'data-cod-producto': this.getAttribute('data-cod-producto'),
+                        'data-num-mesa': this.getAttribute('data-num-mesa')
+                    }
                 });
-                alert('Error: No se pudo obtener la información necesaria para actualizar el estado.');
+                
+                // Mostrar un mensaje de error en la interfaz
+                const errorMsg = document.createElement('div');
+                errorMsg.className = 'text-red-600 text-sm mt-1';
+                errorMsg.textContent = 'Error: Faltan datos del pedido o producto';
+                this.parentNode.appendChild(errorMsg);
+                
+                // Eliminar el mensaje después de 3 segundos
+                setTimeout(() => {
+                    if (errorMsg.parentNode) {
+                        errorMsg.parentNode.removeChild(errorMsg);
+                    }
+                }, 3000);
+                
                 return;
             }
             
-            // Actualizar el estado del producto
-            actualizarEstadoProducto(this, estado, codPedido, codProducto, numMesa);
+            // Deshabilitar temporalmente el botón para evitar múltiples clics
+            this.disabled = true;
+            this.classList.add('opacity-50', 'cursor-wait');
+            
+            // Llamar a la función para actualizar el estado del producto
+            actualizarEstadoProducto(this, estado, codPedido, codProducto, numMesa)
+                .finally(() => {
+                    // Re-habilitar el botón después de un breve retraso
+                    setTimeout(() => {
+                        this.disabled = false;
+                        this.classList.remove('opacity-50', 'cursor-wait');
+                    }, 1000);
+                });
         });
         
         // Marcar el botón como inicializado
         boton.setAttribute('data-inicializado', 'true');
+        console.log('Botón inicializado correctamente:', { 
+            estado, 
+            codPedido, 
+            codProducto, 
+            numMesa 
+        });
         
         // Actualizar estado visual del botón
         const productoElemento = boton.closest('.producto');
@@ -447,6 +573,11 @@ function cargarPedidosCocina() {
             
             if (!data.success || !data.pedidos) {
                 throw new Error('Formato de respuesta inválido');
+            }
+            
+            // Depuración: Ver la estructura de los productos del primer pedido
+            if (data.pedidos.length > 0 && data.pedidos[0].productos) {
+                console.log('Estructura del primer producto del primer pedido:', data.pedidos[0].productos[0]);
             }
             
             // Renderizar los pedidos
@@ -521,99 +652,99 @@ function actualizarEstadoProductoUI(codProducto, estado) {
     requestAnimationFrame(() => {
         console.log(`Actualizando UI para producto ${codProducto} a estado ${estado}`);
         
-        // Buscar todos los elementos de producto con este código
-        const elementosProducto = document.querySelectorAll(`.producto[data-cod-producto="${codProducto}"]`);
+        // Buscar el producto específico usando el ID del producto
+        const elementoProducto = document.querySelector(`.producto[data-cod-producto="${codProducto}"]`);
         
-        if (elementosProducto.length === 0) {
+        if (!elementoProducto) {
             console.log(`No se encontró el producto con código ${codProducto} en la interfaz`);
-            cargarPedidosCocina();
             return;
         }
         
-        // Crear un fragmento de documento para las actualizaciones por lotes
-        const fragment = document.createDocumentFragment();
-        const updates = [];
+        // Actualizar el atributo data-estado
+        elementoProducto.setAttribute('data-estado', estado);
         
-        // Procesar cada instancia del producto
-        elementosProducto.forEach(elementoProducto => {
-            // Actualizar el atributo data-estado
-            elementoProducto.setAttribute('data-estado', estado);
-            
-            // Actualizar el texto del estado
-            let estadoElement = elementoProducto.querySelector('.estado-producto');
-            if (!estadoElement) {
-                estadoElement = document.createElement('div');
-                estadoElement.className = 'estado-producto text-sm font-medium px-2 py-1 rounded mt-1';
-                const btnContainer = elementoProducto.querySelector('.btn-container');
-                if (btnContainer) {
-                    btnContainer.after(estadoElement);
-                } else {
-                    elementoProducto.appendChild(estadoElement);
-                }
-            }
-            
-            // Configurar actualización del estado
-            const estadoMostrar = estado.charAt(0).toUpperCase() + estado.slice(1);
-            updates.push(() => {
-                estadoElement.textContent = `Estado: ${estadoMostrar}`;
-                
-                // Actualizar clases de estilo según el estado
-                estadoElement.className = 'estado-producto text-sm font-medium px-2 py-1 rounded mt-1 ';
-                
-                if (estado === 'preparando') {
-                    estadoElement.classList.add('bg-yellow-100', 'text-yellow-800');
-                    elementoProducto.classList.add('bg-yellow-50');
-                } else if (estado === 'listo') {
-                    estadoElement.classList.add('bg-green-100', 'text-green-800');
-                    elementoProducto.classList.add('bg-green-50');
-                } else {
-                    estadoElement.classList.add('bg-gray-100', 'text-gray-800');
-                }
-            });
-            
-            // Actualizar botones de acción
-            const btnContainer = elementoProducto.querySelector('.btn-container');
+        // Actualizar las clases del contenedor del producto
+        elementoProducto.classList.remove('bg-yellow-50', 'bg-green-50', 'bg-gray-50', 'border-yellow-200', 'border-green-200', 'border-gray-200');
+        if (estado === 'preparando') {
+            elementoProducto.classList.add('bg-yellow-50', 'border-yellow-200');
+        } else if (estado === 'listo') {
+            elementoProducto.classList.add('bg-green-50', 'border-green-200');
+        } else {
+            elementoProducto.classList.add('bg-gray-50', 'border-gray-200');
+        }
+        
+        // Actualizar el texto del estado
+        let estadoElement = elementoProducto.querySelector('.estado-producto');
+        if (!estadoElement) {
+            estadoElement = document.createElement('div');
+            estadoElement.className = 'estado-producto text-sm font-medium px-2 py-1 rounded mt-1';
+            const btnContainer = elementoProducto.querySelector('.flex.space-x-2');
             if (btnContainer) {
-                const btnPreparando = btnContainer.querySelector('.btn-preparando');
-                const btnListo = btnContainer.querySelector('.btn-listo');
-                
-                updates.push(() => {
-                    if (btnPreparando) {
-                        btnPreparando.disabled = estado !== 'pendiente';
-                        if (estado === 'pendiente') {
-                            btnPreparando.classList.remove('opacity-50', 'cursor-not-allowed');
-                        } else {
-                            btnPreparando.classList.add('opacity-50', 'cursor-not-allowed');
-                        }
-                    }
-                    
-                    if (btnListo) {
-                        btnListo.disabled = estado === 'listo';
-                        if (estado === 'pendiente' || estado === 'preparando') {
-                            btnListo.classList.remove('opacity-50', 'cursor-not-allowed');
-                        } else {
-                            btnListo.classList.add('opacity-50', 'cursor-not-allowed');
-                        }
-                    }
-                });
+                btnContainer.after(estadoElement);
+            } else {
+                elementoProducto.appendChild(estadoElement);
             }
-            
-            // Verificar si todos los productos del pedido están listos
-            const tarjetaPedido = elementoProducto.closest('.pedido-card');
-            if (tarjetaPedido) {
-                updates.push(() => {
-                    const productosPedido = tarjetaPedido.querySelectorAll('.producto');
-                    const productosListos = Array.from(productosPedido).every(
-                        prod => prod.getAttribute('data-estado') === 'listo'
-                    );
-                    
-                    actualizarEstadoPedido(tarjetaPedido, productosListos);
-                });
-            }
-        });
+        }
         
-        // Ejecutar todas las actualizaciones
-        updates.forEach(update => update());
+        // Configurar actualización del estado
+        const estadoMostrar = estado.charAt(0).toUpperCase() + estado.slice(1);
+        estadoElement.textContent = `Estado: ${estadoMostrar}`;
+        
+        // Actualizar clases de estilo según el estado
+        estadoElement.className = 'estado-producto text-sm font-medium px-2 py-1 rounded mt-1 ';
+        
+        if (estado === 'preparando') {
+            estadoElement.classList.add('bg-yellow-100', 'text-yellow-800');
+            elementoProducto.classList.add('bg-yellow-50');
+        } else if (estado === 'listo') {
+            estadoElement.classList.add('bg-green-100', 'text-green-800');
+            elementoProducto.classList.add('bg-green-50');
+        } else {
+            estadoElement.classList.add('bg-gray-100', 'text-gray-800');
+        }
+        
+        // Actualizar botones de acción
+        const btnPreparar = elementoProducto.querySelector('.btn-preparar');
+        const btnListo = elementoProducto.querySelector('.btn-listo');
+        
+        // Actualizar botón de preparar
+        if (btnPreparar) {
+            btnPreparar.disabled = estado !== 'pendiente';
+            btnPreparar.classList.remove('opacity-50', 'cursor-not-allowed', 'bg-yellow-100', 'text-yellow-800');
+            
+            if (estado === 'pendiente') {
+                btnPreparar.classList.add('bg-gray-100', 'text-gray-800');
+            } else if (estado === 'preparando') {
+                btnPreparar.classList.add('opacity-50', 'cursor-not-allowed', 'bg-yellow-100', 'text-yellow-800');
+            } else {
+                btnPreparar.classList.add('opacity-50', 'cursor-not-allowed');
+            }
+        }
+        
+        // Actualizar botón de listo
+        if (btnListo) {
+            btnListo.disabled = estado !== 'preparando';
+            btnListo.classList.remove('opacity-50', 'cursor-not-allowed', 'bg-green-100', 'text-green-800');
+            
+            if (estado === 'preparando') {
+                btnListo.classList.add('bg-green-100', 'text-green-800');
+            } else if (estado === 'listo') {
+                btnListo.classList.add('opacity-50', 'cursor-not-allowed', 'bg-green-100', 'text-green-800');
+            } else {
+                btnListo.classList.add('bg-gray-100', 'text-gray-800');
+            }
+        }
+        
+        // Verificar si todos los productos del pedido están listos
+        const tarjetaPedido = elementoProducto.closest('.pedido-card');
+        if (tarjetaPedido) {
+            const productosPedido = tarjetaPedido.querySelectorAll('.producto');
+            const productosListos = Array.from(productosPedido).every(
+                prod => prod.getAttribute('data-estado') === 'listo'
+            );
+            
+            actualizarEstadoPedido(tarjetaPedido, productosListos);
+        }
         
         // Actualizar contadores
         actualizarContadores();
@@ -724,9 +855,22 @@ function renderizarPedidos(pedidos) {
             // Agregar productos del pedido
             if (pedido.productos && pedido.productos.length > 0) {
                 pedido.productos.forEach(producto => {
-                    const estadoProducto = producto.estadoProducto || 'pendiente';
-                    const productoClase = estadoProducto === 'preparando' ? 'bg-yellow-50' : 
-                                        estadoProducto === 'listo' ? 'bg-green-50' : 'bg-gray-50';
+                    // Obtener el estado del producto, verificando múltiples posibles propiedades
+                    let estadoProducto = 'pendiente';
+                    if (producto.estado) {
+                        estadoProducto = producto.estado.toLowerCase();
+                    } else if (producto.estadoProducto) {
+                        estadoProducto = producto.estadoProducto.toLowerCase();
+                    } else if (producto.estado_producto) {
+                        estadoProducto = producto.estado_producto.toLowerCase();
+                    }
+                    
+                    // Depuración: Mostrar información del producto
+                    console.log(`Producto: ${producto.nombre || 'sin nombre'}, Estado: ${estadoProducto}`, producto);
+                    
+                    const productoClase = estadoProducto === 'preparando' ? 'bg-yellow-50 border-l-4 border-yellow-300' : 
+                                        estadoProducto === 'listo' ? 'bg-green-50 border-l-4 border-green-300' : 
+                                        'bg-gray-50 border-l-4 border-gray-200';
                     
                     // Asegurarse de que los IDs de pedido y producto sean válidos
                     const pedidoId = pedido.codPedido || pedido.cod || '0';
@@ -736,36 +880,55 @@ function renderizarPedidos(pedidos) {
                     const mesaId = numMesa && numMesa !== 'undefined' ? numMesa : '0';
                     
                     html += `
-                            <div class="producto ${productoClase} p-3 rounded border border-gray-100" 
+                            <div class="producto ${productoClase} p-3 rounded-r border border-gray-100 transition-all duration-200" 
                                  data-cod-producto="${productoId}"
-                                 data-producto-id="${productoId}">
+                                 data-producto-id="${productoId}"
+                                 data-estado="${estadoProducto}"
+                                 title="Estado: ${estadoProducto.charAt(0).toUpperCase() + estadoProducto.slice(1)}">
                                 <div class="flex justify-between items-start">
                                     <div>
                                         <div class="font-medium text-gray-800">${producto.nombre || 'Producto sin nombre'}</div>
                                         <div class="text-sm text-gray-500">Cant: ${producto.cantidad || 1}</div>
                                     </div>
-                                    <div class="flex space-x-2">
-                                        <button class="btn-estado btn-preparar px-2 py-1 text-xs rounded ${estadoProducto === 'preparando' ? 'bg-yellow-100 text-yellow-800' : 'bg-gray-100 text-gray-800'} ${estadoProducto === 'listo' ? 'opacity-50 cursor-not-allowed' : ''}" 
-                                                data-estado="preparando" 
-                                                data-cod-pedido="${pedidoId}" 
-                                                data-pedido-id="${pedidoId}" 
-                                                data-cod-producto="${productoId}" 
-                                                data-producto-id="${productoId}" 
-                                                data-num-mesa="${mesaId}" 
-                                                data-mesa="${mesaId}"
-                                                ${estadoProducto === 'listo' ? 'disabled' : ''}>
-                                            <span class="material-symbols-outlined" style="font-size: 1rem;">cooking</span>
-                                        </button>
-                                        <button class="btn-estado btn-listo px-2 py-1 text-xs rounded ${estadoProducto === 'listo' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}" 
-                                                data-estado="listo" 
-                                                data-cod-pedido="${pedidoId}" 
-                                                data-pedido-id="${pedidoId}" 
-                                                data-cod-producto="${productoId}" 
-                                                data-producto-id="${productoId}" 
-                                                data-num-mesa="${mesaId}" 
-                                                data-mesa="${mesaId}">
-                                            <span class="material-symbols-outlined" style="font-size: 1rem;">check_circle</span>
-                                        </button>
+                                    <div class="flex items-center space-x-2">
+                                        <div class="estado-producto text-xs font-medium px-2 py-1 rounded ${
+                                            estadoProducto === 'preparando' ? 'bg-yellow-100 text-yellow-800' : 
+                                            estadoProducto === 'listo' ? 'bg-green-100 text-green-800' : 
+                                            'bg-gray-100 text-gray-800'
+                                        }" data-estado-actual>
+                                            ${estadoProducto.charAt(0).toUpperCase() + estadoProducto.slice(1)}
+                                        </div>
+                                        <div class="flex space-x-1">
+                                            <button class="btn-estado btn-preparar px-2 py-1 text-xs rounded ${
+                                                estadoProducto === 'preparando' ? 'bg-yellow-100 text-yellow-800 opacity-50 cursor-not-allowed' : 
+                                                'bg-gray-100 text-gray-800 hover:bg-gray-200'
+                                            }" 
+                                                    data-estado="preparando" 
+                                                    data-cod-pedido="${pedidoId}" 
+                                                    data-pedido-id="${pedidoId}" 
+                                                    data-cod-producto="${productoId}" 
+                                                    data-producto-id="${productoId}" 
+                                                    data-num-mesa="${mesaId}" 
+                                                    data-mesa="${mesaId}"
+                                                    ${estadoProducto !== 'pendiente' ? 'disabled' : ''}>
+                                                <span class="material-symbols-outlined" style="font-size: 1rem;">cooking</span>
+                                            </button>
+                                            <button class="btn-estado btn-listo px-2 py-1 text-xs rounded ${
+                                                estadoProducto === 'listo' ? 'bg-green-100 text-green-800 opacity-50 cursor-not-allowed' : 
+                                                estadoProducto === 'preparando' ? 'bg-green-100 text-green-800 hover:bg-green-200' : 
+                                                'bg-gray-100 text-gray-400 cursor-not-allowed'
+                                            }" 
+                                                    data-estado="listo" 
+                                                    data-cod-pedido="${pedidoId}" 
+                                                    data-pedido-id="${pedidoId}" 
+                                                    data-cod-producto="${productoId}" 
+                                                    data-producto-id="${productoId}" 
+                                                    data-num-mesa="${mesaId}" 
+                                                    data-mesa="${mesaId}"
+                                                    ${estadoProducto !== 'preparando' ? 'disabled' : ''}>
+                                                <span class="material-symbols-outlined" style="font-size: 1rem;">check_circle</span>
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
                             </div>`;
