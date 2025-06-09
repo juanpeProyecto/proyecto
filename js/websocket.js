@@ -1,3 +1,4 @@
+"use strict";
 /**
  * Funcionalidades WebSocket para comunicación en tiempo real
  */

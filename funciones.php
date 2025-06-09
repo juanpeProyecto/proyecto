@@ -89,14 +89,37 @@ function actualizarEstadoProductoCompleto($codPedido, $codProducto, $estado, $ar
         $conexion->begin_transaction();
         
         // 1. Actualizamos el estado del producto
+        error_log("Actualizando estado del producto - Pedido: $codPedido, Producto: $codProducto, Estado: $estado, Área: $area");
+        
+        // Primero verificamos si el registro existe
+        $sqlCheck = "SELECT COUNT(*) as existe FROM DetallePedidos WHERE codPedido = ? AND codProducto = ?";
+        $stmtCheck = $conexion->prepare($sqlCheck);
+        $stmtCheck->bind_param("ii", $codPedido, $codProducto);
+        $stmtCheck->execute();
+        $resultadoCheck = $stmtCheck->get_result()->fetch_assoc();
+        
+        if ($resultadoCheck['existe'] == 0) {
+            throw new Exception("No se encontró el producto $codProducto en el pedido $codPedido");
+        }
+        
         $sqlUpdateProducto = "UPDATE DetallePedidos SET estado = ? WHERE codPedido = ? AND codProducto = ?";
         $stmtProducto = $conexion->prepare($sqlUpdateProducto);
+        if (!$stmtProducto) {
+            throw new Exception("Error al preparar la consulta: " . $conexion->error);
+        }
+        
         $stmtProducto->bind_param("sii", $estado, $codPedido, $codProducto);
-        $stmtProducto->execute();
+        $resultadoUpdate = $stmtProducto->execute();
+        
+        if (!$resultadoUpdate) {
+            throw new Exception("Error al ejecutar la actualización: " . $stmtProducto->error);
+        }
         
         if ($stmtProducto->affected_rows <= 0) {
-            throw new Exception("No se pudo actualizar el estado del producto.");
+            throw new Exception("No se afectaron filas al actualizar el estado del producto. ¿El estado era el mismo?");
         }
+        
+        error_log("Producto actualizado correctamente. Filas afectadas: " . $stmtProducto->affected_rows);
         
         // 2. Contamos productos en diferentes estados para decidir el estado global del pedido
         $sqlContar = "SELECT 

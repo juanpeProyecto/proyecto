@@ -1,3 +1,4 @@
+"use strict";
 // Función para obtener la clave del carrito
 function obtenerKeyCarrito() {
     // Usar 'carrito' como clave por defecto o combinarla con el ID de usuario si está disponible

@@ -91,8 +91,8 @@
             
             error_log("Procesando actualización para pedido: $codPedido, producto: $codProducto, estado: $estado, area: $area, numMesa: $numMesa");
             
-            // Utilizamos la función modularizada
-            $resultado = actualizarEstadoProductoCompleto($codPedido, $codProducto, $estado, $area);
+            // Utilizamos la función modularizada con los parámetros en el orden correcto
+            $resultado = actualizarEstadoProductoCompleto($codPedido, $codProducto, $estado, $area, $numMesa, $codEmpleado);
             
             // Si se requirió una conexión nueva, también actualizar la variable global
             global $conexion;
@@ -208,26 +208,66 @@
 ?>
 <!DOCTYPE html>
 <html lang="es">
-<head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Panel de Cocina</title>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css?v=<?php echo time(); ?>" rel="stylesheet">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0">
     <style>
-        body {
-            background-color: #e6f5f0;
-            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        /* Estilos para el indicador de carga */
+        #cargando {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            transition: opacity 0.3s ease-out;
         }
+        
+        .oculto {
+            opacity: 0;
+            pointer-events: none;
+        }
+        
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #3498db;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* Reset de estilos para evitar conflictos */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background-color: #f0f4f8;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            padding: 20px;
+        }
+        
         .mesa-title {
-            background-color: rgba(255,255,255,0.8);
-            border-radius: 8px;
-            padding: 10px 15px;
+            color: #2d3748;
+            font-size: 1.5rem;
             font-weight: 600;
-            color: #226855;
-            font-size: 18px;
-            margin-bottom: 20px;
-            margin-top: 10px;
+            margin: 1.5rem 0 1rem 0;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid #e2e8f0;
         }
         .pedido-card {
             background-color: white;
@@ -339,6 +379,11 @@
     }
     ?>
 
+    <!-- Indicador de carga -->
+    <div id="cargando">
+        <div class="spinner"></div>
+    </div>
+    
     <!-- Contenedor oculto para contadores (usado por inicializarCocina.js) -->
     <div class="hidden">
         <span id="totalPedidos">0</span>
@@ -346,142 +391,144 @@
         <span id="totalProductosListos">0</span>
     </div>
 
-    <div class="container mx-auto p-4">
-        <?php
-        // Obtener las mesas distintas con pedidos activos que tengan productos pendientes o en preparación
-        $sqlMesas = "SELECT p.numMesa 
-                    FROM pedidos p 
-                    INNER JOIN DetallePedidos dp ON p.codPedido = dp.codPedido 
-                    INNER JOIN Productos pr ON dp.codProducto = pr.codProducto 
-                    WHERE p.estado IN ('pendiente', 'preparando')
-                    AND pr.QuienLoAtiende = 'cocinero'
-                    AND dp.estado IN ('pendiente', 'preparando')
-                    GROUP BY p.numMesa
-                    HAVING COUNT(dp.codPedido) > 0
-                    ORDER BY p.numMesa";
-        $resultMesas = $conexion->query($sqlMesas);
-    
-        if ($resultMesas && $resultMesas->num_rows > 0) {
-            while ($mesa = $resultMesas->fetch_assoc()) {
-                echo "<div class='mesa-title'>Mesa {$mesa['numMesa']}</div>";
-                echo "<div class='pedidos-container'>";
-                
-                // Obtener pedidos de esta mesa que tengan al menos un producto para cocina en estado pendiente o preparando
-                $sqlPedidos = "SELECT p.codPedido, p.numMesa, p.estado, p.Fecha 
-                          FROM pedidos p 
-                          INNER JOIN DetallePedidos dp ON p.codPedido = dp.codPedido
-                          INNER JOIN Productos pr ON dp.codProducto = pr.codProducto
-                          WHERE p.numMesa = {$mesa['numMesa']} 
-                          AND p.estado IN ('pendiente', 'preparando')
-                          AND dp.estado IN ('pendiente', 'preparando')
-                          AND pr.QuienLoAtiende = 'cocinero'
-                          GROUP BY p.codPedido";
-                $resultPedidos = $conexion->query($sqlPedidos);
-                
-                if ($resultPedidos && $resultPedidos->num_rows > 0) {
-                    while ($pedido = $resultPedidos->fetch_assoc()) {
-                        $estadoClass = getEstadoClass($pedido['estado']);
-                        
-                        echo "<div class='pedido-card' data-cod-pedido='{$pedido['codPedido']}'>";
-                        echo "<div class='pedido-header'>";
-                        echo "<div class='pedido-num'>Pedido #{$pedido['codPedido']}</div>";
-                        echo "</div>";
-                        
-                        // Obtener productos del pedido que debe atender el cocinero
-                        $sqlProductos = "SELECT dp.codProducto, dp.codPedido, dp.cantidad, dp.estado as estadoProducto, 
-                                     pr.nombre, pr.QuienLoAtiende
-                                     FROM DetallePedidos dp 
-                                     INNER JOIN Productos pr ON dp.codProducto = pr.codProducto 
-                                     WHERE dp.codPedido = {$pedido['codPedido']} 
-                                     AND pr.QuienLoAtiende = 'cocinero' 
-                                     AND dp.estado IN ('pendiente', 'preparando')";
-                        $resultProductos = $conexion->query($sqlProductos);
-                        
-                        if ($resultProductos && $resultProductos->num_rows > 0) {
-                            while ($producto = $resultProductos->fetch_assoc()) {
-                                echo "<div class='producto' data-cod-producto='{$producto['codProducto']}' data-cod-pedido='{$pedido['codPedido']}'>";
-                                echo "<div class='producto-name'>{$producto['nombre']}</div>";
-                                echo "<div class='cantidad'>Cantidad: {$producto['cantidad']}</div>";
-                                echo "<div class='btn-container'>";
-                                
-                                // Estado del producto para habilitar/deshabilitar botones
-                                $estadoProducto = $producto['estadoProducto'];
-                                $btnPreparandoDisabled = ($estadoProducto !== 'pendiente') ? 'disabled' : '';
-                                $btnListoDisabled = ($estadoProducto === 'listo') ? 'disabled' : '';
-                                
-                                // Clase CSS para botones deshabilitados
-                                $btnPreparandoClass = $btnPreparandoDisabled ? 'disabled' : '';
-                                $btnListoClass = $btnListoDisabled ? 'disabled' : '';
-                                
-                                echo "<button 
-                                    data-estado='preparando' 
-                                    data-cod-pedido='{$pedido['codPedido']}' 
-                                    data-cod-producto='{$producto['codProducto']}' 
-                                    data-num-mesa='{$pedido['numMesa']}' 
-                                    class='btn-preparando btn-estado-producto {$btnPreparandoClass}' 
-                                    {$btnPreparandoDisabled}>
-                                    <span class='material-symbols-outlined'>cooking</span> Preparando
-                                  </button>";
-                                
-                                echo "<button 
-                                    data-estado='listo' 
-                                    data-cod-pedido='{$pedido['codPedido']}' 
-                                    data-cod-producto='{$producto['codProducto']}' 
-                                    data-num-mesa='{$pedido['numMesa']}' 
-                                    class='btn-listo btn-estado-producto {$btnListoClass}' 
-                                    {$btnListoDisabled}>
-                                    <span class='material-symbols-outlined'>check_circle</span> Listo
-                                  </button>";
-                                
-                                echo "</div>"; // Fin btn-container
-                                echo "</div>"; // Fin producto
-                            }
-                        } else {
-                            echo "<div class='text-gray-500 italic p-4'>No hay productos para cocina en este pedido</div>";
-                        }
-                        
-                        // Botón para completar pedido
-                        echo "<button class='btnCompletado bg-[#256353] hover:bg-[#1e5144] text-white px-4 py-2 rounded-md transition-colors duration-200 w-full flex items-center justify-center mt-3'>";
-                        echo "<span class='material-symbols-outlined mr-2'>done_all</span>";
-                        echo "<span class='font-medium'>Completar pedido</span>";
-                        echo "</button>";
-                        
-                        echo "</div>"; // Cierre de la tarjeta del pedido
-                    }
-                } else {
-                    echo '<div class="col-span-3 animate-pulse text-center p-6">'; 
-                    echo '<p class="text-gray-500">No hay pedidos pendientes para cocina</p>';
-                    echo '</div>';
-                }
-                echo "</div>"; // Cierre del contenedor de pedidos por mesa
-            }
-        } else {
-            echo '<div class="col-span-3 bg-red-100 p-4 rounded-lg">';
-            echo '<p class="text-red-500">No hay mesas con pedidos activos para cocina</p>';
-            echo '</div>';
+    <style>
+        /* Estilos simplificados para la interfaz de cocina */
+        .mesa-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #1f2937;
+            margin: 1.5rem 0 0.75rem 0;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid #e5e7eb;
         }
-        ?>
+        
+        .pedido-card {
+            background-color: white;
+            border-radius: 0.5rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            margin-bottom: 1.5rem;
+            padding: 1rem;
+            border-left: 4px solid #51B2E0;
+        }
+        
+        .pedido-num {
+            font-weight: 600;
+            color: #1f2937;
+            font-size: 1rem;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+        
+        .producto {
+            background-color: #f9fafb;
+            border-radius: 0.5rem;
+            padding: 0.75rem;
+            margin-bottom: 0.75rem;
+            border: 1px solid #e5e7eb;
+        }
+        
+        .producto-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+        
+        .producto-nombre {
+            font-weight: 500;
+            color: #111827;
+            font-size: 1rem;
+        }
+        
+        .producto-cantidad {
+            background-color: #e5e7eb;
+            color: #4b5563;
+            padding: 0.15rem 0.5rem;
+            border-radius: 9999px;
+            font-size: 0.875rem;
+            font-weight: 600;
+        }
+        
+        .btn-container {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+        }
+        
+        .btn-estado {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.5rem;
+            border-radius: 0.375rem;
+            font-weight: 500;
+            font-size: 0.875rem;
+            cursor: pointer;
+            border: none;
+            transition: all 0.2s;
+        }
+        
+        .btn-preparar {
+            background-color: #fef3c7;
+            color: #92400e;
+        }
+        
+        .btn-preparar:hover:not(:disabled) {
+            background-color: #fde68a;
+        }
+        
+        .btn-listo {
+            background-color: #dcfce7;
+            color: #166534;
+        }
+        
+        .btn-listo:hover:not(:disabled) {
+            background-color: #bbf7d0;
+        }
+        
+        .btn-estado:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+    </style>
+    
+    <div class="container mx-auto p-4">
+        <!-- Contenedor donde se cargarán los pedidos mediante JavaScript -->
+        <div id="contenedorPedidos">
+            <div class="text-center py-8">
+                <div class="spinner mx-auto"></div>
+                <p class="mt-4 text-gray-600">Cargando pedidos...</p>
+            </div>
         </div>
     </div>
     
     <!-- Plantilla para nuevos pedidos (oculta) -->
-    <template id="plantillaPedido">
-        <div class="pedido bg-white rounded-lg shadow-md p-4 mb-4 border-l-4 border-[#51B2E0]">
-            <div class="flex justify-between items-start mb-3">
-                <div class="flex items-center">
-                    <h2 class="text-xl font-bold codPedido">Pedido #0</h2>
-                    <span class="ml-2 timestamp text-sm text-gray-500">
-                        <span class="material-symbols-outlined text-xs align-middle">schedule</span>
-                        00:00
-                    </span>
-                </div>
-                <span class="numMesa bg-gray-100 text-gray-800 text-xs font-medium rounded-full px-2 py-1">Mesa 0</span>
+    <template id="plantillaMesa">
+        <div class="mb-8">
+            <h2 class="text-xl font-bold mb-4 text-gray-800 border-b pb-2">Mesa <span class="mesa-numero"></span></h2>
+            <div class="pedidos-container grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <!-- Los pedidos se insertarán aquí -->
             </div>
-            <div class="detallesPedido py-2 space-y-3"></div>
-            <div class="flex justify-end mt-4">
-                <button class="btnCompletado bg-[#72E8AC] text-[#256353] px-3 py-1 rounded-md hover:bg-[#51B2E0] hover:text-white transition-colors">
-                    <span class="material-symbols-outlined text-sm align-middle mr-1">check_circle</span> Completado
-                </button>
+        </div>
+    </template>
+    
+    <template id="plantillaPedido">
+        <div class="pedido-card bg-white rounded-lg shadow-md p-4 mb-4 border-l-4 border-blue-500" data-cod-pedido="">
+            <div class="flex justify-between items-center mb-3">
+                <h3 class="text-lg font-semibold text-gray-800">Pedido #<span class="pedido-numero"></span></h3>
+                <span class="estado-pedido text-sm font-medium px-2.5 py-0.5 rounded"></span>
+            </div>
+            <div class="productos-container">
+                <!-- Los productos se insertarán aquí -->
+            </div>
+            <div class="mt-3 pt-3 border-t border-gray-100">
+                <div class="flex justify-between items-center">
+                    <span class="text-sm text-gray-500">Hora: <span class="hora-pedido font-medium"></span></span>
+                    <button class="completar-pedido bg-green-600 hover:bg-green-700 text-white text-sm font-medium py-1.5 px-3 rounded transition-colors">
+                        Completar pedido
+                    </button>
+                </div>
             </div>
         </div>
     </template>
@@ -504,8 +551,8 @@
     </template>
     
     <!-- Scripts JavaScript unificados -->
-    <script src="js/cocina.js"></script>
     <script src="js/gestionPedidos.js"></script>
+    <script src="js/cocina.js"></script>
     
     <!-- Todo el código JavaScript ha sido movido a los archivos externos -->
 </body>

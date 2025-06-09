@@ -13,7 +13,7 @@ $categorias = cargarCategorias($conexion);
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Añadir Producto</title>
+    <title>Añadir Producto nuevo</title>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" />
     <link href="src/output.css" rel="stylesheet">
 </head>

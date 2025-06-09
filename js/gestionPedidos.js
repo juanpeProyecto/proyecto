@@ -1,3 +1,5 @@
+"use strict";
+
 /**
  * Funciones para gestionar pedidos en cocina
  */
@@ -238,8 +240,8 @@ function cargarPedidosPendientes() {
             }
             return response.json();
         })
-        .then(pedidos => {
-            console.log('Pedidos pendientes cargados:', pedidos);
+        .then(data => {
+            console.log('Datos recibidos del servidor:', data);
             const contenedorPedidos = document.getElementById('contenedorPedidos');
             
             if (!contenedorPedidos) {
@@ -250,11 +252,37 @@ function cargarPedidosPendientes() {
             // Limpiar mensajes de carga
             contenedorPedidos.innerHTML = '';
             
+            // Verificar si hay un error en la respuesta
+            if (data.error) {
+                console.error('Error del servidor:', data.error);
+                contenedorPedidos.innerHTML = `
+                    <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
+                        <p>Error al cargar los pedidos: ${data.error}</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            // Verificar si la respuesta tiene éxito y contiene datos
+            if (!data.success) {
+                console.error('Error del servidor:', data.error || 'Error desconocido');
+                contenedorPedidos.innerHTML = `
+                    <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
+                        <p>Error al cargar los pedidos: ${data.error || 'Error desconocido'}</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            // Extraer los pedidos de la respuesta
+            const pedidos = Array.isArray(data.pedidos) ? data.pedidos : [];
+            console.log('Pedidos a mostrar:', pedidos);
+            
             // Si no hay pedidos, mostrar mensaje
-            if (!pedidos || pedidos.length === 0) {
+            if (pedidos.length === 0) {
                 contenedorPedidos.innerHTML = `
                     <div class="animate-pulse text-center p-6">
-                        <p class="text-gray-500">Esperando pedidos...</p>
+                        <p class="text-gray-500">No hay pedidos pendientes en este momento</p>
                     </div>
                 `;
                 return;
