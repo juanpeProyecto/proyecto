@@ -791,7 +791,7 @@ function enviarNotificacionNuevoPedido($codPedido) {
     try {
         require_once __DIR__ . '/vendor/autoload.php';
         
-        $wsClient = new \WebSocket\Client("ws://localhost:8080");
+        $wsClient = new \WebSocket\Client("wss://websocket-u5s9.onrender.com");
         
         $mensaje = json_encode([
             "tipo" => "nuevoPedido",

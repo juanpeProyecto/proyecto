@@ -462,7 +462,7 @@ function iniciarWebSocket() {
     }
 
     console.log('[WS Camarero] Intentando conectar...');
-    window.wsCamarero = new WebSocket('ws://localhost:8080');
+    window.wsCamarero = new WebSocket(window.location.hostname === "localhost" ? "ws://localhost:8081" : "wss://websocket-u5s9.onrender.com");
 
     window.wsCamarero.onopen = function() {
         console.log('[WS Camarero] Conectado al servidor WebSocket.');

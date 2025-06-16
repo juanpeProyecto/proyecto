@@ -456,7 +456,7 @@ function cargarPedidosCocina() {
 }
 
 function iniciarWebSocket() {
-    const wsUrl = 'ws://localhost:8080';
+    const wsUrl = window.location.hostname === "localhost" ? "ws://localhost:8081" : "wss://websocket-u5s9.onrender.com";
 
     // Primero, verifico si el navegador soporta WebSockets
     if (!('WebSocket' in window)) {

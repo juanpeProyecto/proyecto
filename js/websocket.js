@@ -11,7 +11,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Creo la conexión WebSocket
     let wsUrl;
 if (window.location.hostname === "localhost") {
-    wsUrl = "ws://localhost:8081";
+    wsUrl = window.location.hostname === "localhost" ? "ws://localhost:8081" : "wss://websocket-u5s9.onrender.com";
 } else {
     wsUrl = "wss://ws-proyecto-trk1.onrender.com"; // Cambia este dominio si tu WebSocket Render tiene otro nombre
 }
