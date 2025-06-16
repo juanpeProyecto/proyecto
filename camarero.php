@@ -54,8 +54,14 @@
     // Función para enviar notificaciones WebSocket
     function enviarNotificacion($datos) {
         // host y puerto del servidor que utilizo para el socket
-        $host = 'localhost';
-        $port = 8080;
+        // Detecta entorno: si está en Render, usa el host público y puerto 80
+        if (isset($_SERVER['RENDER']) || (isset($_SERVER['HTTP_HOST']) && strpos($_SERVER['HTTP_HOST'], 'onrender.com') !== false)) {
+            $host = 'websocket-u5s9.onrender.com';
+            $port = 80;
+        } else {
+            $host = 'localhost';
+            $port = 8081;
+        }
         
         try {
             // Creo un socket TCP/IP
