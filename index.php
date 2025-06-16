@@ -161,3 +161,6 @@ ob_end_flush();
 </body>
 </html>
 <?php ob_end_flush(); ?>
+<?php // Commit marker para git
+echo "<!-- commit-cambio-cascade -->";
+?>
