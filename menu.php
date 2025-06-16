@@ -21,7 +21,7 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
     <title>Menú del restaurante</title>
 </head>
-<body class="bg-gradient-to-br from-[#E0FAF4] via-[#72E8D4] to-[#51B2E0] min-h-screen w-full overflow-x-hidden px-1 sm:px-0">
+<body class="bg-gradient-to-br from-[#E0FAF4] to-[#51B2E0] min-h-screen w-full overflow-x-hidden px-1 sm:px-0">
     <?php if (isset($_GET['numMesa'])): //si hay una mesa seleccionada ?>
         <div class="fixed top-4 left-4 bg-[#72E8AC] text-[#256353] px-4 py-2 rounded-xl shadow-lg font-bold text-lg border-2 border-[#51B2E0] z-50">
             Mesa <?php echo htmlspecialchars($_GET['numMesa']); //muestro el nummero de mesa para que el cliente vea el numero de mesa que tiene?>
@@ -62,7 +62,7 @@
           <?php if (empty($productos)): // si no hay productos en la categoria seleccionada ponemos mensaje para indicar que no hay productos ?>
             <div class="col-span-full text-center text-[#256353]">No hay productos en esta categoría.</div>
           <?php else: ?>
-            <?php foreach ($productos as $producto): ?>
+            <?php foreach ($productos as $producto)://recorro todos los productos ?> 
               <div class="bg-white/80 rounded-2xl shadow-lg p-3 sm:p-5 flex flex-col justify-between gap-2 items-start border border-[#72E8AC]/30 h-[400px]">
                 <?php if (!empty($producto['Foto'])): // si hay foto del producto la mostramos ?>
                 <div class="w-full h-56 flex justify-center items-center bg-white rounded-xl overflow-hidden mb-3">

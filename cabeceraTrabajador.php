@@ -7,7 +7,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>cabecera del trabajador</title>
+    <title>Panel de empleados</title>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
     <link href="src/output.css" rel="stylesheet">
 </head>
@@ -19,20 +19,13 @@
                 <span class="text-[#51B2E0]"><?php echo isset($_SESSION['usuario']) ? htmlspecialchars($_SESSION['usuario']) : 'Usuario'; ?></span>
             </div>
             
-            <div class="flex items-center gap-3">
-                <?php if (isset($_SESSION['rol']) && $_SESSION['rol'] == 'camarero'): ?>
-                <a href="pedidos.php" class="flex items-center gap-1 bg-[#51B2E0] hover:bg-[#72E8AC] text-white hover:text-[#256353] transition-all duration-200 px-3 py-2 rounded-lg shadow font-semibold text-sm border border-[#51B2E0]">
-                    <span class="material-symbols-outlined text-sm">receipt_long</span>
-                    <span class="hidden sm:inline">Pedidos</span>
-                </a>
-                <?php endif; ?>
-                
+            <div class="flex items-center gap-3">    
                 <a href="logout.php" class="flex items-center gap-1 bg-[#72E8AC] hover:bg-[#51B2E0] text-[#256353] hover:text-white transition-all duration-200 px-3 py-2 rounded-lg shadow font-semibold text-sm border border-[#51E8B0]">
                     <span class="material-symbols-outlined text-sm">logout</span>
                     <span class="hidden sm:inline">Cerrar sesión</span>
                 </a>
             </div>
         </header>
-        <div class="h-16"></div>
+    </div>
 </body>
 </html>

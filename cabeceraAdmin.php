@@ -1,4 +1,6 @@
 <?php
+    require "sesiones.php";
+    comprobar_rol("administrador");
     if (session_status() === PHP_SESSION_NONE) //Si no hay sesion
     {
         session_start();

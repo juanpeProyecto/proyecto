@@ -27,7 +27,7 @@ try {
         <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
         <title>Confirmar Pedido</title>
     </head>
-    <body class="bg-gradient-to-br from-[#E0FAF4] via-[#72E8D4] to-[#51B2E0] min-h-screen flex items-center justify-center p-4">
+    <body class="bg-gradient-to-br from-[#E0FAF4] to-[#51B2E0] min-h-screen flex items-center justify-center p-4">
         <div class="bg-white/90 rounded-2xl shadow-lg p-8 max-w-lg w-full text-center">
             <span class="material-symbols-outlined text-5xl text-[#E57373] mb-4">error</span>
             <h2 class="text-2xl font-bold text-[#E57373] mb-4">Error al procesar el pedido</h2>
@@ -94,7 +94,7 @@ try {
         require_once __DIR__ . '/vendor/autoload.php';
         // preparo el evento WebSocket para nuevo pedido
         
-        $wsClient = new \WebSocket\Client("ws://localhost:8080");
+        $clienteWebSocket = new \WebSocket\Client("ws://localhost:8080");
         
         // preparo el mensaje como JSON
         $mensaje = json_encode([
@@ -105,10 +105,10 @@ try {
         ]);
         
         // envio el mensaje con el pedido que ha realizado el cliente
-        $wsClient->send($mensaje);
+        $clienteWebSocket->send($mensaje);
         
         // cierro la conexion
-        $wsClient->close();
+        $clienteWebSocket->close();
     } catch (Exception $e) {
        echo "Error al enviar el mensaje: " . $e->getMessage(); //si hay un error al enviar el mensaje lo muestro para avisar al usuario
     }
@@ -125,12 +125,12 @@ try {
         <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
         <title>Pedido realizado</title>
     </head>
-    <body class="bg-gradient-to-br from-[#E0FAF4] via-[#72E8D4] to-[#51B2E0] min-h-screen flex items-center justify-center p-4">
+    <body class="bg-gradient-to-br from-[#E0FAF4] to-[#51B2E0] min-h-screen flex items-center justify-center p-4">
         <div class="bg-white/90 rounded-2xl shadow-lg p-8 max-w-lg w-full text-center">
             <div class="flex justify-center mb-6">
                 <span class="material-symbols-outlined text-6xl text-[#72E8AC]">check_circle</span>
             </div>
-            <h2 class="text-2xl font-bold text-[#256353] mb-6">¡Pedido realizado con éxito!</h2>
+            <h2 class="text-2xl font-bold text-[#256353] mb-6">El pedido ha sido realizado de forma exitosa</h2>
             
             <div class="bg-[#E0FAF4] rounded-xl p-6 mb-6 shadow-inner">
                 <div class="flex items-center justify-between mb-4 border-b border-[#72E8AC]/30 pb-2">
@@ -159,11 +159,12 @@ try {
             </div>
             
         </div>
-        <script src="js/confirmarPedido.js?v=<?php echo time(); ?>"></script>
+        <script src="js/confirmarPedido.js"></script>
     </body>
     </html>
     <?php
-} catch (Exception $e) { //si hay un error vuelvvo a la pagina de carrito sin hacer ningun cambio
+} //mostramos la interfaz de error si el cath se ejecuta
+catch (Exception $e) { //si hay un error vuelvvo a la pagina de carrito sin hacer ningun cambio
     if ($conexion && $conexion instanceof mysqli) { 
         $conexion->rollback(); //si falla la transaccion no hacemos ningun cambio
     }
@@ -176,11 +177,11 @@ try {
         <link href="src/output.css" rel="stylesheet">
         <title>Error en el pedido</title>
     </head>
-    <body class="bg-gradient-to-br from-[#E0FAF4] via-[#72E8D4] to-[#51B2E0] min-h-screen flex items-center justify-center">
+    <body class="bg-gradient-to-br from-[#E0FAF4] to-[#51B2E0] min-h-screen flex items-center justify-center">
     <div class="bg-white/90 rounded-2xl shadow-lg p-8 max-w-lg w-full text-center">
         <h2 class="text-2xl font-bold text-[#E57373] mb-4">Error al procesar el pedido</h2>
         <p class="text-[#256353] mb-6"><?= htmlspecialchars($e->getMessage()) ?></p>
-        <a href="carrito.php" class="text-white bg-[#51B2E0] hover:bg-[#72E8AC] hover:text-[#256353] px-6 py-2 rounded-lg font-semibold shadow transition-all duration-200">Volver al carrito</a>
+        <a href="carrito.php" class="text-white bg-[#51B2E0] hover:bg-[#72E8AC] px-6 py-2 rounded-lg font-semibold shadow transition-all hover:text-white duration-200">Volver al carrito</a>
     </div>
     </body>
     </html>

@@ -2,9 +2,9 @@
     require_once "bd.php";
     require_once "sesiones.php";
     require_once "funciones.php";
-    //comprobar_rol("administrador");
+    comprobar_rol("administrador");
     
-    // Inicializo variables
+    // Inicializo las  variables de los errores y los mensajed de exiito
     $errores = [];
     $exito = false;
     
@@ -58,11 +58,11 @@
                 <a href="anadirEmpleado.php" class="px-7 py-4 bg-[#72E8D4] text-white rounded-xl font-bold text-lg hover:bg-[#72B0E8] hover:scale-105 transition-all duration-200 shadow-lg">Volver al formulario</a>
             </div>
         <?php elseif ($exito): ?>
-            <div class="w-full p-6 bg-[#72E8AC] text-white rounded-xl text-center font-bold shadow-lg flex items-center justify-center gap-4">
+            <div class="w-full p-6 bg-[#72E8AC] text-white rounded-xl text-center font-bold flex items-center justify-center gap-4">
                 <span class="material-symbols-outlined text-4xl text-white scale-150">check_circle</span>
                 <p class="text-3xl font-bold"><?= htmlspecialchars($exito) ?></p>
             </div>
-            <p class="text-lg mt-3 text-gray-700 font-medium">Redirigiendo automáticamente a los empleados...</p>
+            <p class="text-lg mt-3 text-gray-700 font-medium">el empleado se ha creado correctamente</p>
         <?php endif; ?>
     </div>
 </body>

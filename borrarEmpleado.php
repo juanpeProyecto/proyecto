@@ -2,26 +2,28 @@
     require_once "bd.php";
     require_once "sesiones.php";
     require_once "funciones.php";
-    //comprobar_rol("administrador");
+    comprobar_rol("administrador");
     
     $errores = [];
     $exito = false;
     
-    if (isset($_GET['codEmpleado'])) {
+    if (isset($_GET['codEmpleado'])) 
+    {
         $codEmpleado = $_GET['codEmpleado']; //Obtengo el valor del codigo del empleado que he pinchado en el archivo empleados.php
         
-        try {
-            $resultado = borrarEmpleado($codEmpleado);
-            if ($resultado) {
-                $exito = 'Empleado borrado correctamente.';
-            } else {
-                $errores[] = 'No se ha podido borrar el empleado.';
-            }
-        } catch (Exception $e) {
-            $errores[] = 'Error al borrar el empleado: ' . htmlspecialchars($e->getMessage());
+        try 
+        {
+            borrarEmpleado($codEmpleado); //intento borrar el empleado con la consulta
+            $exito = 'Empleado borrado correctamente.';
+        } 
+        catch (Exception $e)
+        {
+            $errores[] = 'Error al borrar el empleado seleccionadop: ' . htmlspecialchars($e->getMessage());
         }
-    } else {
-        $errores[] = 'No se ha especificado un empleado para eliminar.';
+    } 
+    else 
+    {
+        $errores[] = 'No se ha especificado un empleado para eliminar';
     }
 ?>
 <!DOCTYPE html>
@@ -38,7 +40,7 @@
 </head>
 <body class="bg-[#E0FAF4] flex flex-col items-center justify-center min-h-screen">
     <div class="w-full max-w-md p-4 flex flex-col items-center">
-        <?php if (!empty($errores)): ?>
+        <?php if (!empty($errores)):?> 
             <div class="w-full p-6 bg-[#72B0E8] text-white rounded-xl text-center font-bold shadow-lg flex items-center justify-center gap-4">
                 <span class="material-symbols-outlined text-4xl text-white">error</span>
                 <p class="text-3xl font-bold"><?= htmlspecialchars($errores[0]) ?></p> <!--muestro el error -->
@@ -49,7 +51,7 @@
                 <span class="material-symbols-outlined text-4xl text-white scale-150">check_circle</span>
                 <p class="text-3xl font-bold"><?= htmlspecialchars($exito) ?></p>
             </div>
-            <p class="text-lg mt-3 text-gray-700 font-medium">Redirigiendo automáticamente a los empleados...</p>
+            <p class="text-lg mt-3 text-gray-700 font-bold">El empleado se ha borrado de forma exitosa</p>
         <?php endif; ?>
     </div>
 </body>

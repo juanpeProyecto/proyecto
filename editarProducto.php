@@ -3,7 +3,7 @@
     require_once "bd.php";
     require_once "funciones.php";
     $conexion = conectarBD();
-
+    comprobar_rol(["administrador"]);
     // Obtengo el producto por código
     $codProducto = isset($_GET['codProducto']) ? $_GET['codProducto'] : null;
     $producto = null;
@@ -27,10 +27,10 @@
     <link href="src/output.css" rel="stylesheet">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" />
 </head>
-<body class="bg-gradient-to-br from-[#E0FAF4] via-[#72E8D4] to-[#51B2E0] flex flex-col items-center px-2 text-2xl min-h-screen justify-center">
+<body class="bg-gradient-to-br from-[#E0FAF4] to-[#51B2E0] flex flex-col items-center px-2 text-2xl min-h-screen justify-center">
     <div class="w-full max-w-3xl bg-white/95 border-2 border-[#51B2E0] hover:border-[#72E8AC] rounded-2xl shadow-xl p-16">
         <?php if (!$producto): ?>
-            <p class="text-red-600 text-center font-bold mt-8">Producto no encontrado o no válido.</p>
+            <p class="text-red-600 text-center font-bold mt-8">El producto no se ha podiddo encontrar o no es valido</p>
         <?php else: ?>
         <form action="guardarEditarProducto.php" method="POST" enctype="multipart/form-data" class="flex flex-col gap-6">
             <input type="hidden" name="codProducto" value="<?= htmlspecialchars($producto['codProducto']) ?>">

@@ -1,5 +1,5 @@
 <?php
-// Funcion que me comprueba si hemos iniciado sesion 
+// Funcion que me comprueba si hemos iniciado sesion  y nos bloquea si no lo hemos hecho
 function comprobar_rol($rolesPermitidos = []) {
     if (session_status() === PHP_SESSION_NONE) {
         session_start();

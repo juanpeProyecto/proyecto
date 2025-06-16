@@ -1,38 +1,36 @@
 "use strict";
 
-/**
- * Funciones para gestionar pedidos en cocina
- */
-
-// Función para agregar un nuevo pedido a la interfaz
+// funcion que uso para agregar un nuevo pedido a la interfaz
 function agregarNuevoPedido(datos) {
-    console.log('Agregando nuevo pedido:', datos);
     const contenedorPedidos = document.getElementById('contenedorPedidos');
     if (!contenedorPedidos) {
-        console.error('No se encontró el contenedor de pedidos');
         return;
     }
     
-    // Si hay mensaje de "no hay pedidos", lo eliminamos
+    // si hay mensaje de no hay pedidos lo eliminamos
     const mensajeNoPedidos = contenedorPedidos.querySelector('.animate-pulse');
     if (mensajeNoPedidos) {
         mensajeNoPedidos.remove();
     }
     
-    // Usamos la plantilla HTML para crear el nuevo pedido
+    // uso la plantilla HTML para crear el nuevo pedido
     const plantilla = document.getElementById('plantillaPedido');
     if (!plantilla) {
-        console.error('No se encontró la plantilla de pedido');
         return;
     }
     
-    const nuevoElemento = document.importNode(plantilla.content, true);
-    
-    // Completamos información básica del pedido
-    const tituloPedido = nuevoElemento.querySelector('h2');
-    if (tituloPedido) {
-        tituloPedido.textContent = `Pedido #${datos.cod}`;
+    const nuevoElemento = document.importNode(plantilla.content, true); // uso la plantilla HTML para crear el nuevo pedido
+
+    // Aseguro que el pie de la tarjeta solo contenga la hora
+    const pieTarjeta = nuevoElemento.querySelector('#pedido-card-footer');
+    if (pieTarjeta) {
+        const divHora = pieTarjeta.querySelector('.text-gray-500.text-sm'); // El div que envuelve el span de la hora
+        if (divHora) {
+            pieTarjeta.innerHTML = ''; // Limpio el pie
+            pieTarjeta.appendChild(divHora); // Añado solo el div de la hora
+        }
     }
+    
     
     const nuevoPedido = nuevoElemento.querySelector('.pedido');
     if (nuevoPedido) {
@@ -43,38 +41,41 @@ function agregarNuevoPedido(datos) {
         }, 3000);
     }
     
-    // Cargar los detalles del pedido mediante AJAX
-    fetch(`obtenerDetallesPedido.php?cod=${datos.cod}`)
+    // funcion que uso para cargar los detalles del pedido mediante AJAX
+    fetch(`/proyecto/obtenerDetallesPedido.php?cod=${datos.cod}`)
         .then(response => {
             if (!response.ok) {
+                // Log the raw text of the 404 response to see if it's HTML or our JSON error
+                response.text().then(text => {
+                    console.error('Raw 404 response text for new pedido ' + datos.cod + ':', text);
+                });
                 throw new Error(`HTTP error: ${response.status}`);
             }
             return response.json();
         })
         .then(detalles => {
-            console.log('Detalles recibidos:', detalles); // Para depuración
             const contenedorDetalles = nuevoElemento.querySelector('.detallesPedido');
             if (!contenedorDetalles) {
                 console.error('No se encontró el contenedor de detalles');
                 return;
             }
             
-            // Crear contenedor de productos
+            // creo contenedor de productos
             const listaProductos = document.createElement('ul');
             listaProductos.className = 'space-y-3';
             
-            // Añadir cada producto
+            // añado cada producto
             if (detalles.productos && Array.isArray(detalles.productos)) {
                 detalles.productos.forEach(producto => {
-                    if (!producto) return; // Ignoramos productos nulos
+                    if (!producto) return; // ignoramos productos nulos
                     
-                    // Usamos la plantilla para productos
+                    // uso la plantilla para productos
                     const plantillaProducto = document.getElementById('plantillaProducto');
                     if (!plantillaProducto) return;
                     
                     const nuevoProducto = document.importNode(plantillaProducto.content, true);
                     
-                    // Rellenar datos del producto
+                    // relleno datos del producto
                     const nombreElement = nuevoProducto.querySelector('.nombre');
                     if (nombreElement) nombreElement.textContent = producto.nombre;
                     
@@ -87,13 +88,16 @@ function agregarNuevoPedido(datos) {
                         productoLi.setAttribute('data-cod-pedido', datos.cod);
                     }
                     
-                    // Rellenar observaciones si existen
+                    // relleno observaciones si existen
                     const obsElement = nuevoProducto.querySelector('.observacionesProducto');
-                    if (obsElement && producto.observaciones) {
+                    if (obsElement && producto.observaciones && producto.observaciones.trim() !== '') {
                         obsElement.textContent = producto.observaciones;
+                        obsElement.classList.remove('hidden');
+                    } else if (obsElement) {
+                        obsElement.classList.add('hidden');
                     }
                     
-                    // Añadir botones con sus manejadores de eventos
+                    // añado botones con sus manejadores de eventos
                     const btnPreparando = nuevoProducto.querySelector('.btnPreparando');
                     if (btnPreparando) {
                         btnPreparando.setAttribute('data-estado', 'preparando');
@@ -130,7 +134,7 @@ function agregarNuevoPedido(datos) {
                         });
                     }
                     
-                    // Establecer el estado visual según el estado del producto
+                    // establezco el estado visual según el estado del producto
                     const estadoElement = nuevoProducto.querySelector('.estadoProducto');
                     if (estadoElement && productoLi) {
                         estadoElement.textContent = producto.estado || 'pendiente';
@@ -140,7 +144,7 @@ function agregarNuevoPedido(datos) {
                             productoLi.style.backgroundColor = '#fefce8';
                             estadoElement.style.cssText = 'background-color:#fef3c7; color:#92400e; border-radius:9999px; padding:2px 8px;';
                             
-                            // Desactivar botón preparando
+                            // desactivo botón preparando
                             if (btnPreparando) {
                                 btnPreparando.disabled = true;
                                 btnPreparando.classList.add('opacity-50', 'cursor-not-allowed');
@@ -149,7 +153,7 @@ function agregarNuevoPedido(datos) {
                             productoLi.style.backgroundColor = '#f0fdf4';
                             estadoElement.style.cssText = 'background-color:#dcfce7; color:#166534; border-radius:9999px; padding:2px 8px;';
                             
-                            // Desactivar ambos botones
+                            // Desactivo ambos botones
                             if (btnPreparando) {
                                 btnPreparando.disabled = true;
                                 btnPreparando.classList.add('opacity-50', 'cursor-not-allowed');
@@ -161,16 +165,29 @@ function agregarNuevoPedido(datos) {
                         }
                     }
                     
-                    // Añadir el producto a la lista
+                    // añado el producto a la lista
                     listaProductos.appendChild(nuevoProducto);
                 });
             }
             
-            // Limpiamos y añadimos la lista al contenedor
+            // limpio y añado la lista al contenedor
             contenedorDetalles.innerHTML = '';
             contenedorDetalles.appendChild(listaProductos);
+
+            // Mostrar observación general del pedido
+            // El elemento 'nuevoElemento' o 'pedidoEnDOM' (dependiendo de la función) es el .pedido-card
+            const pedidoCardElement = nuevoElemento.querySelector('.pedido-card') || nuevoElemento; // En agregarNuevoPedido, nuevoElemento ya es el fragmento que contiene .pedido-card
+            if (pedidoCardElement) {
+                const obsGeneralElement = pedidoCardElement.querySelector('.observacionGeneralPedido');
+                if (obsGeneralElement && detalles.Observaciones && detalles.Observaciones.trim() !== '') {
+                    obsGeneralElement.textContent = detalles.Observaciones;
+                    obsGeneralElement.classList.remove('hidden');
+                } else if (obsGeneralElement) {
+                    obsGeneralElement.classList.add('hidden');
+                }
+            }
             
-            // Actualizar contadores de estados
+            // actualizo contadores de estados
             const contPendientes = nuevoElemento.querySelector('#contadorPendientes');
             const contPreparando = nuevoElemento.querySelector('#contadorPreparando');
             
@@ -187,20 +204,20 @@ function agregarNuevoPedido(datos) {
             }
         });
     
-    // Añadimos el nuevo pedido al contenedor
+    // añado el nuevo pedido al contenedor
     contenedorPedidos.insertBefore(nuevoElemento, contenedorPedidos.firstChild);
 }
 
-// Función para actualizar el estado de un pedido
+// funcion para actualizar el estado de un pedido
 function actualizarEstadoPedido(datos) {
     const pedido = document.querySelector(`.pedido[data-cod-pedido="${datos.codPedido}"]`);
     console.log('Actualizando estado del pedido:', datos);
     
     if (pedido) {
-        // Los pedidos solo se ocultan cuando están en estado 'listo' y se marca el botón "Completado"
-        // o cuando están en estado 'completado'
+        // los pedidos solo se ocultan cuando están en estado listo y se marca el botón Completado
+        // o cuando están en estado completado
         if (datos.estado === 'listo') {
-            // Marcar el pedido como listo pero no ocultarlo
+            // marco el pedidfo como listo pero no ocultarlo
             pedido.classList.add('border-green-500');
             const btnCompletado = pedido.querySelector('.btnCompletado');
             if (btnCompletado) {
@@ -211,12 +228,12 @@ function actualizarEstadoPedido(datos) {
                 `;
             }
         } else if (datos.estado === 'completado') {
-            // Si el empleado marca completado, quitamos el pedido de la vista
+            // si el empleado marca completado, quitamos el pedido de la vista
             pedido.classList.add('bg-green-50');
             setTimeout(() => {
                 pedido.remove();
                 
-                // Si no quedan pedidos, mostramos el mensaje de "esperando pedidos"
+                // si no quedan pedidos, mostramos el mensaje de esperando pedidos
                 const contenedorPedidos = document.getElementById('contenedorPedidos');
                 if (contenedorPedidos && contenedorPedidos.children.length === 0) {
                     contenedorPedidos.innerHTML = `
@@ -230,7 +247,7 @@ function actualizarEstadoPedido(datos) {
     }
 }
 
-// Cargar pedidos pendientes al iniciar
+// cargo los pedidos pendientes al iniciar
 function cargarPedidosPendientes() {
     console.log('Iniciando carga de pedidos pendientes en cocina...');
     fetch('cocina.php?action=obtenerPedidosPendientes&area=cocina')
@@ -249,10 +266,10 @@ function cargarPedidosPendientes() {
                 return;
             }
             
-            // Limpiar mensajes de carga
+            // limpio mensajes de carga
             contenedorPedidos.innerHTML = '';
             
-            // Verificar si hay un error en la respuesta
+            // verifico si hay un error en la respuesta
             if (data.error) {
                 console.error('Error del servidor:', data.error);
                 contenedorPedidos.innerHTML = `
@@ -263,7 +280,7 @@ function cargarPedidosPendientes() {
                 return;
             }
             
-            // Verificar si la respuesta tiene éxito y contiene datos
+            // verifico si la respuesta tiene éxito y contiene datos
             if (!data.success) {
                 console.error('Error del servidor:', data.error || 'Error desconocido');
                 contenedorPedidos.innerHTML = `
@@ -274,11 +291,11 @@ function cargarPedidosPendientes() {
                 return;
             }
             
-            // Extraer los pedidos de la respuesta
+            // extraigo los pedidos de la respuesta
             const pedidos = Array.isArray(data.pedidos) ? data.pedidos : [];
             console.log('Pedidos a mostrar:', pedidos);
             
-            // Si no hay pedidos, mostrar mensaje
+            // si no hay pedidos, muestro mensaje
             if (pedidos.length === 0) {
                 contenedorPedidos.innerHTML = `
                     <div class="animate-pulse text-center p-6">
@@ -288,15 +305,19 @@ function cargarPedidosPendientes() {
                 return;
             }
             
-            // Para cada pedido pendiente, obtenemos sus detalles y lo mostramos
+            // para cada pedido pendiente, obtenemos sus detalles y lo mostramos
             pedidos.forEach(pedido => {
                 const plantilla = document.getElementById('plantillaPedido');
                 const nuevoElemento = document.importNode(plantilla.content, true);
-                
-                // Rellenamos los datos básicos
-                const tituloPedido = nuevoElemento.querySelector('h2');
-                if (tituloPedido) {
-                    tituloPedido.textContent = `Pedido #${pedido.cod}`;
+
+                // aseguro que el pie de la tarjeta solo contenga la hora
+                const pieTarjeta = nuevoElemento.querySelector('#pedido-card-footer');
+                if (pieTarjeta) {
+                    const divHora = pieTarjeta.querySelector('.text-gray-500.text-sm'); // el div que envuelve el span de la hora
+                    if (divHora) {
+                        pieTarjeta.innerHTML = ''; // limpio el pie
+                        pieTarjeta.appendChild(divHora); // añado solo el div de la hora
+                    }
                 }
                 
                 const nuevoPedido = nuevoElemento.querySelector('.pedido');
@@ -304,31 +325,40 @@ function cargarPedidosPendientes() {
                     nuevoPedido.setAttribute('data-cod-pedido', pedido.cod);
                 }
                 
-                // Cargar detalles del pedido mediante AJAX
-                fetch(`obtenerDetallesPedido.php?cod=${pedido.cod}`)
-                    .then(response => response.json())
+                // cargo detalles del pedido mediante AJAX
+                fetch(`/proyecto/obtenerDetallesPedido.php?cod=${pedido.cod}`)
+                    .then(response => {
+                        if (!response.ok) {
+                            // Log the raw text of the 404 response to see if it's HTML or our JSON error
+                            response.text().then(text => {
+                                console.error('Raw 404 response text for pedido ' + pedido.cod + ':', text);
+                            });
+                            throw new Error(`HTTP error: ${response.status}`);
+                        }
+                        return response.json();
+                    })
                     .then(detalles => {
-                        // Obtenemos el pedido del DOM que acabamos de añadir
+                        // obtengo el pedido del DOM que acabamos de añadir
                         const pedidoEnDOM = document.querySelector(`.pedido[data-cod-pedido="${pedido.cod}"]`);
                         if (!pedidoEnDOM) return;
                         
-                        // Contenedor de productos
+                        // contenedor de productos
                         const contenedorDetalles = pedidoEnDOM.querySelector('.detallesPedido');
                         const listaProductos = document.createElement('ul');
                         listaProductos.className = 'space-y-3';
                         
-                        // Añadir cada producto
+                        // añado cada producto
                         if (detalles.productos && Array.isArray(detalles.productos)) {
                             detalles.productos.forEach(producto => {
                                 if (!producto) return;
                                 
-                                // Usamos la plantilla para productos
+                                // uso la plantilla para productos
                                 const plantillaProducto = document.getElementById('plantillaProducto');
                                 if (!plantillaProducto) return;
                                 
                                 const nuevoProducto = document.importNode(plantillaProducto.content, true);
                                 
-                                // Rellenar datos del producto
+                                // relleno datos del producto
                                 const nombreElement = nuevoProducto.querySelector('.nombre');
                                 if (nombreElement) nombreElement.textContent = producto.nombre;
                                 
@@ -341,13 +371,13 @@ function cargarPedidosPendientes() {
                                     productoLi.setAttribute('data-cod-pedido', pedido.cod);
                                 }
                                 
-                                // Rellenar observaciones si existen
+                                // relleno observaciones si existen
                                 const obsElement = nuevoProducto.querySelector('.observacionesProducto');
                                 if (obsElement && producto.observaciones) {
                                     obsElement.textContent = producto.observaciones;
                                 }
                                 
-                                // Añadir botones con sus manejadores de eventos
+                                // añado botones con sus manejadores de eventos
                                 const btnPreparando = nuevoProducto.querySelector('.btnPreparando');
                                 if (btnPreparando) {
                                     btnPreparando.setAttribute('data-estado', 'preparando');
@@ -366,7 +396,7 @@ function cargarPedidosPendientes() {
                                     btnListo.classList.add('btn-estado-producto');
                                 }
                                 
-                                // Establecer el estado visual según el estado del producto
+                                // establezco el estado visual según el estado del producto
                                 const estadoElement = nuevoProducto.querySelector('.estadoProducto');
                                 if (estadoElement && productoLi) {
                                     estadoElement.textContent = producto.estado || 'pendiente';
@@ -375,8 +405,8 @@ function cargarPedidosPendientes() {
                                     if (producto.estado === 'preparando') {
                                         productoLi.style.backgroundColor = '#fefce8';
                                         estadoElement.style.cssText = 'background-color:#fef3c7; color:#92400e; border-radius:9999px; padding:2px 8px;';
-                                        
-                                        // Desactivar botón preparando
+
+                                        // desactivo botón preparando
                                         if (btnPreparando) {
                                             btnPreparando.disabled = true;
                                             btnPreparando.classList.add('opacity-50', 'cursor-not-allowed');
@@ -385,7 +415,7 @@ function cargarPedidosPendientes() {
                                         productoLi.style.backgroundColor = '#f0fdf4';
                                         estadoElement.style.cssText = 'background-color:#dcfce7; color:#166534; border-radius:9999px; padding:2px 8px;';
                                         
-                                        // Desactivar ambos botones
+                                        // desactivo ambos botones
                                         if (btnPreparando) {
                                             btnPreparando.disabled = true;
                                             btnPreparando.classList.add('opacity-50', 'cursor-not-allowed');
@@ -397,16 +427,16 @@ function cargarPedidosPendientes() {
                                     }
                                 }
                                 
-                                // Añadir el producto a la lista
+                                // añado el producto a la lista
                                 listaProductos.appendChild(nuevoProducto);
                             });
                         }
                         
-                        // Limpiamos y añadimos la lista al contenedor
+                        // limpio y añado la lista al contenedor
                         contenedorDetalles.innerHTML = '';
                         contenedorDetalles.appendChild(listaProductos);
                         
-                        // Actualizar contadores de estados
+                        // actualizo contadores de estados
                         const contPendientes = pedidoEnDOM.querySelector('#contadorPendientes');
                         const contPreparando = pedidoEnDOM.querySelector('#contadorPreparando');
                         
@@ -415,7 +445,7 @@ function cargarPedidosPendientes() {
                             contPreparando.textContent = detalles.contadores.preparando || 0;
                         }
                         
-                        // Aplicar estilos de estado al pedido según su estado general
+                        // aplico estilos de estado al pedido según su estado general
                         if (detalles.estadoPedido === 'listo') {
                             pedidoEnDOM.classList.add('border-green-500');
                             const btnCompletado = pedidoEnDOM.querySelector('.btnCompletado');
@@ -432,7 +462,7 @@ function cargarPedidosPendientes() {
                         console.error(`Error al cargar detalles del pedido ${pedido.cod}:`, error);
                     });
                 
-                // Añadimos el pedido al contenedor
+                // añado el pedido al contenedor
                 contenedorPedidos.appendChild(nuevoElemento);
             });
         })
@@ -441,12 +471,10 @@ function cargarPedidosPendientes() {
         });
 }
 
-// Al cargar el documento
+// Al cargar el documento, verifico si estamos en la página que usa este contenedor
 document.addEventListener('DOMContentLoaded', function() {
-    // Verificar si estamos en la página que usa este contenedor
-    // antes de intentar cargar pedidos
     if (document.getElementById('contenedorPedidos')) {
-        // Cargar pedidos pendientes solo si existe el contenedor
+        // cargo los pedidos pendientes solo si existe el contenedor
         cargarPedidosPendientes();
     }
 });

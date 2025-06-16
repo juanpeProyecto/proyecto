@@ -1,10 +1,10 @@
 <?php
     require_once "bd.php";
     require_once "funciones.php";
-    //require "sesiones.php";
-    //comprobar_rol(["administrador"]);
+    require "sesiones.php";
+    comprobar_rol(["administrador"]);
 
-    $codCategoria = intval($_POST['codCategoria']);
+    $codCategoria = intval($_POST['codCategoria']); //hago un casting a int para que no me de error
     $nombre = $_POST['nombre'];
     $descripcion = $_POST['descripcion'];
 
@@ -35,16 +35,16 @@
 <body class="bg-[#E0FAF4] flex flex-col items-center justify-center min-h-screen">
     <div class="w-full max-w-md p-4 flex flex-col items-center">
         <?php if (!empty($errores)): ?>
-            <div class="w-full p-6 bg-[#72B0E8] text-white rounded-xl text-center font-bold shadow-lg flex items-center justify-center gap-4">
+            <div class="w-full p-6 bg-[#72B0E8] text-white rounded-xl text-center font-bold flex items-center justify-center gap-4">
                 <span class="material-symbols-outlined text-4xl text-white">error</span>
                 <p class="text-3xl font-bold"><?= htmlspecialchars($errores[0]) ?></p>
             </div>
         <?php elseif ($exito): ?>
-            <div class="w-full p-6 bg-[#72E8AC] text-white rounded-xl text-center font-bold shadow-lg flex items-center justify-center gap-4">
+            <div class="w-full p-6 bg-[#72E8AC] text-white rounded-xl text-center font-bold flex items-center justify-center gap-4">
                 <span class="material-symbols-outlined text-4xl text-white scale-150">check_circle</span>
                 <p class="text-3xl font-bold"><?= htmlspecialchars($exito) ?></p>
             </div>
-            <p class="text-lg mt-3 text-gray-700 font-medium">Redirigiendo automáticamente a las categorías...</p>
+            <p class="text-lg mt-3 text-gray-700 font-medium">la categoria se ha editado correctamente</p>
         <?php endif; ?>
     </div>
 </body>

@@ -2,18 +2,12 @@
 require_once "bd.php";
 require_once __DIR__ . '/enviarNotificacion.php';
 
-// ============== FUNCIONES API COCINA ==============
-
-/**
- * Obtiene un pedido específico con todos sus detalles
- * @param int $codPedido - Código del pedido a obtener
- * @return array - Datos del pedido y sus productos
- */
+//funcion que obtiene el detalle de un pedido y me devueleve un array con el pedido y los productos
 function obtenerDetallePedido($codPedido) {
     try {
         $conexion = conectarBD();
         
-        // Consulta para obtener los datos básicos del pedido
+        // Consulta para obtener los datos básicos del pedido 
         $consulta = "SELECT codPedido, numMesa, Fecha, Observaciones, Estado, Total 
                     FROM Pedidos 
                     WHERE codPedido = ?";
@@ -31,13 +25,13 @@ function obtenerDetallePedido($codPedido) {
         
         // Consulta para obtener los detalles de los productos del pedido
         $consultaProductos = "SELECT pd.codProducto, pd.cantidad, pd.precioUnitario, pd.observaciones, pd.estado,
-                            p.nombre, p.imagenURL 
+                            p.nombre 
                             FROM DetallePedidos pd
                             JOIN productos p ON pd.codProducto = p.codProducto
                             WHERE pd.codPedido = ?";
         
         $stmtProductos = $conexion->prepare($consultaProductos);
-        $stmtProductos->bind_param("i", $codPedido);
+        $stmtProductos->bind_param("i", $codPedido); 
         $stmtProductos->execute();
         $resultadoProductos = $stmtProductos->get_result();
         
@@ -55,19 +49,11 @@ function obtenerDetallePedido($codPedido) {
     }
 }
 
-/**
- * Actualiza el estado de un producto y recalcula el estado global del pedido
- * 
- * @param int $codPedido Código del pedido
- * @param int $codProducto Código del producto
- * @param string $estado Nuevo estado del producto ('pendiente', 'preparando', 'listo')
- * @param string $area Área que realiza la actualización ('cocina', 'barra')
- * @return array Resultado de la operación con información del estado del pedido
- */
+
 function actualizarEstadoProductoCompleto($codPedido, $codProducto, $estado, $area = 'cocina', $numMesa = null, $codEmpleado = null) {
-    global $conexion;
+    global $conexion; //utilizo una conexion global por que la tansaccion la ncesita para que funcione correctamente
     
-    // Aseguramos que hay una conexión válida, si no, la creamos
+    // Me aseguro que hay una conexión válida, si no, la creamos
     if (!$conexion || !($conexion instanceof mysqli)) {
         error_log("Conexión nula en actualizarEstadoProductoCompleto, intentando reconectar");
         $conexion = conectarBD();
@@ -79,46 +65,46 @@ function actualizarEstadoProductoCompleto($codPedido, $codProducto, $estado, $ar
         $created_new_connection = true;
     }
     
-    // Aseguramos que solo se incluya un archivo para evitar redefinción de funciones
-    if (!function_exists('enviarNotificacionWebSocket')) {
+    // Me aseguro que solo se incluya un archivo para evitar redefinción de funciones
+    if (!function_exists('enviarNotificacionWebSocket')) {//si no existe la funcion la incluyo
         require_once __DIR__ . '/enviarNotificacion.php';
     }
     
     try {
-        // Iniciamos una transacción para garantizar la integridad
+        // Iniciamos una transacción para garantizar que todo se haga correctamente, si hay un error se deshace todo
         $conexion->begin_transaction();
         
         // 1. Actualizamos el estado del producto
         error_log("Actualizando estado del producto - Pedido: $codPedido, Producto: $codProducto, Estado: $estado, Área: $area");
         
-        // Primero verificamos si el registro existe y obtenemos su área
-        $sqlCheck = "SELECT dp.*, p.QuienLoAtiende as area FROM DetallePedidos dp 
+        // Primero verificare si el registro existe y obtendre su área
+        $sql = "SELECT dp.*, p.QuienLoAtiende as area FROM DetallePedidos dp 
                     JOIN Productos p ON dp.codProducto = p.codProducto 
                     WHERE dp.codPedido = ? AND dp.codProducto = ?";
-        $stmtCheck = $conexion->prepare($sqlCheck);
-        $stmtCheck->bind_param("ii", $codPedido, $codProducto);
-        $stmtCheck->execute();
-        $resultadoCheck = $stmtCheck->get_result()->fetch_assoc();
+        $stmt = $conexion->prepare($sql);
+        $stmt->bind_param("ii", $codPedido, $codProducto);
+        $stmt->execute();
+        $resultado = $stmt->get_result()->fetch_assoc();
         
-        if (!$resultadoCheck) {
+        if (!$resultado) {
             throw new Exception("No se encontró el producto $codProducto en el pedido $codPedido");
         }
         
         // Mapeo de áreas a roles
-        $areaToRole = [
+        $rolArea= [
             'cocina' => 'cocinero',  // Área cocina mapea a rol 'cocinero'
             'barra' => 'barra',
             'mesa' => 'camarero'
         ];
         
         // Verificamos que el producto pertenezca al área correcta
-        $rolEsperado = $areaToRole[strtolower($area)] ?? $area;
-        if (strtolower($resultadoCheck['area']) != strtolower($rolEsperado)) {
+        $rolEsperado = $rolArea[strtolower($area)] ?? $area;
+        if (strtolower($resultado['area']) != strtolower($rolEsperado)) {
             // Si el área es 'cocina' pero el rol es 'cocinero', lo permitimos
-            if (strtolower($area) === 'cocina' && strtolower($resultadoCheck['area']) === 'cocinero') {
+            if (strtolower($area) === 'cocina' && strtolower($resultado['area']) === 'cocinero') {
                 // Permitir la actualización
             } else {
-                throw new Exception("El producto está asignado a '{$resultadoCheck['area']}' pero se intentó actualizar desde '$area'");
+                throw new Exception("El producto está asignado a '{$resultado['area']}' pero se intentó actualizar desde '$area'");
             }
         }
         
@@ -141,7 +127,7 @@ function actualizarEstadoProductoCompleto($codPedido, $codProducto, $estado, $ar
         
         error_log("Producto actualizado correctamente. Filas afectadas: " . $stmtProducto->affected_rows);
         
-        // 2. Contamos productos en diferentes estados para decidir el estado global del pedido
+        // 2. Contare los productos en diferentes estados para decidir el estado del pedido
         $sqlContar = "SELECT 
                         SUM(CASE WHEN estado = 'pendiente' THEN 1 ELSE 0 END) as pendiente,
                         SUM(CASE WHEN estado = 'preparando' THEN 1 ELSE 0 END) as preparando,
@@ -154,7 +140,7 @@ function actualizarEstadoProductoCompleto($codPedido, $codProducto, $estado, $ar
         $stmtContar->execute();
         $resultado = $stmtContar->get_result()->fetch_assoc();
         
-        // 3. Determinar el nuevo estado del pedido
+        // 3. Determino el nuevo estado del pedido
         $estadoPedido = 'pendiente'; // Estado por defecto
         $pedidoCompleto = false;
         $conteos = $resultado;
@@ -169,19 +155,19 @@ function actualizarEstadoProductoCompleto($codPedido, $codProducto, $estado, $ar
             $estadoPedido = 'preparando';
         }
         
-        // Si todos los productos están listos, actualizamos el estado del pedido a 'listo'
+        // Si todos los productos están listos, actualizo el estado del pedido a 'listo'
         if ($conteos['total'] > 0 && $conteos['total'] == $conteos['listos']) {
             $estadoPedido = 'listo';
             $pedidoCompleto = true;
         }
         
-        // 4. Actualizamos el estado del pedido
+        // 4. Actualizo el estado del pedido
         $sqlUpdatePedido = "UPDATE Pedidos SET estado = ? WHERE codPedido = ?";
         $stmtPedido = $conexion->prepare($sqlUpdatePedido);
         $stmtPedido->bind_param("si", $estadoPedido, $codPedido);
         $stmtPedido->execute();
         
-        // 5. Obtener información de la mesa para la respuesta
+        // 5. Obtengo la información de la mesa para la respuesta
         $sqlMesa = "SELECT numMesa FROM Pedidos WHERE codPedido = ?";
         $stmtMesa = $conexion->prepare($sqlMesa);
         $stmtMesa->bind_param("i", $codPedido);
@@ -189,10 +175,10 @@ function actualizarEstadoProductoCompleto($codPedido, $codProducto, $estado, $ar
         $resultadoMesa = $stmtMesa->get_result()->fetch_assoc();
         $numMesa = $resultadoMesa['numMesa'];
         
-        // Confirmar la transacción
+        // Confirmo la transacción si todo ha ido bien
         $conexion->commit();
         
-        // 6. Enviar notificación al servidor WebSocket
+        // 6. Envio notificación al servidor WebSocket
         try {
             // Aseguramos que la función de notificación esté disponible
             if (!function_exists('enviarNotificacionWebSocket')) {
@@ -209,15 +195,15 @@ function actualizarEstadoProductoCompleto($codPedido, $codProducto, $estado, $ar
                 'numMesa' => $numMesa
             ];
             
-            // Enviamos la notificación
+            // Envio la notificación
             enviarNotificacionWebSocket($datosNotificacion);
             error_log('Notificación WebSocket enviada: ' . json_encode($datosNotificacion));
         } catch (\Exception $wsEx) {
             error_log('Error al enviar notificación: ' . $wsEx->getMessage());
-            // No lanzamos excepción para que no interfiera con la respuesta JSON
+            // No lanzo excepción para que no interfiera con la respuesta JSON
         }
         
-        // Devolver resultado exitoso con conexión si se creó una nueva
+        // Devuelvo resultado exitoso con conexión si se creó una nueva
         $result = [
             'success' => true,
             'mensaje' => 'Estado actualizado correctamente',
@@ -228,7 +214,7 @@ function actualizarEstadoProductoCompleto($codPedido, $codProducto, $estado, $ar
             'conteos' => $conteos
         ];
         
-        // Incluir la conexión creada en la respuesta si creamos una nueva
+        // Incluyo la conexión creada en la respuesta si creamos una nueva
         if (isset($created_new_connection) && $created_new_connection) {
             $result['conexion'] = $conexion;
         }
@@ -244,7 +230,7 @@ function actualizarEstadoProductoCompleto($codPedido, $codProducto, $estado, $ar
             'mensaje' => 'Error al actualizar el estado: ' . $e->getMessage()
         ];
         
-        // Incluir la conexión creada en la respuesta si creamos una nueva
+        // Incluyo la conexión creada en la respuesta si creamos una nueva
         if (isset($created_new_connection) && $created_new_connection) {
             $result['conexion'] = $conexion;
         }
@@ -253,54 +239,45 @@ function actualizarEstadoProductoCompleto($codPedido, $codProducto, $estado, $ar
     }
 }
 
-/**
- * Actualiza el estado global de un pedido
- * @param int $codPedido - Código del pedido
- * @param string $estado - Nuevo estado
- * @return array - Resultado de la operación
- */
+
 function cambiarEstadoPedido($codPedido, $estado) {
     try {
         $conexion = conectarBD();
         
-        // Actualizar estado del pedido
+        // Actualizo el estado del pedido
         $stmt = $conexion->prepare("UPDATE Pedidos SET Estado = ? WHERE codPedido = ?");
         $stmt->bind_param("si", $estado, $codPedido);
         $result = $stmt->execute();
         
         if ($result) {
-            return ['success' => true, 'message' => 'Estado actualizado correctamente'];
+            return ['success' => true, 'mensaje' => 'Estado actualizado correctamente'];
         } else {
-            return ['success' => false, 'error' => 'Error al actualizar el estado del pedido'];
+            return ['success' => false, 'mensaje' => 'Error al actualizar el estado del pedido'];
         }
         
     } catch (Exception $e) {
-        return ['success' => false, 'error' => $e->getMessage()];
+        return ['success' => false, 'mensaje' => $e->getMessage()];
     }
 }
 
-/**
- * Obtiene todos los pedidos pendientes o en preparación para un área específica
- * @param string $area - Área para la que obtener los pedidos (cocina, barra, etc.)
- * @return array - Lista de pedidos con sus productos
- */
+
 function obtenerPedidosPendientesArea($area = '') {
     try {
         // Comprobar que podemos conectar a la base de datos
         $conexion = conectarBD();
         if (!$conexion) {
             error_log("Error al conectar con la base de datos");
-            return ['error' => 'Error de conexión'];
+            return ['exito' => false, 'mensaje' => 'Error de conexión'];
         }
         
-        // Consulta base para pedidos con estado pendiente o preparando
+        // Consulta que hago para obtener los pedidos pendientes o en preparación
         $consulta = "SELECT p.codPedido, p.numMesa, p.Fecha, p.Observaciones, p.Estado, p.Total 
                     FROM Pedidos p
                     WHERE p.Estado IN ('pendiente', 'preparando')";
                     
         // Filtrar por área si se especifica
         if ($area === 'cocina') {
-            // Para cocina, mostrar todos los pedidos que tengan al menos un producto pendiente o en preparación
+            // consulto  los pedidos que tengan al menos un producto pendiente o en preparación
             $consulta = "SELECT DISTINCT p.codPedido, p.numMesa, p.Fecha, p.Observaciones, p.Estado, p.Total 
                         FROM Pedidos p
                         JOIN DetallePedidos d ON p.codPedido = d.codPedido
@@ -311,7 +288,7 @@ function obtenerPedidosPendientesArea($area = '') {
                         GROUP BY p.codPedido
                         ORDER BY p.Fecha DESC";
         } else {
-            // Ordenar por fecha
+            // Ordeno por fecha
             $consulta .= " ORDER BY p.Fecha DESC";
         }
         
@@ -320,33 +297,36 @@ function obtenerPedidosPendientesArea($area = '') {
         $resultado = $stmt->get_result();
         
         $pedidos = [];
-        while ($fila = $resultado->fetch_assoc()) {
-            // Convertimos a camelCase para la respuesta JSON
+        while ($fila = $resultado->fetch_assoc()) { //recorro todos los pedidos
+            // Log para depuración
+            error_log("Observaciones del pedido {$fila['codPedido']}: '{$fila['Observaciones']}'");
+            
             $pedido = [
                 'cod' => (int)$fila['codPedido'],
-                'codPedido' => (int)$fila['codPedido'], // Añadido para compatibilidad
+                'codPedido' => (int)$fila['codPedido'], // Lo añado para tener compatibilidad con la API
                 'numMesa' => $fila['numMesa'],
                 'fecha' => $fila['Fecha'],
                 'observaciones' => $fila['Observaciones'],
+                'observacionesGenerales' => $fila['Observaciones'], // Añado campo alternativo
                 'estado' => $fila['Estado'],
                 'total' => (float)$fila['Total']
             ];
             
-            // Obtenemos los productos del pedido
-            $consultaProductos = "SELECT d.codProducto, d.cantidad, d.estado, p.Nombre, p.Descripcion, p.Precio, p.QuienLoAtiende, p.Foto AS Imagen 
+            // Obtengo los productos del pedido
+            $consultaProductos = "SELECT d.codProducto, d.cantidad, d.estado, d.Observaciones, p.Nombre, p.Descripcion, p.Precio, p.QuienLoAtiende, p.Foto AS Imagen 
                                 FROM DetallePedidos d
                                 JOIN Productos p ON d.codProducto = p.codProducto
                                 WHERE d.codPedido = ?";
                                 
-            // Filtrar por área
+            // Filtro por área
             if ($area === 'cocina') {
                 $consultaProductos .= " AND p.QuienLoAtiende = 'cocinero'";
             } else if ($area === 'barra') {
                 $consultaProductos .= " AND p.QuienLoAtiende = 'camarero'";
             }
             
-            // Primero, obtener todos los productos del pedido para verificar estados
-            $consultaTodosProductos = "SELECT d.codProducto, d.cantidad, d.estado, p.Nombre, p.Descripcion, p.Precio, p.QuienLoAtiende, p.Foto AS Imagen 
+            // Primero obtendré todos los productos del pedido para verificar estados
+            $consultaTodosProductos = "SELECT d.codProducto, d.cantidad, d.estado, d.Observaciones, p.Nombre, p.Descripcion, p.Precio, p.QuienLoAtiende, p.Foto AS Imagen 
                                     FROM DetallePedidos d
                                     JOIN Productos p ON d.codProducto = p.codProducto
                                     WHERE d.codPedido = ?";
@@ -378,7 +358,7 @@ function obtenerPedidosPendientesArea($area = '') {
             
             // Filtrar solo los productos pendientes o en preparación para mostrar
             $productos = [];
-            foreach ($todosProductos as $filaProducto) {
+            foreach ($todosProductos as $filaProducto) { //recorro todos los productos
                 if (in_array($filaProducto['estado'], ['pendiente', 'preparando'])) {
                     $productos[] = [
                         'cod' => (int)$filaProducto['codProducto'],
@@ -388,13 +368,14 @@ function obtenerPedidosPendientesArea($area = '') {
                         'precio' => (float)$filaProducto['Precio'],
                         'tipo' => $filaProducto['QuienLoAtiende'],
                         'imagen' => $filaProducto['Imagen'],
-                        'estado' => $filaProducto['estado']
+                        'estado' => $filaProducto['estado'],
+                        'observaciones' => $filaProducto['Observaciones']
                     ];
                 }
             }
             
             $pedido['productos'] = $productos;
-            if (count($productos) > 0) {  // Solo incluimos pedidos con productos
+            if (count($productos) > 0) {  // Solo incluyo pedidos con productos
                 $pedidos[] = $pedido;
             }
         }
@@ -670,6 +651,7 @@ function actualizarProductosQuienLoAtiende($quien) {
 // Función que devuelve todos los pedidos pendientes o en preparación agrupados por mesa y producto
 function obtenerPedidosPendientes() {
     $conexion = conectarBD();
+    // Consulta que hago para obtener todos los pedidos pendientes o en preparación agrupados por mesa y producto
     $sql = "SELECT p.numMesa, dp.codPedido, dp.codProducto, pr.Nombre as nombreProducto, dp.Cantidad as cantidad, 
                    dp.Observaciones as ObservacionesProducto, dp.Estado, pr.Precio
             FROM Pedidos p
@@ -710,6 +692,7 @@ function obtenerPedidosPendientes() {
     return $pedidosAgrupados;
 }
 
+//funcion que devuelve una categoria por su codigo
 function obtenerCategoriaPorId($codCategoria) {
     $conexion = conectarBD();
     $stmt = $conexion->prepare("SELECT * FROM Categorias WHERE codCategoria = ?");
@@ -721,6 +704,7 @@ function obtenerCategoriaPorId($codCategoria) {
     $conexion->close();
     return $categoria;
 }
+//funcion que devuelve un empleado por su codigo
 function obtenerEmpleadoPorId($codEmpleado) {
     $conexion = conectarBD();
     $stmt = $conexion->prepare("SELECT * FROM Empleados WHERE codEmpleado = ?");
@@ -732,6 +716,7 @@ function obtenerEmpleadoPorId($codEmpleado) {
     $conexion->close();
     return $empleado;
 }
+//funcion que verifica si un pedido existe
 function verificarPedidoExiste($codPedido) {
     $conexion = conectarBD();
     $consulta = "SELECT codPedido FROM pedidos WHERE codPedido = ?";
@@ -744,6 +729,7 @@ function verificarPedidoExiste($codPedido) {
     $conexion->close();
     return $existe;
 }
+//funcion que actualiza el estado de un pedido
 function actualizarEstadoPedido($codPedido, $nuevoEstado) {
     $conexion = conectarBD();
     $consulta = "UPDATE detallepedidos 
@@ -759,8 +745,10 @@ function actualizarEstadoPedido($codPedido, $nuevoEstado) {
     $conexion->close();
     return $resultado;
 }
+//funcion que registra el cambio de estado de un pedido
 function registrarCambioEstadoPedido($codPedido, $nuevoEstado, $codEmpleado) {
     $conexion = conectarBD();
+    //consulta que inserta en la tabla empleadodetallespedidos los detalles de los pedidos
     $consulta = "
         INSERT INTO empleadodetallespedidos (codEmpleado, Fecha, codDetallePedido, cambioEstado)
         SELECT 
@@ -780,10 +768,7 @@ function registrarCambioEstadoPedido($codPedido, $nuevoEstado, $codEmpleado) {
     $conexion->close();
     return $resultado;
 }
-/**
- * Función auxiliar que facilita el envío de notificaciones WebSocket de cambio de estado
- * Esta es solo una envoltura alrededor de la función principal enviarNotificacionWebSocket
- */
+//funcion que notifica el cambio de estado de un pedido
 function notificarCambioEstadoPedido($codPedido, $nuevoEstado) {
     
     try {
@@ -796,12 +781,12 @@ function notificarCambioEstadoPedido($codPedido, $nuevoEstado) {
         
         return enviarNotificacionWebSocket($datos);
     } catch (\Exception $e) {
-        // No interrumpimos el flujo si falla la notificación WebSocket
+        // No interrumpo el flujo si falla la notificación WebSocket
         error_log("Error al enviar notificación WebSocket: " . $e->getMessage());
     }
 }
 
-// Función para enviar notificación de nuevo pedido
+//funcion que envia notificacion de nuevo pedido
 function enviarNotificacionNuevoPedido($codPedido) {
     try {
         require_once __DIR__ . '/vendor/autoload.php';
@@ -818,12 +803,13 @@ function enviarNotificacionNuevoPedido($codPedido) {
         $wsClient->close();
         return true;
     } catch (\Exception $e) {
-        // No interrumpimos el flujo si falla la notificación WebSocket
+        // No interrumpo el flujo si falla la notificación WebSocket
         error_log("Error al enviar notificación WebSocket: " . $e->getMessage());
         return false;
     }
 }
 
+//funcion que actuaaliza el estado de un detalle de pedido
 function actualizarEstadoDetallePedido($codDetallePedido, $nuevoEstado) {
     $conexion = conectarBD();
     $sql = "UPDATE DetallePedidos SET Estado = ? WHERE codDetallePedido = ?";
@@ -835,6 +821,7 @@ function actualizarEstadoDetallePedido($codDetallePedido, $nuevoEstado) {
     return $resultado;
 }
 
+//funcion que devuelve el codigo de un pedido por su codidgo de detalle
 function obtenerCodPedidoPorDetalle($codDetallePedido) {
     $conexion = conectarBD();
     $sql = "SELECT codPedido FROM DetallePedidos WHERE codDetallePedido = ?";
@@ -848,6 +835,7 @@ function obtenerCodPedidoPorDetalle($codDetallePedido) {
     return $fila ? $fila['codPedido'] : false;
 }
 
+//funcion que actualiza el estado de los productos de una categoria
 function actualizarProductosPorCategoria($codCategoria, $quienAtiende = 'cocinero') {
     $conexion = conectarBD();
     $sql = "UPDATE Productos SET QuienLoAtiende = ? WHERE codCategoria = ?";
@@ -873,26 +861,27 @@ function obtenerProductosConAtendidoPor() {
     return $productos;
 }
 
+//funcion que inserta un pedido y sus detalles
 function insertarPedido($numMesa, $observaciones, $total, $productos) {
     $conexion = conectarBD();
     $conexion->begin_transaction();
     
     try {
-        // Validar que la mesa sea un número válido
+        // Valido que la mesa sea un número válido
         if (!is_numeric($numMesa) || $numMesa <= 0) {
             throw new Exception("Número de mesa no válido");
         }
         
-        // Insertar el pedido
+        // Inserto el pedido
         $stmt = $conexion->prepare("INSERT INTO pedidos (numMesa, fecha, observaciones, Total) VALUES (?, NOW(), ?, ?)");
         $stmt->bind_param("isd", $numMesa, $observaciones, $total);
         $stmt->execute();
         $codPedido = $conexion->insert_id;
         $stmt->close();
         
-        // Insertar cada producto en DetallePedidos y actualizar stock
+        // Inserto cada producto en DetallePedidos y actualizo stock
         foreach ($productos as $producto) {
-            // Descontar stock
+            // Descuento el stock
             $cantidad = $producto['cantidad'];
             $codProducto = $producto['codProducto'];
             $stmtStock = $conexion->prepare("UPDATE productos SET Stock = Stock - ? WHERE codProducto = ? AND Stock >= ?");
@@ -904,7 +893,7 @@ function insertarPedido($numMesa, $observaciones, $total, $productos) {
             }
             $stmtStock->close();
             
-            // Insertar detalle del pedido
+            // Inserto el detalle del pedido
             $stmtDetalle = $conexion->prepare("INSERT INTO detallepedidos 
                 (codPedido, codProducto, cantidad, precioUnitario, Estado, Observaciones) 
                 VALUES (?, ?, ?, ?, 'pendiente', ?)");
@@ -922,7 +911,7 @@ function insertarPedido($numMesa, $observaciones, $total, $productos) {
         
         $conexion->commit();
         
-        // Enviar notificación WebSocket para actualización en tiempo real
+        // Envio notificacion WebSocket para actualizacion en tiempo real
         enviarNotificacionNuevoPedido($codPedido);
         
         return ['success' => true, 'codPedido' => $codPedido];
@@ -937,11 +926,12 @@ function insertarPedido($numMesa, $observaciones, $total, $productos) {
     }
 }
 
-// Función que obtiene los pedidos pendientes o en preparación para cocina
+//funcion que obtiene los pedidos pendientes o en preparacion para cocina
 function obtenerPedidosCocina() {
     $conexion = conectarBD();
     
-    // Primero obtenemos todos los detalles de pedidos pendientes o en preparación
+    // Primero obtendre todos los detalles de pedidos pendientes o en preparacion
+    //consulta que me devuelve todos los detalles de pedidos pendientes o en preparacion
     $sql = "SELECT 
                 GROUP_CONCAT(d.codDetallePedido) as codsPedido, 
                 p.numMesa, 
@@ -961,12 +951,12 @@ function obtenerPedidosCocina() {
     $resultado = $stmt->get_result();
     $pedidos = $resultado->fetch_all(MYSQLI_ASSOC);
     
-    // Procesamos los resultados para formatearlos adecuadamente
+    // cojo los resultados para formatearlos adecuadamente
     foreach ($pedidos as &$pedido) {
-        // Tomamos el primer ID de la lista concatenada como referencia
+        // cojo el primer ID de la lista concatenada como referencia
         $codsPedidoArray = explode(',', $pedido['codsPedido']);
         $pedido['codPedido'] = $codsPedidoArray[0];
-        // Eliminamos el campo temporal
+        // Elimino el campo temporal
         unset($pedido['codsPedido']);
     }
     

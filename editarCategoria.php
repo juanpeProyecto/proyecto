@@ -3,17 +3,17 @@
     require_once "bd.php";
     require "sesiones.php";
     require_once "funciones.php";
-    //comprobar_rol(["administrador"]);
+    comprobar_rol(["administrador"]);
 
     $error = '';
     $categoria = null;
     if (!isset($_GET['codCategoria'])) { //si no se ha proporcionado una categoria nos saldra un mensaje de error
-        $error = 'No se ha proporcionado una categoría válida.';
+        $error = 'No se ha proporcionado una categoría válida';
     } else {
-        $codCategoria = intval($_GET['codCategoria']);
+        $codCategoria = intval($_GET['codCategoria']); //hago un casting a entero
         $categoria = obtenerCategoriaPorId($codCategoria);
         if (!$categoria) {
-            $error = 'Categoría no encontrada.';
+            $error = 'Categoría no encontrada';
         }
     }
 ?>
@@ -26,7 +26,7 @@
     <link href="src/output.css" rel="stylesheet">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" />
 </head>
-<body class="bg-gradient-to-br from-[#E0FAF4] via-[#72E8D4] to-[#51B2E0] flex flex-col items-center px-2 text-2xl min-h-screen">
+<body class="bg-gradient-to-br from-[#E0FAF4] to-[#51B2E0] flex flex-col items-center px-2 text-2xl min-h-screen">
     <div class="w-full max-w-3xl bg-white/95 border-2 border-[#51B2E0] hover:border-[#72E8AC] rounded-2xl shadow-xl p-16">
         <?php if ($error): ?>
             <p class="text-red-600 text-center font-bold mt-8"><?= htmlspecialchars($error) ?></p>

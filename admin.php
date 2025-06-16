@@ -1,7 +1,7 @@
 <?php
-require "cabeceraAdmin.php"
-  //require 'sesiones.php';
-  //comprobar_rol(["administrador"]);
+require "cabeceraAdmin.php";
+require 'sesiones.php';
+comprobar_rol(["administrador"]);
 ?>
 <!DOCTYPE html>
 <html lang="es">

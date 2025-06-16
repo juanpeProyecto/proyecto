@@ -1,15 +1,14 @@
 <?php
-// Incluimos la conexión a la base de datos y control de sesiones
 require_once "bd.php";
 require_once "sesiones.php";
 require_once "funciones.php";
-// comprobar_rol(["administrador"]);
+comprobar_rol(["administrador"]);
 
-// Inicializamos variables para mensajes
+// Inicializo variables para mensajes
 $errores = [];
 $exito = '';
 
-// Procesamos el formulario solo si es POST
+// Proceso el formulario solo si es POST
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Recogemos los datos del formulario
     $codProducto = $_POST['codProducto'] ?? '';
@@ -20,7 +19,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $categoria = $_POST['categoria'] ?? '';
     $foto_actual = $_POST['foto_actual'] ?? '';
 
-    // Validación básica de campos obligatorios
+    // Valido los campos obligatorios
     if (!$codProducto || !$nombre || !$descripcion || !$precio || !$stock || !$categoria) {
         $errores[] = "Todos los campos son obligatorios excepto la foto.";
     }
@@ -41,16 +40,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $errores[] = 'Solo se permiten imágenes JPG, PNG, GIF o WEBP.';
         }
         // Valido el tamaño
-        if ($_FILES['foto']['size'] > $maxSize) {
+        if ($_FILES['foto']['size'] > $maxSize) { //si la imagen es mayor a 2MB  muestros menssaje de error
             $errores[] = 'La imagen es demasiado grande. Máximo 2MB.';
         }
         // Si pasa las validaciones, muevo la imagen
         if (empty($errores)) {
-            $rutaDestino = 'img/productos/';
+            $rutaDestino = 'img/productos/'; //esta ruta es importante porque es la que se va a usar en la base de datos
             if (!is_dir($rutaDestino)) {
                 mkdir($rutaDestino, 0777, true);
             }
-            $nombreArchivo = uniqid('img_') . '.' . $extension;
+            $nombreArchivo = uniqid('img_') . '.' . $extension;//creamos un nombre unico para la imagen
             $rutaCompleta = $rutaDestino . $nombreArchivo;
             if (!move_uploaded_file($tmpName, $rutaCompleta)) {
                 $errores[] = 'Error al guardar la imagen en el servidor.';
@@ -97,18 +96,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <body class="bg-[#E0FAF4] flex flex-col items-center justify-center min-h-screen">
     <div class="w-full max-w-md p-4 flex flex-col items-center">
         <?php if (!empty($errores)): ?>
-            <div class="w-full p-6 bg-[#72B0E8] text-white rounded-xl text-center font-bold shadow-lg flex items-center justify-center gap-4">
+            <div class="w-full p-6 bg-[#72B0E8] text-white rounded-xl text-center font-bold flex items-center justify-center gap-4">
                 <span class="material-symbols-outlined text-4xl text-white">error</span>
                 <p class="text-3xl font-bold"><?= htmlspecialchars($errores[0]) ?></p>
             </div>
         <?php elseif ($exito): ?>
-            <div class="w-full p-6 bg-[#72E8AC] text-white rounded-xl text-center font-bold shadow-lg flex items-center justify-center gap-4">
+            <div class="w-full p-6 bg-[#72E8AC] text-white rounded-xl text-center font-bold flex items-center justify-center gap-4">
                 <span class="material-symbols-outlined text-4xl text-white scale-150">check_circle</span>
                 <p class="text-3xl font-bold"><?= htmlspecialchars($exito) //obtengo el mensaje de exito?> </p>
             </div>
-            <p class="text-lg mt-3 text-gray-700 font-medium">Redirigiendo automáticamente a los productos...</p>
+            <p class="text-lg mt-3 text-gray-700 font-medium">el producto se ha editado correctamente</p>
         <?php else: ?>
-            <div class="w-full p-6 bg-[#72B0E8] text-white rounded-xl text-center font-bold shadow-lg flex items-center justify-center gap-4">
+            <div class="w-full p-6 bg-[#72B0E8] text-white rounded-xl text-center font-bold flex items-center justify-center gap-4">
                 <span class="material-symbols-outlined text-4xl text-white">info</span>
                 <p class="text-3xl font-bold">No se recibieron datos para procesar.</p>
             </div>

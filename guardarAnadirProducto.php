@@ -3,7 +3,7 @@
 require_once "bd.php";
 require_once "sesiones.php";
 require_once "funciones.php";
-// comprobar_rol("administrador");
+comprobar_rol("administrador");
 
 // Inicializo variables para mensajes
 $errores = [];
@@ -31,14 +31,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $originalName = basename($_FILES['foto']['name']);
         $extension = strtolower(pathinfo($originalName, PATHINFO_EXTENSION));
         $permitidas = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
-        $tamañoMax = 2 * 1024 * 1024; // el tamaño maximo que pondre en las fotos es de 2MB
+        $tamanioMax = 2 * 1024 * 1024; // el tamaño maximo que pondre en las fotos es de 2MB
 
         // Valido el tipo de archivo
         if (!in_array($extension, $permitidas)) {
             $errores[] = 'Solo se permiten imágenes JPG, PNG, GIF o WEBP.';
         }
         // Valido el tamaño
-        if ($_FILES['foto']['size'] > $tamañoMax) {
+        if ($_FILES['foto']['size'] > $tamanioMax) {
             $errores[] = 'La imagen es demasiado grande. Máximo 2MB.';
         }
         // Si pasa las validaciones, muevo la imagen
@@ -57,7 +57,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $errores[] = 'No se ha seleccionado ninguna imagen o hubo un error al subirla.';
     }
 
-    // Si no hay errores, inserto el producto en la base de datos
+    // Si no hay errores inserto el producto en la base de datos
     if (empty($errores)) {
         try {
             $res = anadirProducto($nombre, $descripcion, $precio, $stock, $categoria, $quienLoAtiende, $nombreArchivo);
@@ -87,16 +87,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <body class="bg-[#E0FAF4] flex flex-col items-center justify-center min-h-screen">
     <div class="w-full max-w-md p-4 flex flex-col items-center">
         <?php if (!empty($errores)): ?>
-            <div class="w-full p-6 bg-[#72B0E8] text-white rounded-xl text-center font-bold shadow-lg flex items-center justify-center gap-4">
+            <div class="w-full p-6 bg-[#72B0E8] text-white rounded-xl text-center font-bold flex items-center justify-center gap-4">
                 <span class="material-symbols-outlined text-4xl text-white">error</span>
                 <p class="text-3xl font-bold"><?= htmlspecialchars($errores[0]) ?></p>
             </div>
         <?php elseif ($exito): ?>
-            <div class="w-full p-6 bg-[#72E8AC] text-white rounded-xl text-center font-bold shadow-lg flex items-center justify-center gap-4">
+            <div class="w-full p-6 bg-[#72E8AC] text-white rounded-xl text-center font-bold flex items-center justify-center gap-4">
                 <span class="material-symbols-outlined text-4xl text-white scale-150">check_circle</span>
                 <p class="text-3xl font-bold"><?= htmlspecialchars($exito) ?></p>
             </div>
-            <p class="text-lg mt-3 text-gray-700 font-medium">Redirigiendo automáticamente a los productos...</p>
+            <p class="text-lg mt-3 text-gray-700 font-medium">el producto se ha creado correctamente</p>
         <?php endif; ?>
     </div>
 </body>

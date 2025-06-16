@@ -42,7 +42,6 @@ function mostrarAvisoCarrito(mensaje, color = '#51B2E0') {
     let aviso = document.getElementById('avisoCarrito');
     if (!aviso) {
         aviso = document.createElement('div');
-        aviso.id = 'avisoCarrito';
         aviso.className = 'fixed top-20 right-4 z-50 px-4 py-2 rounded-lg shadow-lg hidden transition-all duration-300';
         document.body.appendChild(aviso);
     }
@@ -63,9 +62,9 @@ function anadirAlCarrito(producto) {
     if (isNaN(producto.cantidad) || producto.cantidad < 1) {
         producto.cantidad = 1;
     }
-    const idx = carrito.findIndex(p => p.codProducto === producto.codProducto);//busco el producto en el carrito
-    if (idx !== -1) {//si el producto existe
-        carrito[idx].cantidad = Number(carrito[idx].cantidad) + producto.cantidad;//sumo la cantidad
+    const i = carrito.findIndex(p => p.codProducto === producto.codProducto);//busco el producto en el carrito
+    if (i !== -1) {//si el producto existe
+        carrito[i].cantidad = Number(carrito[i].cantidad) + producto.cantidad;//sumo la cantidad
     } else {
         carrito.push(producto);//si no existe lo añado
     }
@@ -79,9 +78,9 @@ function anadirAlCarrito(producto) {
 function actualizarCarrito()
 {
     let carrito = JSON.parse(localStorage.getItem(obtenerKeyCarrito())) || [];//recupero los datos del carrito
-    const contenidoPedido = document.getElementById('carritoContenido');
-    const totalDiv = document.getElementById('carritoTotal');
-    if (!contenidoPedido || !totalDiv) {
+    const contenidoPedido = document.getElementById('contenidoCarrito');
+    const totalDiv = document.getElementById('totalCarrito');
+    if (!contenidoPedido || !totalDiv) { //si uno de los dos es falso salgo de la funcion
         return;
     }
     const btnVaciar = document.getElementById('btnVaciar');
@@ -109,7 +108,7 @@ function actualizarCarrito()
                 <div class="text-[#21476B]">Cantidad: ${item.cantidad}</div>
                 <div class="text-[#51B2E0]">Precio: ${item.precio}</div>
                 <label class="block mt-2 text-[#256353] text-sm">Observaciones para este producto:
-                    <input type="text" class="observacion-producto w-full rounded border p-1 mt-1 text-[#256353] bg-[#E0FAF4] border-[#72E8AC] focus:outline-none focus:border-[#51B2E0]" name="observacionesProducto[]" data-index="${i}" value="${item.observacion || ''}" placeholder="Observaciones para este producto...">
+                    <input type="text" class="observacionProducto w-full rounded border p-1 mt-1 text-[#256353] bg-[#E0FAF4] border-[#72E8AC] focus:outline-none focus:border-[#51B2E0]" name="observacionesProducto[]" data-index="${i}" value="${item.observacion || ''}" placeholder="Observaciones para este producto...">
                 </label>
             </div>
             <div class="mt-2 sm:mt-0 flex flex-col items-center justify-center sm:items-end sm:justify-end w-full sm:w-auto"> 
@@ -127,16 +126,16 @@ function actualizarCarrito()
     let botonesEliminar = contenidoPedido.querySelectorAll('.btnEliminarProducto');
     for (let i = 0; i < botonesEliminar.length; i++) { //recorro los botones eliminar 
         botonesEliminar[i].addEventListener('click', function() {
-            const index = parseInt(this.getAttribute('data-index'));//obtengo el indice del producto
+            const indice = parseInt(this.getAttribute('data-index'));//obtengo el indice del producto
             eliminarDelCarrito(index);
         });
     }
 
     if(btnVaciar) {
         btnVaciar.disabled = false;
-        btnVaciar.onclick = function() {
+        btnVaciar.addEventListener('click', function() {
             vaciarCarrito();
-        };
+        });
     }
 }
 
@@ -166,10 +165,10 @@ document.addEventListener('DOMContentLoaded', function() {
             evento.preventDefault(); // evito que se envie el formulario
             // Guardo las observaciones de producto en el localStorage antes de enviar
             let carrito = JSON.parse(localStorage.getItem(obtenerKeyCarrito())) || [];//recupero el carrito o un array vacio si no existe
-            let observacionesInputs = document.querySelectorAll('.observacion-producto');
-            observacionesInputs.forEach(function(input) {
-                let i = parseInt(input.getAttribute('data-index')); //obtengo el indice del producto
-                if (!isNaN(i)) {
+            let inputsObservaciones = document.querySelectorAll('.observacionProducto');
+            inputsObservaciones.forEach(function(input) {
+                let i = parseInt(input.getAttribute('data-index'));//obtengo el indice del producto
+                if (!isNaN(i)) { //si el indice es un numero  pongo el valor del input en el carrito
                     carrito[i].observacion = input.value;
                 }
             });
@@ -178,13 +177,15 @@ document.addEventListener('DOMContentLoaded', function() {
             // Creo inputs ocultos para observaciones por producto 
             let formObservacionesPorProducto = document.getElementById('formObservacionesPorProducto');
             formObservacionesPorProducto.innerHTML = '';
-            carrito.forEach(function(item) { //recorro el carrito
+            for (let i = 0; i < carrito.length; i++) {
+                const element = carrito[i];
                 let input = document.createElement('input');
                 input.type = 'hidden';
                 input.name = 'observacionesProducto[]';
-                input.value = item.observacion || '';
+                input.value = element.observacion || '';
                 formObservacionesPorProducto.appendChild(input);
-            });
+            }
+            
             //asigno el numero de mesa al formulario
             if (formNumMesa) {
                 let mesa = localStorage.getItem('numMesa') || '';

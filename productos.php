@@ -3,8 +3,8 @@
     require "cabeceraAdmin.php";
     require_once "bd.php";
     require_once "funciones.php";
-    //require "sesiones.php";
-    //comprobar_rol(["administrador"]); 
+    require "sesiones.php";
+    comprobar_rol(["administrador"]); 
     $conexion = conectarBD();
     $todosProductos = cargarProductos($conexion);
 ?>
@@ -17,22 +17,22 @@
     <link href="src/output.css" rel="stylesheet">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" />
 </head>
-<body class="bg-gradient-to-br from-[#E0FAF4] via-[#72E8D4] to-[#51B2E0] min-h-screen w-full flex flex-col items-center overflow-x-hidden px-2 sm:px-0 text-2xl">
-    <div class="w-full max-w-7xl bg-[#E0FAF4]/95 border-4 border-[#72E8AC] rounded-[2.5rem] mt-6 shadow-[0_8px_40px_0_rgba(81,178,224,0.18)] p-4 flex flex-col items-center">
+<body class="bg-gradient-to-br from-[#E0FAF4] to-[#51B2E0] min-h-screen w-full flex flex-col items-center overflow-x-hidden px-2 sm:px-0 text-2xl">
+    <div class="w-full max-w-6xl bg-[#E0FAF4]/95 border-4 border-[#72E8AC] rounded-[2.5rem] mt-6 shadow-[0_8px_40px_0_rgba(81,178,224,0.18)] p-4 flex flex-col items-center">
         <h1 class="text-4xl font-bold text-[#256353] mb-6 w-full text-center">Gestión de Productos</h1>
         <?php 
             if (count($todosProductos) > 0) { //si hay productos
         ?>
-        <div class="w-full rounded-3xl">
-        <table class="w-full text-left rounded-3xl overflow-hidden text-xs sm:text-base md:text-lg lg:text-2xl shadow-xl border-separate border-spacing-0 hidden lg:table">
+        <div class="w-full rounded-xl">
+        <table class="w-full text-left rounded-xl overflow-hidden text-xs sm:text-base md:text-lg lg:text-2xl shadow-xl border-separate border-spacing-0 hidden lg:table">
                 <tr class="bg-gradient-to-r from-[#72E8AC]/90 to-[#51E080]/80 text-[#256353]">
-                    <th class="py-2 md:py-4 lg:py-6 px-2 md:px-3 lg:px-4 font-bold uppercase tracking-widest border-b-4 border-[#51E080] text-base sm:text-2xl whitespace-nowrap text-center">Foto</th>
-                    <th class="py-2 md:py-4 lg:py-6 px-2 md:px-3 lg:px-4 font-bold uppercase tracking-widest border-b-4 border-[#51E080] text-base sm:text-2xl whitespace-nowrap text-center">Nombre</th>
-                    <th class="py-2 md:py-4 lg:py-6 px-2 md:px-3 lg:px-4 font-bold uppercase tracking-widest border-b-4 border-[#51E080] text-base sm:text-2xl whitespace-nowrap text-center">Categoría</th>
-                    <th class="py-2 md:py-4 lg:py-6 px-2 md:px-3 lg:px-4 font-bold uppercase tracking-widest border-b-4 border-[#51E080] text-base sm:text-2xl whitespace-nowrap text-center">Descripción</th>
-                    <th class="py-2 md:py-4 lg:py-6 px-2 md:px-3 lg:px-4 font-bold uppercase tracking-widest border-b-4 border-[#51E080] text-base sm:text-2xl whitespace-nowrap text-center">Stock</th>
-                    <th class="py-2 md:py-4 lg:py-6 px-2 md:px-3 lg:px-4 font-bold uppercase tracking-widest border-b-4 border-[#51E080] text-base sm:text-2xl whitespace-nowrap text-center">Precio</th>
-                    <th class="py-2 md:py-4 lg:py-6 px-2 md:px-3 lg:px-4 text-center font-bold uppercase tracking-widest border-b-4 border-[#51E080] text-base sm:text-2xl whitespace-nowrap">Acciones</th>
+                    <th class="py-2 md:py-4 lg:py-6 px-2 md:px-3 lg:px-4 font-bold border-b-4 border-[#51E080] text-base sm:text-2xl whitespace-nowrap text-center">Foto</th>
+                    <th class="py-2 md:py-4 lg:py-6 px-2 md:px-3 lg:px-4 font-bold border-b-4 border-[#51E080] text-base sm:text-2xl whitespace-nowrap text-center">Nombre</th>
+                    <th class="py-2 md:py-4 lg:py-6 px-2 md:px-3 lg:px-4 font-bold border-b-4 border-[#51E080] text-base sm:text-2xl whitespace-nowrap text-center">Categoría</th>
+                    <th class="py-2 md:py-4 lg:py-6 px-2 md:px-3 lg:px-4 font-bold border-b-4 border-[#51E080] text-base sm:text-2xl whitespace-nowrap text-center">Descripción</th>
+                    <th class="py-2 md:py-4 lg:py-6 px-2 md:px-3 lg:px-4 font-bold border-b-4 border-[#51E080] text-base sm:text-2xl whitespace-nowrap text-center">Stock</th>
+                    <th class="py-2 md:py-4 lg:py-6 px-2 md:px-3 lg:px-4 font-bold border-b-4 border-[#51E080] text-base sm:text-2xl whitespace-nowrap text-center">Precio</th>
+                    <th class="py-2 md:py-4 lg:py-6 px-2 md:px-3 lg:px-4 text-center font-bold border-b-4 border-[#51E080] text-base sm:text-2xl whitespace-nowrap">Acciones</th>
                 </tr>
                 <?php 
                     foreach ($todosProductos as $prod): //recorreo todos los productos
@@ -41,8 +41,7 @@
                     <td class="py-2 md:py-4 lg:py-6 px-2 md:px-3 lg:px-4 bg-[#E0FAF4]/80 whitespace-normal text-center flex justify-center items-center">
                         <img src="img/productos/<?= htmlspecialchars($prod['Foto']) ?>"
                         alt="<?= htmlspecialchars($prod['Nombre']) ?>"
-                        class="w-28 h-28 object-cover rounded-xl shadow border border-[#51E080]"
-                        style="aspect-ratio:1/1; min-width:7rem; min-height:7rem; max-width:7rem; max-height:7rem;"
+                        class="w-28 h-28 object-cover rounded-xl shadow border border-[#51E080] aspect-square min-w-[7rem] min-h-[7rem] max-w-[7rem] max-h-[7rem]"
                         onerror="this.onerror=null;this.src='img/productos/default.png';" />
                     </td>
                     <td class="py-2 md:py-4 lg:py-6 px-2 md:px-3 lg:px-4 font-semibold text-[#256353] text-xs sm:text-base md:text-lg lg:text-2xl bg-[#E0FAF4]/80 whitespace-normal text-center">
@@ -69,7 +68,8 @@
                     endforeach; 
                 ?>
         </table>
-        <!-- Vista para móvil -->
+
+        <!-- ESta sera la vista para el movil  cuando la pantalla sea menor de 1024 px-->
         <div class="flex flex-col gap-4 lg:hidden mt-6">
             <?php foreach ($todosProductos as $prod): ?>
                 <div class="bg-white/90 rounded-xl p-4 shadow flex flex-col gap-2">

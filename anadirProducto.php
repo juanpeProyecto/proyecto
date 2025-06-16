@@ -65,8 +65,8 @@ $categorias = cargarCategorias($conexion);
             </div>
             <input type="file" id="foto" name="foto" accept="image/*" class="hidden">
         </div>     
-        <button type="submit" class="w-full flex flex-row items-center justify-center gap-2 bg-[#72E8AC] hover:bg-[#72E884] text-[#256353] hover:text-white transition-all duration-200 px-8 py-4 rounded-2xl font-bold text-xl text-center border-2 border-[#72E884] mt-6">Añadir Producto</button>
-        <button type="reset" class="w-full flex flex-row items-center justify-center gap-2 bg-[#51B2E0] hover:bg-[#51E080] text-white font-bold py-4 rounded-2xl shadow transition text-lg sm:text-xl cursor-pointer">Borrar</button>
+        <button type="submit" class="w-full flex flex-row items-center justify-center gap-2 bg-[#72E8AC] hover:bg-[#72E884] text-[#256353] hover:text-white transition-all duration-200 px-8 py-4 rounded font-bold text-xl text-center border-2 border-[#72E884] mt-6 cursor-pointer">Añadir Producto</button>
+        <button type="reset" class="w-full flex flex-row items-center justify-center gap-2 bg-[#51B2E0] hover:bg-[#51E080] text-white font-bold py-4 rounded text-xl text-center border-2 border-[#72E884] mt-6 cursor-pointer">Borrar</button>
     </div>
 </body>
 <script src="js/estiloBotonSeleccionarArchivo.js"></script>

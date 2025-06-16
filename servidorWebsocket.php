@@ -1,30 +1,26 @@
 <?php
-/*
-* Servidor de WebSocket para manejar pedidos en tiempo real
-* Este servidor recibirá y enviará actualizaciones a los diferentes clientes conectados
-*/
+//el servidor se encargara de gestionar las conexiones y la distribucion de mensajes de los diferentes clientes conectados
 use Ratchet\MessageComponentInterface;
 use Ratchet\ConnectionInterface;
 use Ratchet\Server\IoServer;
 use Ratchet\Http\HttpServer;
 use Ratchet\WebSocket\WsServer;
 
-require __DIR__ . '/vendor/autoload.php';
+require __DIR__ . '/vendor/autoload.php'; //añado el autoloader ya que es necesario para que funcione el servidor
 
 // Clase principal para manejar los websockets
-class ServidorPedidos implements MessageComponentInterface
+class ServidorPedidos implements MessageComponentInterface //
 {
     protected $clientes;
-    protected $clientesTipo = [
+    protected $tipoCliente = [
         'cocina' => [],
-        'barra' => [],
+        'barra' => [], //no me ha dado tiempo 
         'camarero' => [],
         'cliente' => []
     ];
 
     public function __construct()
     {
-        // Almacenamiento de conexiones de clientes
         $this->clientes = new \SplObjectStorage();
         echo "Servidor WebSocket iniciado\n";
     }
@@ -32,7 +28,7 @@ class ServidorPedidos implements MessageComponentInterface
     // Cuando un cliente se conecta al servidor
     public function onOpen(ConnectionInterface $conn)
     {
-        // Almacenamos la nueva conexión
+        // Almaceno la nueva conexión
         $this->clientes->attach($conn);
         $conn->tipoCliente = 'desconocido'; // Por defecto, tipo desconocido
         
@@ -44,62 +40,61 @@ class ServidorPedidos implements MessageComponentInterface
     // Cuando un cliente envía un mensaje al servidor
     public function onMessage(ConnectionInterface $from, $mensaje)
     {
-        $numRecibidos = count($this->clientes) - 1;
-        $datos = json_decode($mensaje, true);
-        
-        // Usando la identificación segura del cliente
-        $clienteId = spl_object_hash($from);
-        echo "Mensaje recibido de conexión (cliente: {$clienteId}): $mensaje\n";
-
-        // Si el mensaje incluye un tipo de cliente (cocina, barra, camarero, cliente)
-        if (isset($datos['tipoCliente']) && in_array($datos['tipoCliente'], array_keys($this->clientesTipo))) {
-            $from->tipoCliente = $datos['tipoCliente'];
-            // Usando la identificación segura del cliente
-            $clienteId = spl_object_hash($from);
-            $this->clientesTipo[$datos['tipoCliente']][$clienteId] = $from;
-            echo "Cliente {$clienteId} registrado como: {$datos['tipoCliente']}\n";
+        $data = json_decode($mensaje, true);
+        if ($data === null) {
+            echo "Mensaje inválido recibido: {$mensaje}\n";
             return;
         }
-        
-        // Si es un nuevo pedido, enviamos a cocina, barra y camarero
-        if (isset($datos['tipo']) && $datos['tipo'] === 'nuevoPedido') {
-            $this->enviarATodos($mensaje, ['cocina', 'barra', 'camarero']);
+
+        // Primero, verifico si es un mensaje de registro de cliente
+        if (isset($data['tipoCliente']) && in_array($data['tipoCliente'], array_keys($this->tipoCliente))) {
+            $from->tipoCliente = $data['tipoCliente'];
+            $clienteId = spl_object_hash($from);
+            $this->tipoCliente[$data['tipoCliente']][$clienteId] = $from;
+            echo "Cliente {$clienteId} registrado como: {$data['tipoCliente']}\n";
+            return; // No hay nada más que hacer con los mensajes de registro
         }
-        
-        // Si es una actualización de estado de pedido completo
-        if (isset($datos['tipo']) && $datos['tipo'] === 'actualizacionEstado') {
-            // Si la actualización es para un pedido específico, notificamos al cliente correspondiente
-            if (isset($datos['numMesa'])) {
-                $this->enviarACliente($mensaje, $datos['numMesa']);
-            }
-            
-            // También notificamos a todos los trabajadores
-            $this->enviarATodos($mensaje, ['cocina', 'barra', 'camarero']);
+
+        // Si no es de registro, debe ser una notificación con un 'tipo'
+        if (!isset($data['tipo'])) {
+            echo "Mensaje recibido sin 'tipo'. Ignorando: {$mensaje}\n";
+            return;
         }
-        
-        // Si es una actualización de estado de un producto individual
-        if (isset($datos['tipo']) && $datos['tipo'] === 'actualizacionEstadoProducto') {
-            // Registramos la acción
-            echo "Actualizando estado de producto: {$datos['codProducto']} de pedido {$datos['codPedido']} a {$datos['estado']}\n";
+
+        $tipoMensaje = $data['tipo'];
+        $tiposDestino = [];
+
+        echo "Notificación recibida de tipo: {$tipoMensaje}\n";
+
+        switch ($tipoMensaje) {
+            case 'productoListo':
+            case 'pedidoListo':
+                $tiposDestino = ['camarero', 'cocina'];
+                break;
+
+            case 'productoServido':
+            case 'pedidoServido':
+                $tiposDestino = ['cocina', 'camarero'];
+                break;
             
-            // Si la actualización es para un producto específico, notificamos al cliente correspondiente
-            if (isset($datos['numMesa'])) {
-                $this->enviarACliente($mensaje, $datos['numMesa']);
-            }
-            
-            // También notificamos a todos los trabajadores según el área que necesita saber
-            $areaDestino = ['cocina', 'camarero'];
-            $this->enviarATodos($mensaje, $areaDestino);
-            
-            // Aquí podrías agregar código para actualizar el estado en la base de datos si lo deseas
-            // Por ejemplo: actualizarEstadoProducto($datos['codPedido'], $datos['codProducto'], $datos['estado']);
+            case 'nuevoPedido':
+            case 'pedidoEnPreparacion':
+                 $tiposDestino = ['cocina', 'camarero']; // Notifico a cocina y camarero
+                 break;
+        }
+
+        if (!empty($tiposDestino)) {
+            echo "-> Reenviando a: " . implode(', ', $tiposDestino) . "\n";
+            $this->enviarATodos($mensaje, $tiposDestino, $from);
+        } else {
+            echo "-> Mensaje de tipo '{$tipoMensaje}' sin destino específico. No se reenvía.\n";
         }
     }
 
     // Cuando un cliente se desconecta
     public function onClose(ConnectionInterface $conn)
     {
-        // Quitamos la conexión del registro
+        // Quito la conexión del registro
         $this->clientes->detach($conn);
         
         // Lo quitamos también del registro por tipo
@@ -122,18 +117,17 @@ class ServidorPedidos implements MessageComponentInterface
         $conn->close();
     }
     
-    // Método para enviar mensajes a ciertos tipos de clientes
-    protected function enviarATodos($mensaje, array $tiposDestino)
+    // Método para enviar mensajes a ciertos tipos de clientes, excluyendo al emisor
+    protected function enviarATodos($mensaje, array $tiposDestino, ConnectionInterface $emisor = null)
     {
         foreach ($tiposDestino as $tipo) {
-            if (isset($this->clientesTipo[$tipo]) && !empty($this->clientesTipo[$tipo])) {
-                foreach ($this->clientesTipo[$tipo] as $cliente) {
-                    if ($cliente instanceof ConnectionInterface) {
-                        $cliente->send($mensaje);
-                        // Usando la identificación segura del cliente
-                        $clienteId = spl_object_hash($cliente);
-                        echo "Mensaje enviado a {$tipo} (cliente: {$clienteId})\n";
+            if (isset($this->tipoCliente[$tipo])) {
+                foreach ($this->tipoCliente[$tipo] as $cliente) {
+                    // No envio el mensaje de vuelta al emisor original
+                    if ($emisor !== null && $emisor === $cliente) {
+                        continue;
                     }
+                    $cliente->send($mensaje);
                 }
             }
         }
@@ -142,9 +136,9 @@ class ServidorPedidos implements MessageComponentInterface
     // Método para enviar mensajes a un cliente específico por número de mesa
     protected function enviarACliente($mensaje, $numMesa)
     {
-        if (isset($this->clientesTipo['cliente']) && !empty($this->clientesTipo['cliente'])) {
-            foreach ($this->clientesTipo['cliente'] as $cliente) {
-                // Verificamos que el cliente sea una instancia válida y tenga registrada su mesa
+        if (isset($this->tipoCliente['cliente']) && !empty($this->tipoCliente['cliente'])) {
+            foreach ($this->tipoCliente['cliente'] as $cliente) {
+                // Verifico que el cliente sea una instancia válida y tenga registrada su mesa
                 if ($cliente instanceof ConnectionInterface && isset($cliente->numMesa) && $cliente->numMesa == $numMesa) {
                     $cliente->send($mensaje);
                     // Usando la identificación segura del cliente
@@ -156,7 +150,7 @@ class ServidorPedidos implements MessageComponentInterface
     }
 }
 
-// Crear e iniciar el servidor
+// Creo e inicio el servidor
 $server = IoServer::factory(
     new HttpServer(
         new WsServer(
@@ -166,6 +160,6 @@ $server = IoServer::factory(
     8080
 );
 
-// Mensaje indicando que el servidor está activo
-echo "Servidor WebSocket escuchando en el puerto 8080...\n";
+// Mensaje indicando que el servidor esta activo (lo pongo para ver que me conecta correctaemente)
+echo "EL  Servidor WebSocket se ha iniciado en el puerto 8080...\n";
 $server->run();
