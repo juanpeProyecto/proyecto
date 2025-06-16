@@ -83,7 +83,7 @@
           $empleado = $resultado->fetch_assoc();
           
           // Verifico la contraseña
-          if (password_verify($contrasena, $empleado["Clave"])) {
+          if ($contrasena === $empleado["Clave"]) {
               // si la verificación fue exitosa
               $_SESSION["usuario"] = $empleado["Nombre"];
               $_SESSION["rol"] = $empleado["Rol"];
