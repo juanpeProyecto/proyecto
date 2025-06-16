@@ -94,7 +94,7 @@ try {
         require_once __DIR__ . '/vendor/autoload.php';
         // preparo el evento WebSocket para nuevo pedido
         
-        $clienteWebSocket = new \WebSocket\Client("ws://localhost:8080");
+        $clienteWebSocket = new \WebSocket\Client("ws://localhost:8081");
         
         // preparo el mensaje como JSON
         $mensaje = json_encode([

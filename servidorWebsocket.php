@@ -151,7 +151,7 @@ class ServidorPedidos implements MessageComponentInterface //
 }
 
 // Creo e inicio el servidor
-$ws_port = getenv('WEBSOCKET_PORT') ?: 8080;
+$ws_port = getenv('WEBSOCKET_PORT') ?: (isset($argv[1]) ? intval($argv[1]) : 80);
 $server = IoServer::factory(
     new HttpServer(
         new WsServer(
@@ -162,5 +162,5 @@ $server = IoServer::factory(
 );
 
 // Mensaje indicando que el servidor esta activo (lo pongo para ver que me conecta correctaemente)
-echo "EL  Servidor WebSocket se ha iniciado en el puerto 8080...\n";
+echo "EL  Servidor WebSocket se ha iniciado en el puerto 8081...\n";
 $server->run();

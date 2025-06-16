@@ -9,7 +9,13 @@ window.onerror = function(mensaje, url, linea, columna, error) {
 console.log("Iniciando conexión WebSocket...");
 document.addEventListener('DOMContentLoaded', function() {
     // Creo la conexión WebSocket
-    const ws = new WebSocket('ws://localhost:8080');
+    let wsUrl;
+if (window.location.hostname === "localhost") {
+    wsUrl = "ws://localhost:8081";
+} else {
+    wsUrl = "wss://ws-proyecto-trk1.onrender.com"; // Cambia este dominio si tu WebSocket Render tiene otro nombre
+}
+const ws = new WebSocket(wsUrl);
     
     // Cuando se abre la conexión, detecto en qué página estamos y registro al cliente
     ws.onopen = function() {
