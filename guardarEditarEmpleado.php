@@ -1,6 +1,6 @@
 <?php
     require_once "bd.php";
-    require "sesiones.php";
+    require_once "sesiones.php";
     require "funciones.php";
     comprobar_rol(["administrador"]);
 

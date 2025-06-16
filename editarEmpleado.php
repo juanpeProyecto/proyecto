@@ -2,7 +2,7 @@
     require "cabeceraAdmin.php";
     require_once "bd.php";
     require_once "funciones.php";
-    require "sesiones.php";
+    require_once "sesiones.php";
     comprobar_rol(["administrador"]);
 
     if (!isset($_GET['codEmpleado'])) {//si no hay un empleado muestro mensaje de error

@@ -1,5 +1,5 @@
 <?php
-    require "sesiones.php";
+    require_once "sesiones.php";
     comprobar_rol(["camarero", "cocinero", "barra"]);
 ?>
 <!DOCTYPE html>

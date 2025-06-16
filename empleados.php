@@ -2,7 +2,7 @@
     require "cabeceraAdmin.php"; //
     require_once "bd.php";
     require_once "funciones.php";
-    require "sesiones.php";
+    require_once "sesiones.php";
     comprobar_rol(["administrador"]);
     $conexion = conectarBD();
     $todosEmpleados = cargarEmpleados($conexion); //guardo todos los empleados que tengo en la base de datos mediante la funcion cargarEmpleados

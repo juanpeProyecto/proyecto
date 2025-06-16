@@ -1,5 +1,5 @@
 <?php
-    require "sesiones.php";
+    require_once "sesiones.php";
     comprobar_rol(["administrador"]);
     if (session_status() === PHP_SESSION_NONE) //Si no hay sesion
     {

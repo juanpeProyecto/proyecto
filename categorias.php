@@ -2,7 +2,7 @@
     require "cabeceraAdmin.php"; 
     require_once "bd.php";
     require_once "funciones.php";
-    require "sesiones.php";
+    require_once "sesiones.php";
     comprobar_rol(["administrador"]);
     $conexion = conectarBD();
     $todasCategorias = cargarCategorias($conexion);

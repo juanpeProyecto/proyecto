@@ -1,7 +1,7 @@
 <?php
     require_once "bd.php";
     require_once "funciones.php";
-    require "sesiones.php";
+    require_once "sesiones.php";
     comprobar_rol(["administrador"]);
 
     $codCategoria = intval($_POST['codCategoria']); //hago un casting a int para que no me de error

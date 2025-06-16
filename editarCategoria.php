@@ -1,7 +1,7 @@
 <?php
     require "cabeceraAdmin.php";
     require_once "bd.php";
-    require "sesiones.php";
+    require_once "sesiones.php";
     require_once "funciones.php";
     comprobar_rol(["administrador"]);
 
