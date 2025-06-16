@@ -1,4 +1,3 @@
-
 <?php
     require "cabeceraAdmin.php";
     require_once "bd.php";
