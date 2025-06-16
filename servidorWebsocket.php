@@ -151,13 +151,14 @@ class ServidorPedidos implements MessageComponentInterface //
 }
 
 // Creo e inicio el servidor
+$ws_port = getenv('WEBSOCKET_PORT') ?: 8080;
 $server = IoServer::factory(
     new HttpServer(
         new WsServer(
             new ServidorPedidos()
         )
     ),
-    8080
+    $ws_port
 );
 
 // Mensaje indicando que el servidor esta activo (lo pongo para ver que me conecta correctaemente)

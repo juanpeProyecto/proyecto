@@ -13,4 +13,4 @@ COPY . /var/www/html/
 RUN chown -R www-data:www-data /var/www/html
 
 # Expón el puerto 80 para HTTP
-EXPOSE 80
+EXPOSE 8080

@@ -5,7 +5,7 @@ function comprobar_rol($rolesPermitidos = []) {
         session_start();
     }
     if (!isset($_SESSION["usuario"]) || !in_array($_SESSION["rol"], $rolesPermitidos)) {
-        header("Location: login.php?redirigido=true");
+        header("Location: index.php?redirigido=true");
         exit();
     }
 }

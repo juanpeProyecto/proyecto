@@ -1,8 +1,8 @@
 <?php
   session_start();
   
-  // Cierro la sesión si se accede directamente a login.php
-  if (basename($_SERVER['PHP_SELF']) === 'login.php' && !isset($_POST['usuario']) && isset($_SESSION["usuario"])) {
+  // Cierro la sesión si se accede directamente a index.php
+  if (basename($_SERVER['PHP_SELF']) === 'index.php' && !isset($_POST['usuario']) && isset($_SESSION["usuario"])) {
     session_unset();
     session_destroy();
     // Reinicio la sesión para el formulario de login
@@ -29,7 +29,7 @@
               header("Location: barra.php");
               break;
           default:
-              header("Location: login.php?error=rol");
+              header("Location: index.php?error=rol");
       }
       exit();
   }
@@ -53,7 +53,7 @@
       </div>
       <h2 class="text-2xl font-bold text-[#51E080] text-center mb-4">Panel de acceso</h2>
     </div>
-    <form action="login.php" method="POST" class="flex flex-col gap-6">
+    <form action="index.php" method="POST" class="flex flex-col gap-6">
       <div class="relative">
         <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[#51B2E0] text-3xl">person</span>
         <input type="text" id="usuario" name="usuario" required placeholder="Correo" class="pl-14 pr-4 py-4 w-full rounded-xl border-2 border-[#51B2E0] text-lg sm:text-xl bg-[#E0FAF4] text-[#2773A5] placeholder-[#51B2E0]">
@@ -73,14 +73,14 @@
       $usuario = $_POST['usuario'] ?? '';
       $contrasena = $_POST['contrasena'] ?? '';
 
-      // Busco aa el usuario en la base de datos y lo guardo en una variable
+      // Busco al usuario en la base de datos y lo guardo en una variable
       $stmt = $conexion->prepare("SELECT * FROM Empleados WHERE Correo = ? LIMIT 1");
       $stmt->bind_param('s', $usuario);
       $stmt->execute();
       $resultado = $stmt->get_result();
 
-      if ($resultado && pg_num_rows($resultado) === 1) {
-          $empleado = pg_fetch_assoc($resultado);
+      if ($resultado && $resultado->num_rows === 1) {
+          $empleado = $resultado->fetch_assoc();
           
           // Verifico la contraseña
           if (password_verify($contrasena, $empleado["Clave"])) {
@@ -102,7 +102,7 @@
                       header("Location: barra.php");
                       break;
                   default:
-                      header("Location: login.php?error=rol");
+                      header("Location: index.php?error=rol");
               }
               exit();
           } else {
