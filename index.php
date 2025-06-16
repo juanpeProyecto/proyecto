@@ -35,6 +35,67 @@
   }
 ?>
 
+<?php
+// --- LÓGICA DE LOGIN Y DEPURACIÓN ANTES DE CUALQUIER HTML ---
+$debug_html = '';
+$error = null;
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $usuario = trim(strtolower($_POST['usuario'] ?? ''));
+    $contrasena = trim($_POST['contrasena'] ?? '');
+    $stmt = $conexion->prepare("SELECT * FROM Empleados WHERE Correo = ? LIMIT 1");
+    $stmt->bind_param('s', $usuario);
+    $stmt->execute();
+    $resultado = $stmt->get_result();
+    if ($resultado && $resultado->num_rows === 1) {
+        $empleado = $resultado->fetch_assoc();
+        // Depuración en consola
+        echo "<script>console.log('Usuario introducido: ", addslashes($usuario), "');</script>";
+        echo "<script>console.log('Contraseña introducida: ", addslashes($contrasena), "');</script>";
+        echo "<script>console.log('Contraseña en BD: ", addslashes($empleado['Clave']), "');</script>";
+        echo "<script>console.log('Valor introducido: ', '" . addslashes($contrasena) . "');</script>";
+        echo "<script>console.log('Valor BD: ', '" . addslashes($empleado['Clave']) . "');</script>";
+        echo "<script>console.log('Longitud introducido: ', " . strlen($contrasena) . ");</script>";
+        echo "<script>console.log('Longitud BD: ', " . strlen($empleado['Clave']) . ");</script>";
+        $debug_html .= '<div style="background:#ffe0e0;color:#a00;padding:10px;margin:10px 0;border-radius:8px;max-width:500px;text-align:left;font-size:1em;">';
+        $debug_html .= '<b>DEBUG LOGIN</b><br>';
+        $debug_html .= 'Usuario introducido: ' . htmlspecialchars($usuario) . '<br>';
+        $debug_html .= 'Contraseña introducida: ' . htmlspecialchars($contrasena) . '<br>';
+        $debug_html .= 'Contraseña en BD: ' . htmlspecialchars($empleado['Clave']) . '<br>';
+        $debug_html .= '</div>';
+        if ($contrasena === $empleado["Clave"]) {
+            echo "<script>console.log('Comparación EXACTA: OK');</script>";
+            $_SESSION["usuario"] = $empleado["Nombre"];
+            $_SESSION["rol"] = $empleado["Rol"];
+            switch ($_SESSION["rol"]) {
+                case "administrador":
+                    header("Location: admin.php");
+                    break;
+                case "camarero":
+                    header("Location: camarero.php");
+                    break;
+                case "cocinero":
+                    header("Location: cocina.php");
+                    break;
+                case "barra":
+                    header("Location: barra.php");
+                    break;
+                default:
+                    header("Location: index.php?error=rol");
+                    break;
+            }
+            exit();
+        } else {
+            echo "<script>console.log('Comparación EXACTA: FALLO');</script>";
+            $debug_html .= '<div style="background:#ffe0e0;color:#a00;padding:10px;margin:10px 0;border-radius:8px;max-width:500px;text-align:left;font-size:1em;">Comparación: <b>FALLO</b></div>';
+            $error = "Contraseña incorrecta";
+        }
+    } else {
+        echo "<script>console.log('Usuario no encontrado en la BD');</script>";
+        $debug_html .= '<div style="background:#ffe0e0;color:#a00;padding:10px;margin:10px 0;border-radius:8px;max-width:500px;text-align:left;font-size:1em;">Usuario no encontrado en la base de datos</div>';
+        $error = "Usuario no encontrado";
+    }
+}
+?>
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -68,81 +129,10 @@
   </div>
 </body>
 </html>
-<?php
-  if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-      $usuario = trim(strtolower($_POST['usuario'] ?? ''));
-      $contrasena = trim($_POST['contrasena'] ?? '');
-
-      // Busco al usuario en la base de datos y lo guardo en una variable
-      $stmt = $conexion->prepare("SELECT * FROM Empleados WHERE Correo = ? LIMIT 1");
-      $stmt->bind_param('s', $usuario);
-      $stmt->execute();
-      $resultado = $stmt->get_result();
-
-      if ($resultado && $resultado->num_rows === 1) {
-          $empleado = $resultado->fetch_assoc();
-          
-          // Verifico la contraseña
-          // DEBUG: Mostrar datos en consola JS y en la interfaz
-            echo "<script>console.log('Usuario introducido: ", addslashes($usuario), "');</script>";
-            echo "<script>console.log('Contraseña introducida: ", addslashes($contrasena), "');</script>";
-            echo "<script>console.log('Contraseña en BD: ", addslashes($empleado['Clave']), "');</script>";
-            // También mostramos en la interfaz
-            echo '<div style="background:#ffe0e0;color:#a00;padding:10px;margin:10px 0;border-radius:8px;max-width:500px;text-align:left;font-size:1em;">';
-            echo '<b>DEBUG LOGIN</b><br>';
-            echo 'Usuario introducido: ' . htmlspecialchars($usuario) . '<br>';
-            echo 'Contraseña introducida: ' . htmlspecialchars($contrasena) . '<br>';
-            echo 'Contraseña en BD: ' . htmlspecialchars($empleado['Clave']) . '<br>';
-            echo '</div>';
-            // Depuración de comparación detallada
-            echo "<script>console.log('Valor introducido: ', '" . addslashes($contrasena) . "');</script>";
-            echo "<script>console.log('Valor BD: ', '" . addslashes($empleado['Clave']) . "');</script>";
-            echo "<script>console.log('Longitud introducido: ', " . strlen($contrasena) . ");</script>";
-            echo "<script>console.log('Longitud BD: ', " . strlen($empleado['Clave']) . ");</script>";
-            if ($contrasena === $empleado["Clave"]) {
-                echo "<script>console.log('Comparación EXACTA: OK');</script>";
-
-              // si la verificación fue exitosa
-              $_SESSION["usuario"] = $empleado["Nombre"];
-              $_SESSION["rol"] = $empleado["Rol"];
-              // dependiendo del rol que tengamos la aplicacion nos redirigirra a un archivo o a otro
-              switch ($_SESSION["rol"]) {
-                  case "administrador":
-                      header("Location: admin.php");
-                      break;
-                  case "camarero":
-                      header("Location: camarero.php");
-                      break;
-                  case "cocinero":
-                      header("Location: cocina.php");
-                      break;
-                  case "barra":
-                      header("Location: barra.php");
-                      break;
-                  default:
-                      header("Location: index.php?error=rol");
-                      break;
-              }
-              exit();
-          } else {
-            // DEBUG: Contraseña incorrecta
-            echo "<script>console.log('Comparación EXACTA: FALLO');</script>";
-            echo '<div style="background:#ffe0e0;color:#a00;padding:10px;margin:10px 0;border-radius:8px;max-width:500px;text-align:left;font-size:1em;">Comparación: <b>FALLO</b></div>';
-            $error = "Contraseña incorrecta"; //si el usuario se equivoca en la contraseña lo avisamos con un mensaje
-        }
-      } else {
-        // DEBUG: Usuario no encontrado
-        echo "<script>console.log('Usuario no encontrado en la BD');</script>";
-        echo '<div style="background:#ffe0e0;color:#a00;padding:10px;margin:10px 0;border-radius:8px;max-width:500px;text-align:left;font-size:1em;">Usuario no encontrado en la base de datos</div>';
-        $error = "Usuario no encontrado"; //si el usuario no se encuentra nos saldrá este error
-    }
-  }
-  if (isset($error)): 
-?>
+<?php if (isset($error)): ?>
     <div class="text-red-600 text-center font-bold mt-4 mb-2 text-xl"><?= htmlspecialchars($error) ?></div>
-<?php 
-  endif; 
-?>
+    <?= $debug_html ?>
+<?php endif; ?>
 <div style="background: #FFF3CD; color: #856404; border: 1px solid #FFEEBA; padding: 18px; border-radius: 12px; margin: 20px auto; max-width: 500px; text-align: center; font-size: 1.1em;">
     <b>DEBUG LOGIN</b><br>
     <?php
