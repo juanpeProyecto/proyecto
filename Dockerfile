@@ -22,5 +22,14 @@ COPY . /var/www/html/
 # Da permisos correctos
 RUN chown -R www-data:www-data /var/www/html
 
+# Instala supervisord
+RUN apt-get update && apt-get install -y supervisor
+
+# Copia la configuración de supervisord
+COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+
 # Expón el puerto 8080 para HTTP
 EXPOSE 8080
+
+# Lanza Apache y el WebSocket con supervisord
+CMD ["/usr/bin/supervisord"]
