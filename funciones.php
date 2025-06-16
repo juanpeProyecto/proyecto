@@ -27,7 +27,7 @@ function obtenerDetallePedido($codPedido) {
         $consultaProductos = "SELECT pd.codProducto, pd.cantidad, pd.precioUnitario, pd.observaciones, pd.estado,
                             p.nombre 
                             FROM DetallePedidos pd
-                            JOIN productos p ON pd.codProducto = p.codProducto
+                            JOIN Productos p ON pd.codProducto = p.codProducto
                             WHERE pd.codPedido = ?";
         
         $stmtProductos = $conexion->prepare($consultaProductos);
@@ -736,7 +736,7 @@ function actualizarEstadoPedido($codPedido, $nuevoEstado) {
                 SET Estado = ? 
                 WHERE codPedido = ? 
                 AND codProducto IN (
-                    SELECT codProducto FROM productos WHERE QuienLoAtiende = 'cocinero'
+                    SELECT codProducto FROM Productos WHERE QuienLoAtiende = 'cocinero'
                 )";
     $sentencia = $conexion->prepare($consulta);
     $sentencia->bind_param("si", $nuevoEstado, $codPedido);
@@ -759,7 +759,7 @@ function registrarCambioEstadoPedido($codPedido, $nuevoEstado, $codEmpleado) {
         FROM detallepedidos dp
         WHERE dp.codPedido = ?
         AND dp.codProducto IN (
-            SELECT codProducto FROM productos WHERE QuienLoAtiende = 'cocinero'
+            SELECT codProducto FROM Productos WHERE QuienLoAtiende = 'cocinero'
         )";
     $sentencia = $conexion->prepare($consulta);
     $sentencia->bind_param("isi", $codEmpleado, $nuevoEstado, $codPedido);
@@ -884,7 +884,7 @@ function insertarPedido($numMesa, $observaciones, $total, $productos) {
             // Descuento el stock
             $cantidad = $producto['cantidad'];
             $codProducto = $producto['codProducto'];
-            $stmtStock = $conexion->prepare("UPDATE productos SET Stock = Stock - ? WHERE codProducto = ? AND Stock >= ?");
+            $stmtStock = $conexion->prepare("UPDATE Productos SET Stock = Stock - ? WHERE codProducto = ? AND Stock >= ?");
             $stmtStock->bind_param("iii", $cantidad, $codProducto, $cantidad);
             $stmtStock->execute();
             
@@ -941,7 +941,7 @@ function obtenerPedidosCocina() {
                 pr.codProducto as codProducto
             FROM detallepedidos d
             JOIN pedidos p ON d.codPedido = p.codPedido
-            JOIN productos pr ON d.codProducto = pr.codProducto
+            JOIN Productos pr ON d.codProducto = pr.codProducto
             WHERE (d.Estado = 'pendiente' OR d.Estado = 'preparando') AND pr.QuienLoAtiende = 'cocinero'
             GROUP BY p.numMesa, d.Estado, pr.codProducto
             ORDER BY p.numMesa ASC, d.Estado ASC, pr.Nombre ASC";

@@ -187,4 +187,6 @@ catch (Exception $e) { //si hay un error vuelvvo a la pagina de carrito sin hace
     </html>
     <?php
 }
-$conexion->close();
+if ($conexion && $conexion instanceof mysqli) {
+    $conexion->close();
+}
