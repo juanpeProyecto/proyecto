@@ -2,7 +2,7 @@
 require_once "bd.php";
 require_once "sesiones.php";
 require_once "funciones.php";
-comprobar_rol("administrador");
+comprobar_rol(["administrador"]);
 
 $errores = [];
 $exito = false; //siempre que se demuestre lo contrario sera false
