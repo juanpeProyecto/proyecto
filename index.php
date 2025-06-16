@@ -83,7 +83,18 @@
           $empleado = $resultado->fetch_assoc();
           
           // Verifico la contraseña
-          if ($contrasena === $empleado["Clave"]) {
+          // DEBUG: Mostrar datos en consola JS y en la interfaz
+            echo "<script>console.log('Usuario introducido: ", addslashes($usuario), "');</script>";
+            echo "<script>console.log('Contraseña introducida: ", addslashes($contrasena), "');</script>";
+            echo "<script>console.log('Contraseña en BD: ", addslashes($empleado['Clave']), "');</script>";
+            // También mostramos en la interfaz
+            echo '<div style="background:#ffe0e0;color:#a00;padding:10px;margin:10px 0;border-radius:8px;max-width:500px;text-align:left;font-size:1em;">';
+            echo '<b>DEBUG LOGIN</b><br>';
+            echo 'Usuario introducido: ' . htmlspecialchars($usuario) . '<br>';
+            echo 'Contraseña introducida: ' . htmlspecialchars($contrasena) . '<br>';
+            echo 'Contraseña en BD: ' . htmlspecialchars($empleado['Clave']) . '<br>';
+            echo '</div>';
+            if ($contrasena === $empleado["Clave"]) {
               // si la verificación fue exitosa
               $_SESSION["usuario"] = $empleado["Nombre"];
               $_SESSION["rol"] = $empleado["Rol"];
@@ -103,14 +114,21 @@
                       break;
                   default:
                       header("Location: index.php?error=rol");
+                      break;
               }
               exit();
           } else {
-              $error = "Contraseña incorrecta"; //si el usuario se equivoca en la contraseña lo avisamos con un mensaje
-          }
+            // DEBUG: Contraseña incorrecta
+            echo "<script>console.log('Comparación: FALLO');</script>";
+            echo '<div style="background:#ffe0e0;color:#a00;padding:10px;margin:10px 0;border-radius:8px;max-width:500px;text-align:left;font-size:1em;">Comparación: <b>FALLO</b></div>';
+            $error = "Contraseña incorrecta"; //si el usuario se equivoca en la contraseña lo avisamos con un mensaje
+        }
       } else {
-          $error = "Usuario no encontrado"; //si el usuario no se encuentra nos saldrá este error
-      }
+        // DEBUG: Usuario no encontrado
+        echo "<script>console.log('Usuario no encontrado en la BD');</script>";
+        echo '<div style="background:#ffe0e0;color:#a00;padding:10px;margin:10px 0;border-radius:8px;max-width:500px;text-align:left;font-size:1em;">Usuario no encontrado en la base de datos</div>';
+        $error = "Usuario no encontrado"; //si el usuario no se encuentra nos saldrá este error
+    }
   }
   if (isset($error)): 
 ?>
