@@ -1,44 +1,46 @@
 <?php
-  session_start();
-  
-  // Cierro la sesión si se accede directamente a index.php
-  if (basename($_SERVER['PHP_SELF']) === 'index.php' && !isset($_POST['usuario']) && isset($_SESSION["usuario"])) {
+ob_start();
+session_start();
+
+// Cierro la sesión si se accede directamente a index.php
+if (basename($_SERVER['PHP_SELF']) === 'index.php' && !isset($_POST['usuario']) && isset($_SESSION["usuario"])) {
     session_unset();
     session_destroy();
     // Reinicio la sesión para el formulario de login
     session_start();
-  }
-  
-  require_once "sesiones.php";
-  require_once "bd.php";
-  $conexion = conectarBD();
-  
-  // Si ya hay una sesión activa y no estamos enviando el formulario, redirigimos según el rol
-  if (isset($_SESSION["usuario"]) && !isset($_POST['usuario'])) {
-      switch ($_SESSION["rol"]) {
-          case "administrador":
-              header("Location: admin.php");
-              break;
-          case "camarero":
-              header("Location: camarero.php");
-              break;
-          case "cocinero":
-              header("Location: cocina.php");
-              break;
-          case "barra":
-              header("Location: barra.php");
-              break;
-          default:
-              header("Location: index.php?error=rol");
-      }
-      exit();
-  }
-?>
+}
 
-<?php
+require_once "sesiones.php";
+require_once "bd.php";
+$conexion = conectarBD();
+
+// Si ya hay una sesión activa y no estamos enviando el formulario, redirigimos según el rol
+if (isset($_SESSION["usuario"]) && !isset($_POST['usuario'])) {
+    switch ($_SESSION["rol"]) {
+        case "administrador":
+            header("Location: admin.php");
+            break;
+        case "camarero":
+            header("Location: camarero.php");
+            break;
+        case "cocinero":
+            header("Location: cocina.php");
+            break;
+        case "barra":
+            header("Location: barra.php");
+            break;
+        default:
+            header("Location: index.php?error=rol");
+    }
+    exit();
+}
+
 // --- LÓGICA DE LOGIN Y DEPURACIÓN ANTES DE CUALQUIER HTML ---
 $debug_html = '';
 $error = null;
+$empleado = null;
+$usuario = '';
+$contrasena = '';
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $usuario = trim(strtolower($_POST['usuario'] ?? ''));
     $contrasena = trim($_POST['contrasena'] ?? '');
@@ -62,7 +64,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $debug_html .= 'Contraseña introducida: ' . htmlspecialchars($contrasena) . '<br>';
         $debug_html .= 'Contraseña en BD: ' . htmlspecialchars($empleado['Clave']) . '<br>';
         $debug_html .= '</div>';
-        if ($contrasena === $empleado["Clave"]) {
+        var_dump($contrasena, $empleado["Clave"], $_SESSION);
+die("DEBUG: Mira arriba los valores y dime qué ves.");
+if ($contrasena === $empleado["Clave"]) {
             echo "<script>console.log('Comparación EXACTA: OK');</script>";
             $_SESSION["usuario"] = $empleado["Nombre"];
             $_SESSION["rol"] = $empleado["Rol"];
@@ -95,6 +99,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $error = "Usuario no encontrado";
     }
 }
+ob_end_flush();
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -126,39 +131,42 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       <button type="submit" class="bg-[#51E080] hover:bg-[#53E051] text-white font-bold py-4 rounded-xl shadow transition text-lg sm:text-xl mt-2 cursor-pointer">Entrar</button>
       <button type="reset" class="bg-[#51B2E0] hover:bg-[#51E080] text-white font-bold py-4 rounded-xl shadow transition text-lg sm:text-xl cursor-pointer">Borrar</button>
     </form>
+
+    <?php if (isset($error)): ?>
+        <div class="text-red-600 text-center font-bold mt-4 mb-2 text-xl"><?= htmlspecialchars($error) ?></div>
+        <?= $debug_html ?>
+    <?php endif; ?>
+
+    <div style="background: #FFF3CD; color: #856404; border: 1px solid #FFEEBA; padding: 18px; border-radius: 12px; margin: 20px auto; max-width: 500px; text-align: center; font-size: 1.1em;">
+        <b>DEBUG LOGIN</b><br>
+        <?php
+        // Prueba conexión y empleados
+        try {
+            $testConn = conectarBD();
+            $testRes = $testConn->query("SELECT COUNT(*) as total FROM Empleados");
+            $row = $testRes->fetch_assoc();
+            echo "Conexión a la base de datos: <span style='color:green'>OK</span><br>";
+            echo "Empleados en la BD: <b>" . $row['total'] . "</b><br>";
+        } catch (Exception $e) {
+            echo "Conexión a la base de datos: <span style='color:red'>FALLO</span><br>";
+            echo "Error: " . htmlspecialchars($e->getMessage()) . "<br>";
+        }
+        ?>
+        <hr style="margin:10px 0;">
+        <?php if (isset($error)): ?>
+            <span style="color:red;"><b><?= htmlspecialchars($error) ?></b></span><br>
+            Usuario introducido: <?= htmlspecialchars($usuario) ?><br>
+            <?php if (isset($empleado)): ?>
+                Hash en BD: <?= htmlspecialchars($empleado['Clave']) ?><br>
+                Password_verify: <?= password_verify($contrasena, $empleado['Clave']) ? "OK" : "FALLO" ?>
+            <?php else: ?>
+                No se encontró empleado con ese correo.
+            <?php endif; ?>
+        <?php else: ?>
+            <span style="color:green;">Sin errores de login detectados.</span>
+        <?php endif; ?>
+    </div>
   </div>
 </body>
 </html>
-<?php if (isset($error)): ?>
-    <div class="text-red-600 text-center font-bold mt-4 mb-2 text-xl"><?= htmlspecialchars($error) ?></div>
-    <?= $debug_html ?>
-<?php endif; ?>
-<div style="background: #FFF3CD; color: #856404; border: 1px solid #FFEEBA; padding: 18px; border-radius: 12px; margin: 20px auto; max-width: 500px; text-align: center; font-size: 1.1em;">
-    <b>DEBUG LOGIN</b><br>
-    <?php
-    // Prueba conexión y empleados
-    try {
-        $testConn = conectarBD();
-        $testRes = $testConn->query("SELECT COUNT(*) as total FROM Empleados");
-        $row = $testRes->fetch_assoc();
-        echo "Conexión a la base de datos: <span style='color:green'>OK</span><br>";
-        echo "Empleados en la BD: <b>" . $row['total'] . "</b><br>";
-    } catch (Exception $e) {
-        echo "Conexión a la base de datos: <span style='color:red'>FALLO</span><br>";
-        echo "Error: " . htmlspecialchars($e->getMessage()) . "<br>";
-    }
-    ?>
-    <hr style="margin:10px 0;">
-    <?php if (isset($error)): ?>
-        <span style="color:red;"><b><?= htmlspecialchars($error) ?></b></span><br>
-        Usuario introducido: <?= htmlspecialchars($usuario) ?><br>
-        <?php if (isset($empleado)): ?>
-            Hash en BD: <?= htmlspecialchars($empleado['Clave']) ?><br>
-            Password_verify: <?= password_verify($contrasena, $empleado['Clave']) ? "OK" : "FALLO" ?>
-        <?php else: ?>
-            No se encontró empleado con ese correo.
-        <?php endif; ?>
-    <?php else: ?>
-        <span style="color:green;">Sin errores de login detectados.</span>
-    <?php endif; ?>
-</div>
+<?php ob_end_flush(); ?>
