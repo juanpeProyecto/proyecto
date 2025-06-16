@@ -118,16 +118,32 @@
 <?php 
   endif; 
 ?>
-<?php if (isset($error)): ?>
-    <div class="text-xs text-center text-gray-500 bg-yellow-100 p-2 rounded-lg mt-2">
-        <?php
-        echo "Usuario introducido: " . htmlspecialchars($usuario) . "<br>";
-        if (isset($empleado)) {
-            echo "Hash en BD: " . htmlspecialchars($empleado['Clave']) . "<br>";
-            echo "Password_verify: " . (password_verify($contrasena, $empleado['Clave']) ? "OK" : "FALLO");
-        } else {
-            echo "No se encontró empleado con ese correo.";
-        }
-        ?>
-    </div>
-<?php endif; ?>
+<div style="background: #FFF3CD; color: #856404; border: 1px solid #FFEEBA; padding: 18px; border-radius: 12px; margin: 20px auto; max-width: 500px; text-align: center; font-size: 1.1em;">
+    <b>DEBUG LOGIN</b><br>
+    <?php
+    // Prueba conexión y empleados
+    try {
+        $testConn = conectarBD();
+        $testRes = $testConn->query("SELECT COUNT(*) as total FROM Empleados");
+        $row = $testRes->fetch_assoc();
+        echo "Conexión a la base de datos: <span style='color:green'>OK</span><br>";
+        echo "Empleados en la BD: <b>" . $row['total'] . "</b><br>";
+    } catch (Exception $e) {
+        echo "Conexión a la base de datos: <span style='color:red'>FALLO</span><br>";
+        echo "Error: " . htmlspecialchars($e->getMessage()) . "<br>";
+    }
+    ?>
+    <hr style="margin:10px 0;">
+    <?php if (isset($error)): ?>
+        <span style="color:red;"><b><?= htmlspecialchars($error) ?></b></span><br>
+        Usuario introducido: <?= htmlspecialchars($usuario) ?><br>
+        <?php if (isset($empleado)): ?>
+            Hash en BD: <?= htmlspecialchars($empleado['Clave']) ?><br>
+            Password_verify: <?= password_verify($contrasena, $empleado['Clave']) ? "OK" : "FALLO" ?>
+        <?php else: ?>
+            No se encontró empleado con ese correo.
+        <?php endif; ?>
+    <?php else: ?>
+        <span style="color:green;">Sin errores de login detectados.</span>
+    <?php endif; ?>
+</div>
