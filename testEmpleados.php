@@ -31,7 +31,7 @@ if ($result && $result->num_rows > 0) {
 } else {
     echo "No hay empleados en la base de datos.";
 }
-
+//clave bd nube
 //Pk5WcimQ346Jz7mre3wt
 $conn->close();
 ?>
