@@ -44,6 +44,7 @@ VALUES
 ('Juan', 'Perez Garcia', 'juan.perez@email.com', '600123456', 'administrador', 'admin123'),
 ('Ana', 'Lopez Ruiz', 'ana.lopez@email.com', '600654321', 'camarero', 'camarero123'),
 ('Luis', 'Martinez Soto', 'luis.martinez@email.com', '600789123', 'cocinero', 'cocinero123');
+('admin', 'admin', 'admin@gmail.com', '600789123', 'administrador', 'admin');
 
 CREATE TABLE Productos (
     codProducto INT PRIMARY KEY AUTO_INCREMENT,
