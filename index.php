@@ -50,23 +50,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $resultado = $stmt->get_result();
     if ($resultado && $resultado->num_rows === 1) {
         $empleado = $resultado->fetch_assoc();
-        // Depuración en consola
-        echo "<script>console.log('Usuario introducido: ", addslashes($usuario), "');</script>";
-        echo "<script>console.log('Contraseña introducida: ", addslashes($contrasena), "');</script>";
-        echo "<script>console.log('Contraseña en BD: ", addslashes($empleado['Clave']), "');</script>";
-        echo "<script>console.log('Valor introducido: ', '" . addslashes($contrasena) . "');</script>";
-        echo "<script>console.log('Valor BD: ', '" . addslashes($empleado['Clave']) . "');</script>";
-        echo "<script>console.log('Longitud introducido: ', " . strlen($contrasena) . ");</script>";
-        echo "<script>console.log('Longitud BD: ', " . strlen($empleado['Clave']) . ");</script>";
+        // Depuración solo para mostrar después, no antes del header
         $debug_html .= '<div style="background:#ffe0e0;color:#a00;padding:10px;margin:10px 0;border-radius:8px;max-width:500px;text-align:left;font-size:1em;">';
         $debug_html .= '<b>DEBUG LOGIN</b><br>';
         $debug_html .= 'Usuario introducido: ' . htmlspecialchars($usuario) . '<br>';
         $debug_html .= 'Contraseña introducida: ' . htmlspecialchars($contrasena) . '<br>';
         $debug_html .= 'Contraseña en BD: ' . htmlspecialchars($empleado['Clave']) . '<br>';
         $debug_html .= '</div>';
-        var_dump($contrasena, $empleado["Clave"], $_SESSION);
-die("DEBUG: Mira arriba los valores y dime qué ves.");
-if ($contrasena === $empleado["Clave"]) {
+        if ($contrasena === $empleado["Clave"]) {
             echo "<script>console.log('Comparación EXACTA: OK');</script>";
             $_SESSION["usuario"] = $empleado["Nombre"];
             $_SESSION["rol"] = $empleado["Rol"];
