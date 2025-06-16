@@ -1,6 +1,6 @@
 <?php
 require "cabeceraAdmin.php";
-require 'sesiones.php';
+require_once 'sesiones.php';
 comprobar_rol(["administrador"]);
 ?>
 <!DOCTYPE html>
