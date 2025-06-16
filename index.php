@@ -70,8 +70,8 @@
 </html>
 <?php
   if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-      $usuario = $_POST['usuario'] ?? '';
-      $contrasena = $_POST['contrasena'] ?? '';
+      $usuario = trim(strtolower($_POST['usuario'] ?? ''));
+      $contrasena = trim($_POST['contrasena'] ?? '');
 
       // Busco al usuario en la base de datos y lo guardo en una variable
       $stmt = $conexion->prepare("SELECT * FROM Empleados WHERE Correo = ? LIMIT 1");
@@ -94,7 +94,14 @@
             echo 'Contraseña introducida: ' . htmlspecialchars($contrasena) . '<br>';
             echo 'Contraseña en BD: ' . htmlspecialchars($empleado['Clave']) . '<br>';
             echo '</div>';
+            // Depuración de comparación detallada
+            echo "<script>console.log('Valor introducido: ', '" . addslashes($contrasena) . "');</script>";
+            echo "<script>console.log('Valor BD: ', '" . addslashes($empleado['Clave']) . "');</script>";
+            echo "<script>console.log('Longitud introducido: ', " . strlen($contrasena) . ");</script>";
+            echo "<script>console.log('Longitud BD: ', " . strlen($empleado['Clave']) . ");</script>";
             if ($contrasena === $empleado["Clave"]) {
+                echo "<script>console.log('Comparación EXACTA: OK');</script>";
+
               // si la verificación fue exitosa
               $_SESSION["usuario"] = $empleado["Nombre"];
               $_SESSION["rol"] = $empleado["Rol"];
@@ -119,7 +126,7 @@
               exit();
           } else {
             // DEBUG: Contraseña incorrecta
-            echo "<script>console.log('Comparación: FALLO');</script>";
+            echo "<script>console.log('Comparación EXACTA: FALLO');</script>";
             echo '<div style="background:#ffe0e0;color:#a00;padding:10px;margin:10px 0;border-radius:8px;max-width:500px;text-align:left;font-size:1em;">Comparación: <b>FALLO</b></div>';
             $error = "Contraseña incorrecta"; //si el usuario se equivoca en la contraseña lo avisamos con un mensaje
         }
