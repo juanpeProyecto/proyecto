@@ -32,5 +32,6 @@ if ($result && $result->num_rows > 0) {
     echo "No hay empleados en la base de datos.";
 }
 
+//Pk5WcimQ346Jz7mre3wt
 $conn->close();
 ?>

@@ -873,7 +873,7 @@ function insertarPedido($numMesa, $observaciones, $total, $productos) {
         }
         
         // Inserto el pedido
-        $stmt = $conexion->prepare("INSERT INTO pedidos (numMesa, fecha, observaciones, Total) VALUES (?, NOW(), ?, ?)");
+        $stmt = $conexion->prepare("INSERT INTO Pedidos (numMesa, fecha, observaciones, Total) VALUES (?, NOW(), ?, ?)");
         $stmt->bind_param("isd", $numMesa, $observaciones, $total);
         $stmt->execute();
         $codPedido = $conexion->insert_id;
