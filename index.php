@@ -118,3 +118,16 @@
 <?php 
   endif; 
 ?>
+<?php if (isset($error)): ?>
+    <div class="text-xs text-center text-gray-500 bg-yellow-100 p-2 rounded-lg mt-2">
+        <?php
+        echo "Usuario introducido: " . htmlspecialchars($usuario) . "<br>";
+        if (isset($empleado)) {
+            echo "Hash en BD: " . htmlspecialchars($empleado['Clave']) . "<br>";
+            echo "Password_verify: " . (password_verify($contrasena, $empleado['Clave']) ? "OK" : "FALLO");
+        } else {
+            echo "No se encontró empleado con ese correo.";
+        }
+        ?>
+    </div>
+<?php endif; ?>
