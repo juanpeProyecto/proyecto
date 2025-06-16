@@ -15,45 +15,11 @@ try {
     $precioUnitarioArr = isset($_POST['precioUnitario']) ? (array)$_POST['precioUnitario'] : []; 
     $observacionesProductoArr = isset($_POST['observacionesProducto']) ? (array)$_POST['observacionesProducto'] : []; // observaciones por producto
 
-    // valido los datos
+    // valida los datos antes de cualquier salida
     if (!$numMesa || empty($codProductoArr) || empty($cantidadArr) || empty($precioUnitarioArr)) {
-    ?>
-    <!DOCTYPE html>
-    <html lang="es">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link href="src/output.css" rel="stylesheet">
-        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
-        <title>Confirmar Pedido</title>
-    </head>
-    <body class="bg-gradient-to-br from-[#E0FAF4] to-[#51B2E0] min-h-screen flex items-center justify-center p-4">
-        <div class="bg-white/90 rounded-2xl shadow-lg p-8 max-w-lg w-full text-center">
-            <span class="material-symbols-outlined text-5xl text-[#E57373] mb-4">error</span>
-            <h2 class="text-2xl font-bold text-[#E57373] mb-4">Error al procesar el pedido</h2>
-            <p class="text-[#256353] mb-6">
-                <?php 
-                if (!$numMesa) {
-                    echo 'No se ha especificado un número de mesa válido.';
-                } else {
-                    echo 'Datos de productos incompletos. No se pudo procesar el pedido.';
-                }
-                ?>
-            </p>
-            <a href="carrito.php<?php echo isset($numMesa) ? '?numMesa='.urlencode($numMesa) : '';?>" class="inline-flex items-center justify-center gap-2 bg-[#51B2E0] hover:bg-[#72E8AC] text-white hover:text-[#256353] px-6 py-2 rounded-lg font-semibold shadow transition-all duration-200">
-                <span class="material-symbols-outlined">arrow_back</span>
-                Volver al carrito
-            </a>
-        </div>
-    </body>
-    </html>
-    <?php
-    exit();
-}
-
-    // valido los datos
-    if (!$numMesa || empty($codProductoArr) || empty($cantidadArr) || empty($precioUnitarioArr)) {
-        throw new Exception("Datos del formulario incompletos");
+        $carritoUrl = 'carrito.php' . ($numMesa ? ('?numMesa=' . urlencode($numMesa)) : '');
+        header('Location: ' . $carritoUrl);
+        exit();
     }
 
     // preparo el array de productos para la funcion insertarPedido
