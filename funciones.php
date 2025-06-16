@@ -695,10 +695,13 @@ function obtenerPedidosPendientes() {
 //funcion que devuelve una categoria por su codigo
 function obtenerCategoriaPorId($codCategoria) {
     $conexion = conectarBD();
-    $sql = "SELECT * FROM Categorias WHERE codCategoria = $1";
-    $result = pg_query_params($conexion, $sql, array($codCategoria));
-    $categoria = pg_fetch_assoc($result);
-    pg_free_result($result);
+    $stmt = $conexion->prepare("SELECT * FROM Categorias WHERE codCategoria = ?");
+    $stmt->bind_param("i", $codCategoria);
+    $stmt->execute();
+    $resultado = $stmt->get_result();
+    $categoria = $resultado->fetch_assoc();
+    $stmt->close();
+    $conexion->close();
     return $categoria;
 }
 //funcion que devuelve un empleado por su codigo
