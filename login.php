@@ -79,8 +79,8 @@
       $stmt->execute();
       $resultado = $stmt->get_result();
 
-      if ($resultado && $resultado->num_rows === 1) {
-          $empleado = $resultado->fetch_assoc();
+      if ($resultado && pg_num_rows($resultado) === 1) {
+          $empleado = pg_fetch_assoc($resultado);
           
           // Verifico la contraseña
           if (password_verify($contrasena, $empleado["Clave"])) {
