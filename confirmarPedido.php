@@ -190,3 +190,4 @@ catch (Exception $e) { //si hay un error vuelvvo a la pagina de carrito sin hace
 if ($conexion && $conexion instanceof mysqli) {
     $conexion->close();
 }
+//lh
