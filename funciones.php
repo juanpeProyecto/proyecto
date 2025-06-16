@@ -732,7 +732,7 @@ function verificarPedidoExiste($codPedido) {
 //funcion que actualiza el estado de un pedido
 function actualizarEstadoPedido($codPedido, $nuevoEstado) {
     $conexion = conectarBD();
-    $consulta = "UPDATE detallepedidos 
+    $consulta = "UPDATE DetallePedidos 
                 SET Estado = ? 
                 WHERE codPedido = ? 
                 AND codProducto IN (
@@ -756,7 +756,7 @@ function registrarCambioEstadoPedido($codPedido, $nuevoEstado, $codEmpleado) {
             NOW(), 
             dp.codDetallePedido, 
             ?
-        FROM detallepedidos dp
+        FROM DetallePedidos dp
         WHERE dp.codPedido = ?
         AND dp.codProducto IN (
             SELECT codProducto FROM Productos WHERE QuienLoAtiende = 'cocinero'
@@ -894,7 +894,7 @@ function insertarPedido($numMesa, $observaciones, $total, $productos) {
             $stmtStock->close();
             
             // Inserto el detalle del pedido
-            $stmtDetalle = $conexion->prepare("INSERT INTO detallepedidos 
+            $stmtDetalle = $conexion->prepare("INSERT INTO DetallePedidos 
                 (codPedido, codProducto, cantidad, precioUnitario, Estado, Observaciones) 
                 VALUES (?, ?, ?, ?, 'pendiente', ?)");
             $observacionesProducto = $producto['observaciones'] ?? '';
@@ -933,18 +933,18 @@ function obtenerPedidosCocina() {
     // Primero obtendre todos los detalles de pedidos pendientes o en preparacion
     //consulta que me devuelve todos los detalles de pedidos pendientes o en preparacion
     $sql = "SELECT 
-                GROUP_CONCAT(d.codDetallePedido) as codsPedido, 
+                GROUP_CONCAT(dp.codDetallePedido) as codsPedido, 
                 p.numMesa, 
-                d.Estado as estado, 
-                SUM(d.Cantidad) as cantidad, 
+                dp.Estado as estado, 
+                SUM(dp.Cantidad) as cantidad, 
                 pr.Nombre as nombre,
                 pr.codProducto as codProducto
-            FROM detallepedidos d
-            JOIN pedidos p ON d.codPedido = p.codPedido
-            JOIN Productos pr ON d.codProducto = pr.codProducto
-            WHERE (d.Estado = 'pendiente' OR d.Estado = 'preparando') AND pr.QuienLoAtiende = 'cocinero'
-            GROUP BY p.numMesa, d.Estado, pr.codProducto
-            ORDER BY p.numMesa ASC, d.Estado ASC, pr.Nombre ASC";
+            FROM DetallePedidos dp
+            JOIN pedidos p ON dp.codPedido = p.codPedido
+            JOIN Productos pr ON dp.codProducto = pr.codProducto
+            WHERE (dp.Estado = 'pendiente' OR dp.Estado = 'preparando') AND pr.QuienLoAtiende = 'cocinero'
+            GROUP BY p.numMesa, dp.Estado, pr.codProducto
+            ORDER BY p.numMesa ASC, dp.Estado ASC, pr.Nombre ASC";
 
     $stmt = $conexion->prepare($sql);
     $stmt->execute();
