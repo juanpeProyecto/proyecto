@@ -476,7 +476,7 @@ function anadirCategoria($nombre, $descripcion) {
 function anadirEmpleado($nombre, $apellidos, $correo, $telefono, $rol, $contrasena) {
     $conexion = conectarBD();
     $claveHash = password_hash($contrasena, PASSWORD_DEFAULT);
-    $stmt = $conexion->prepare("INSERT INTO EMPLEADOS (Nombre, Apellidos, Correo, Telefono, Rol, Clave) VALUES (?, ?, ?, ?, ?, ?)");
+    $stmt = $conexion->prepare("INSERT INTO Empleados (Nombre, Apellidos, Correo, Telefono, Rol, Clave) VALUES (?, ?, ?, ?, ?, ?)");
     $stmt->bind_param("ssssss", $nombre, $apellidos, $correo, $telefono, $rol, $claveHash);
     $res = $stmt->execute();
     $stmt->close();
