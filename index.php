@@ -160,7 +160,10 @@ ob_end_flush();
   </div>
 </body>
 </html>
-<?php ob_end_flush(); ?>
-<?php // Commit marker para git
+<?php
+if (ob_get_level() > 0) {
+    ob_end_flush();
+}
+// Commit marker para git
 echo "<!-- commit-cambio-cascade -->";
 ?>
