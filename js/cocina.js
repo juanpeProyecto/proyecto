@@ -78,7 +78,7 @@ function mostrarMensajeSinPedidos() {
     if (!sinPedidos) {
         sinPedidos = document.createElement('div');
         sinPedidos.id = 'sin-pedidos';
-        sinPedidos.className = 'text-center py-12 px-4';
+        sinPedidos.className = 'text-center py-12 px-4 mt-24'; // Añadido margen superior
         sinPedidos.innerHTML = `
             <span class="material-symbols-outlined text-gray-400 text-5xl mb-3">kitchen</span>
             <p class="text-xl text-gray-700 font-medium mb-2">No hay pedidos pendientes</p>
@@ -428,7 +428,7 @@ function inicializarBotones() {
 
 // Cargo ñlos pedidos pendientes al iniciar (versión específica para cocina)
 function cargarPedidosCocina() {
-    
+    console.log('Cargando pedidos de cocina...');
     
     fetch('cocina.php?action=obtenerPedidosPendientes&area=cocina')
         .then(response => {
@@ -438,8 +438,20 @@ function cargarPedidosCocina() {
             return response.json();
         })
         .then(data => {
-            if (!data.success || !data.pedidos) {
+            // Depuración: Imprime la respuesta completa
+            console.log('Respuesta API:', data);
+            
+            if (!data.success) {
+                console.error('Error en la respuesta:', data.error || 'Error desconocido');
                 throw new Error('Formato de respuesta inválido');
+            }
+            
+            if (!data.pedidos || !Array.isArray(data.pedidos)) {
+                console.warn('No hay pedidos o formato incorrecto:', data.pedidos);
+                // Aseguro que data.pedidos sea un array vacío si no existe
+                data.pedidos = [];
+            } else {
+                console.log(`Se encontraron ${data.pedidos.length} pedidos`);
             }
             
             // Renderizo los pedidos
