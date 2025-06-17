@@ -1,5 +1,5 @@
 <?php
-    //aqui lo que hago es comprobar si la peticion es ajax
+//aqui lo que hago es comprobar si la peticion es ajax
     $esAjax = isset($_SERVER['HTTP_X_REQUESTED_WITH']) && 
               strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest' ||
               (isset($_GET['action']) || isset($_POST['action']) || $_SERVER['REQUEST_METHOD'] === 'POST');
@@ -36,16 +36,13 @@
                 } else {
                     echo $jsonError;
                 }
-                
                 // Registro el error detallado en el log del servidor para depuración interna
                 error_log("AJAX Fatal Error (cocina.php): " . $error['message'] . " in " . $error['file'] . " on line " . $error['line']);
             }
         });
     }
-    
     require_once "funciones.php";
     require_once('bd.php');
-    
     // Procesador de API unificado para cocina
     if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest' || 
         (isset($_GET['action']) || isset($_POST['action']) || $_SERVER['REQUEST_METHOD'] === 'POST')) {
@@ -243,24 +240,11 @@
         }
     }
     
-    // Solo incluyo la cabecera si NO es una petición AJAX
-    if (!isset($_SERVER['HTTP_X_REQUESTED_WITH']) || strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) !== 'xmlhttprequest') {
-        require "cabeceraTrabajador.php";
-    }
-    comprobar_rol(["cocina"]);
-    $conexion = conectarBD();
-?>
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Panel de Cocina</title>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css?v=<?php echo time(); ?>" rel="stylesheet">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0">
-</head>
-<body class="bg-gradient-to-br from-[#E0FAF4] to-[#51B2E0] min-h-screen">
-    <?php
+// Al final del archivo, después de toda la lógica PHP, incluye la cabecera solo si NO es una petición AJAX
+if (!isset($_SERVER['HTTP_X_REQUESTED_WITH']) || strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) !== 'xmlhttprequest') {
+    require "cabeceraTrabajador.php";
+}
+
     // Función para definir la clase CSS según estado
     function getEstadoClass($estado) {
         switch ($estado) {
