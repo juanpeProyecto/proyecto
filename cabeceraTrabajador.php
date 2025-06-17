@@ -1,8 +1,7 @@
 <?php
-// ¡IMPORTANTE! No debe haber salida HTML antes de la gestión de sesión y headers:
 require_once "sesiones.php";
 comprobar_rol(["camarero", "cocinero", "barra"]);
-// Ahora sí, empieza el HTML:
+// Aquí termina la gestión de sesión y rol
 ?>
 <!DOCTYPE html>
 <html lang="es">

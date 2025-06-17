@@ -9,5 +9,6 @@ function comprobar_rol($rolesPermitidos = []) {
         exit();
     }
 }
+?>
 
 
