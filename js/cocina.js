@@ -428,7 +428,7 @@ function inicializarBotones() {
 
 // Cargo ñlos pedidos pendientes al iniciar (versión específica para cocina)
 function cargarPedidosCocina() {
-    mostrarCarga();
+    
     
     fetch('cocina.php?action=obtenerPedidosPendientes&area=cocina')
         .then(response => {
