@@ -91,26 +91,29 @@ function mostrarMensajeSinPedidos() {
 }
 
 function inicializar() {
-    
-    
     // Inicializo los botones de estado
     inicializarBotones();
-    
-    // Cargo los pedidos pendientes al iniciar - Usamos nuestra propia versión
-    // para evitar conflictos con gestionPedidos.js
-    cargarPedidosCocina();
-    
-    // Configuro la conexión WebSocket
+
+    // Si gestionPedidos.js no está activo, cargar pedidos desde aquí
+    if (!window.gestionPedidosActivo) {
+        console.log('cocina.js: gestionPedidos no detectado, cargando pedidos desde cocina.js');
+        cargarPedidosCocina();
+        
+        // Configurar actualizaciones periódicas
+        setInterval(function() {
+            cargarPedidosCocina();
+        }, 30000); // cada 30 segundos
+    } else {
+        console.log('cocina.js: gestionPedidos ya está activo, no cargaré pedidos');
+    }
+
+    // Configuro la conexión WebSocket (siempre necesaria)
     iniciarWebSocket();
-    
+
     // Actualizo los contadores
     actualizarContadores();
-    
-    // Oculto la carga cuando todo esté listo
-    
-    
+
     // Por si acaso, oculto la carga después de 3 segundos como máximo
-    
 }
 
 // Función para actualizar el estado de un producto individual
@@ -426,7 +429,7 @@ function inicializarBotones() {
     });
 }
 
-// Cargo ñlos pedidos pendientes al iniciar (versión específica para cocina)
+// Cargo los pedidos pendientes al iniciar (versión específica para cocina)
 function cargarPedidosCocina() {
     console.log('Cargando pedidos de cocina...');
     
@@ -444,6 +447,35 @@ function cargarPedidosCocina() {
             if (!data.success) {
                 console.error('Error en la respuesta:', data.error || 'Error desconocido');
                 throw new Error('Formato de respuesta inválido');
+            }
+            
+            // Mostrar información de diagnóstico si está disponible
+            if (data.diagnostico) {
+                console.log('%c === DIAGNÓSTICO DE PEDIDOS === ', 'background: #ff8c00; color: white; font-weight: bold;');
+                
+                // Mostrar valores de QuienLoAtiende
+                if (data.diagnostico.valoresQuienLoAtiende) {
+                    console.log('%cValores de QuienLoAtiende en productos:', 'font-weight: bold; color: blue;');
+                    console.table(data.diagnostico.valoresQuienLoAtiende);
+                }
+                
+                // Mostrar pedidos generales sin filtro
+                if (data.diagnostico.pedidosSinFiltro) {
+                    console.log('%cPedidos sin filtro de área:', 'font-weight: bold; color: blue;');
+                    console.table(data.diagnostico.pedidosSinFiltro);
+                    document.getElementById('sin-pedidos').innerHTML += `
+                        <div class="mt-4 p-4 bg-orange-100 border border-orange-300 rounded">
+                            <p class="font-medium">DIAGNÓSTICO: Hay ${data.diagnostico.pedidosSinFiltro.length} pedidos en la base de datos</p>
+                            <p>Pero ninguno tiene productos asignados al área de cocina.</p>
+                        </div>
+                    `;
+                }
+                
+                // Mostrar detalles de productos por pedido
+                if (data.diagnostico.detalleProductosPorPedido) {
+                    console.log('%cDetalle de productos por pedido:', 'font-weight: bold; color: blue;');
+                    console.table(data.diagnostico.detalleProductosPorPedido);
+                }
             }
             
             if (!data.pedidos || !Array.isArray(data.pedidos)) {

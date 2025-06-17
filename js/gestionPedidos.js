@@ -471,9 +471,16 @@ function cargarPedidosPendientes() {
         });
 }
 
+// Variable global para indicar que gestionPedidos está activo
+window.gestionPedidosActivo = false;
+
 // Al cargar el documento, verifico si estamos en la página que usa este contenedor
 document.addEventListener('DOMContentLoaded', function() {
     if (document.getElementById('contenedorPedidos')) {
+        // Indico que gestionPedidos está activo
+        window.gestionPedidosActivo = true;
+        console.log('gestionPedidos.js: Activando carga de pedidos');
+        
         // cargo los pedidos pendientes solo si existe el contenedor
         cargarPedidosPendientes();
     }

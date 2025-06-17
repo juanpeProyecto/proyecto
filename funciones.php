@@ -263,11 +263,14 @@ function cambiarEstadoPedido($codPedido, $estado) {
 
 function obtenerPedidosPendientesArea($area = '') {
     try {
+        // Datos de diagnóstico para incluir en la respuesta
+        $diagnostico = [];
+        
         // Comprobar que podemos conectar a la base de datos
         $conexion = conectarBD();
         if (!$conexion) {
             error_log("Error al conectar con la base de datos");
-            return ['exito' => false, 'mensaje' => 'Error de conexión'];
+            return ['success' => false, 'mensaje' => 'Error de conexión'];
         }
         
         // DEPURACIÓN: Comprobemos qué valores de QuienLoAtiende existen
@@ -279,41 +282,55 @@ function obtenerPedidosPendientesArea($area = '') {
         while ($fila = $resultadoDebug->fetch_assoc()) {
             $valoresLoAtiende[] = $fila['QuienLoAtiende'];
         }
-        error_log("Valores de QuienLoAtiende en la base de datos: " . json_encode($valoresLoAtiende));
+        $diagnostico['valoresQuienLoAtiende'] = $valoresLoAtiende;
         
         // Consulta que hago para obtener los pedidos pendientes o en preparación
         $consulta = "SELECT p.codPedido, p.numMesa, p.Fecha, p.Observaciones, p.Estado, p.Total 
                     FROM Pedidos p
                     WHERE p.Estado IN ('pendiente', 'preparando')";
                     
+        // Consulta sin filtros para verificar si hay pedidos generales
+        $stmtGeneral = $conexion->prepare($consulta);
+        $stmtGeneral->execute();
+        $resultadoGeneral = $stmtGeneral->get_result();
+        $pedidosGenerales = [];
+        while ($fila = $resultadoGeneral->fetch_assoc()) {
+            $pedidosGenerales[] = [
+                'codPedido' => $fila['codPedido'],
+                'numMesa' => $fila['numMesa'],
+                'estado' => $fila['Estado']
+            ];
+        }
+        $diagnostico['pedidosSinFiltro'] = $pedidosGenerales;
+        
         // Filtrar por área si se especifica
         if ($area === 'cocina') {
-            // MODIFICADO: Ahora aceptamos tanto 'cocinero' como 'Cocinero' (case insensitive)
-            $consulta = "SELECT DISTINCT p.codPedido, p.numMesa, p.Fecha, p.Observaciones, p.Estado, p.Total 
+            // MODIFICADO: Ahora aceptamos cualquier valor de QuienLoAtiende (para diagnóstico)
+            $consulta = "SELECT DISTINCT p.codPedido, p.numMesa, p.Fecha, p.Observaciones, p.Estado, p.Total,
+                        pr.QuienLoAtiende 
                         FROM Pedidos p
                         JOIN DetallePedidos d ON p.codPedido = d.codPedido
                         JOIN Productos pr ON d.codProducto = pr.codProducto
                         WHERE d.estado IN ('pendiente', 'preparando')
-                        AND LOWER(pr.QuienLoAtiende) IN ('cocinero', 'cocina')
                         AND p.Estado != 'listo'
                         GROUP BY p.codPedido
                         ORDER BY p.Fecha DESC";
             
-            // DEPURACIÓN: También probemos una consulta más amplia
-            error_log("Ejecutando consulta más amplia para depurar");
-            $consultaAmplia = "SELECT DISTINCT p.codPedido, p.Estado, pr.QuienLoAtiende, d.estado as estadoDetalle
-                            FROM Pedidos p 
-                            JOIN DetallePedidos d ON p.codPedido = d.codPedido
-                            JOIN Productos pr ON d.codProducto = pr.codProducto
-                            WHERE p.Estado IN ('pendiente', 'preparando')";
-            $stmtAmplio = $conexion->prepare($consultaAmplia);
-            $stmtAmplio->execute();
-            $resultadoAmplio = $stmtAmplio->get_result();
-            $pedidosAmplia = [];
-            while ($fila = $resultadoAmplio->fetch_assoc()) {
-                $pedidosAmplia[] = $fila;
+            // DEPURACIÓN: También obtener todos los pedidos con sus productos
+            $consultaDetallada = "SELECT p.codPedido, p.Estado as estadoPedido, d.estado as estadoProducto,
+                                pr.codProducto, pr.Nombre, pr.QuienLoAtiende 
+                                FROM Pedidos p 
+                                JOIN DetallePedidos d ON p.codPedido = d.codPedido
+                                JOIN Productos pr ON d.codProducto = pr.codProducto
+                                WHERE p.Estado IN ('pendiente', 'preparando')";
+            $stmtDetallado = $conexion->prepare($consultaDetallada);
+            $stmtDetallado->execute();
+            $resultadoDetallado = $stmtDetallado->get_result();
+            $pedidosDetallados = [];
+            while ($fila = $resultadoDetallado->fetch_assoc()) {
+                $pedidosDetallados[] = $fila;
             }
-            error_log("Pedidos encontrados sin filtro de área: " . json_encode($pedidosAmplia));
+            $diagnostico['detalleProductosPorPedido'] = $pedidosDetallados;
             
         } else {
             // Ordeno por fecha
@@ -339,6 +356,11 @@ function obtenerPedidosPendientesArea($area = '') {
                 'estado' => $fila['Estado'],
                 'total' => (float)$fila['Total']
             ];
+            
+            // Si estamos en el modo cocina, incluimos el campo QuienLoAtiende para diagnóstico
+            if ($area === 'cocina' && isset($fila['QuienLoAtiende'])) {
+                $pedido['quienLoAtiende'] = $fila['QuienLoAtiende'];
+            }
             
             // Obtengo los productos del pedido
             $consultaProductos = "SELECT d.codProducto, d.cantidad, d.estado, d.Observaciones, p.Nombre, p.Descripcion, p.Precio, p.QuienLoAtiende, p.Foto AS Imagen 
@@ -408,11 +430,12 @@ function obtenerPedidosPendientesArea($area = '') {
             }
         }
         
-        return ['success' => true, 'pedidos' => $pedidos];
+        // Incluyo la información de diagnóstico en la respuesta
+        return ['success' => true, 'pedidos' => $pedidos, 'diagnostico' => $diagnostico];
         
     } catch (Exception $e) {
         error_log("Error en obtenerPedidosPendientesArea: " . $e->getMessage());
-        return ['success' => false, 'error' => $e->getMessage()];
+        return ['success' => false, 'error' => $e->getMessage(), 'diagnostico' => $diagnostico ?? []];
     }
 }
 
