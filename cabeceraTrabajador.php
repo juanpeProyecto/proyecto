@@ -18,8 +18,7 @@ comprobar_rol(["camarero", "cocinero", "barra"]);
             <div class="font-bold text-lg sm:text-xl">
                 <span class="text-[#256353]">Bienvenido, </span>
                 <span class="text-[#51B2E0]"><?php echo isset($_SESSION['usuario']) ? htmlspecialchars($_SESSION['usuario']) : 'Usuario'; ?></span>
-            </div>
-            
+            </div>  
             <div class="flex items-center gap-3">    
                 <a href="logout.php" class="flex items-center gap-1 bg-[#72E8AC] hover:bg-[#51B2E0] text-[#256353] hover:text-white transition-all duration-200 px-3 py-2 rounded-lg shadow font-semibold text-sm border border-[#51E8B0]">
                     <span class="material-symbols-outlined text-sm">logout</span>
