@@ -1,13 +1,23 @@
 <?php
-//aqui lo que hago es comprobar si la peticion es ajax
-    $esAjax = isset($_SERVER['HTTP_X_REQUESTED_WITH']) && 
-              strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest' ||
-              (isset($_GET['action']) || isset($_POST['action']) || $_SERVER['REQUEST_METHOD'] === 'POST');
-    
-    if ($esAjax) { //si es ajax 
-        ob_start();//inicializo el buffer
-        ini_set('display_errors', 0); //deshabilito la salida de errores
-        error_reporting(0); //deshabilito la reporte de errores
+// Primero incluyo las dependencias y verifico roles antes de cualquier output
+require_once "funciones.php";
+require_once "bd.php";
+
+// Solo si es una petición normal (no AJAX) comprobar sesiones
+$esAjax = isset($_SERVER['HTTP_X_REQUESTED_WITH']) && 
+          strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest' ||
+          (isset($_GET['action']) || isset($_POST['action']) || $_SERVER['REQUEST_METHOD'] === 'POST');
+
+if (!$esAjax) {
+    require_once "sesiones.php";
+    comprobar_rol(["camarero", "cocinero", "barra"]);
+}
+
+//si es ajax 
+if ($esAjax) { 
+    ob_start();//inicializo el buffer
+    ini_set('display_errors', 0); //deshabilito la salida de errores
+    error_reporting(0); //deshabilito la reporte de errores
 
         // Registra una función para capturar errores fatales y devolver un formato JSON
         register_shutdown_function(function() {

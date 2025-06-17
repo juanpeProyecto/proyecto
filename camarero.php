@@ -1,9 +1,19 @@
 <?php
-//si no es ajax no se ejecuta el script
-    $esAjax = isset($_SERVER['HTTP_X_REQUESTED_WITH']) && 
-              strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest' ||
-              (isset($_GET['action']) || isset($_POST['action']) || $_SERVER['REQUEST_METHOD'] === 'POST');
-    error_log("camarero.php: Script INICIADO. REQUEST_METHOD: " . ($_SERVER['REQUEST_METHOD'] ?? 'N/A') . ". Es AJAX: " . (isset($esAjax) && $esAjax ? 'Sí' : 'No') . ". GET: " . json_encode($_GET) . ". POST: " . json_encode($_POST) . ". RAW POST: " . file_get_contents('php://input'));
+// Primero incluyo las sesiones y verifico roles antes de cualquier output
+require_once "funciones.php";
+require_once "bd.php";
+
+// Solo si es una petición normal (no AJAX) comprobar sesiones
+$esAjax = isset($_SERVER['HTTP_X_REQUESTED_WITH']) && 
+          strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest' ||
+          (isset($_GET['action']) || isset($_POST['action']) || $_SERVER['REQUEST_METHOD'] === 'POST');
+
+if (!$esAjax) {
+    require_once "sesiones.php";
+    comprobar_rol(["camarero", "cocinero", "barra"]);
+}
+
+error_log("camarero.php: Script INICIADO. REQUEST_METHOD: " . ($_SERVER['REQUEST_METHOD'] ?? 'N/A') . ". Es AJAX: " . (isset($esAjax) && $esAjax ? 'Sí' : 'No') . ". GET: " . json_encode($_GET) . ". POST: " . json_encode($_POST) . ". RAW POST: " . file_get_contents('php://input'));
     
     if ($esAjax) {
         ob_start();
