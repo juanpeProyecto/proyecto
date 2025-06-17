@@ -143,25 +143,30 @@ function actualizarEstadoProducto(boton, estado, codPedido, codProducto, numMesa
     boton.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
     boton.disabled = true;
     
-    // Actualizo la interfaz inmediatamente para mejor experiencia de usuario
-    actualizarEstadoProductoUI(codProducto, estado);
-    
-    // Si el estado es 'listo', eliminamos el producto inmediatamente
-    if (estado === 'listo' && elementoProducto && elementoProducto.parentNode) {
-        elementoProducto.remove();
-        actualizarContadores();
-        // Si no hay más productos en el pedido, eliminamos el pedido
-        if (elementoPedido) {
-            const productosRestantes = elementoPedido.querySelectorAll('.producto');
-            if (productosRestantes.length === 0) {
-                const mesaContenedor = elementoPedido.closest('.mb-8');
-                elementoPedido.remove();
-                if (mesaContenedor) {
-                    verificarYocultarMesaSiVaciaCocina(mesaContenedor);
+    // No actualizo la interfaz hasta que el servidor confirme la actualización
+    // Solo guardo una referencia para después
+    const actualizarUI = () => {
+        actualizarEstadoProductoUI(codProducto, estado);
+        
+        // Si el estado es 'listo', eliminamos el producto 
+        if (estado === 'listo' && elementoProducto && elementoProducto.parentNode) {
+            elementoProducto.remove();
+            actualizarContadores();
+            // Si no hay más productos en el pedido, eliminamos el pedido
+            if (elementoPedido) {
+                const productosRestantes = elementoPedido.querySelectorAll('.producto');
+                if (productosRestantes.length === 0) {
+                    const mesaContenedor = elementoPedido.closest('.mb-8');
+                    elementoPedido.remove();
+                    if (mesaContenedor) {
+                        verificarYocultarMesaSiVaciaCocina(mesaContenedor);
+                    }
                 }
             }
         }
-    }
+    };
+    
+    // No eliminamos nada todavía, esperamos confirmación del servidor
     
     // Creo una promesa para manejar la actualización
     return new Promise((resolve, reject) => {
@@ -213,6 +218,9 @@ function actualizarEstadoProducto(boton, estado, codPedido, codProducto, numMesa
             }
             
             if (data.success) {
+                // Ahora que el servidor confirmó la actualización, actualizo la UI
+                actualizarUI();
+                
                 // Notificación WebSocket si un producto está listo
                 if (estado === 'listo') {
                     if (window.ws && window.ws.readyState === WebSocket.OPEN) {
@@ -224,16 +232,19 @@ function actualizarEstadoProducto(boton, estado, codPedido, codProducto, numMesa
                             numMesa: numMesa
                         };
                         window.ws.send(JSON.stringify(notificacion));
+                        console.log('Notificación enviada:', notificacion);
                     } else {
+                        console.warn('WebSocket no disponible para enviar notificación');
                     }
                 }
 
                 // Verifico si el pedido está completo
                 if (data.pedidoCompleto) {
-                    // El producto y posiblemente el pedido ya se eliminaron en la UI
+                    console.log('Pedido completo:', codPedido);
+                    // El producto y posiblemente el pedido ya se eliminaron en la UI con actualizarUI()
                     actualizarContadores();
                 } else {
-                    actualizarEstadoProductoUI(codProducto, estado);
+                    // Ya no necesito actualizar la UI aquí, lo hago en actualizarUI()
                     if (elementoPedido) {
                         const estadoPedidoElement = elementoPedido.querySelector('.estado-pedido');
                         if (data.estadoPedido && estadoPedidoElement) {
