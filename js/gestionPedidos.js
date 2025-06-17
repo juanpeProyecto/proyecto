@@ -42,7 +42,7 @@ function agregarNuevoPedido(datos) {
     }
     
     // funcion que uso para cargar los detalles del pedido mediante AJAX
-    fetch(`/proyecto/obtenerDetallesPedido.php?cod=${datos.cod}`)
+    fetch(`obtenerDetallesPedido.php?cod=${datos.cod}`)
         .then(response => {
             if (!response.ok) {
                 // Log the raw text of the 404 response to see if it's HTML or our JSON error
@@ -326,7 +326,7 @@ function cargarPedidosPendientes() {
                 }
                 
                 // cargo detalles del pedido mediante AJAX
-                fetch(`/proyecto/obtenerDetallesPedido.php?cod=${pedido.cod}`)
+                fetch(`obtenerDetallesPedido.php?cod=${pedido.cod}`)
                     .then(response => {
                         if (!response.ok) {
                             // Log the raw text of the 404 response to see if it's HTML or our JSON error
