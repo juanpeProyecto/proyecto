@@ -107,10 +107,10 @@ function inicializar() {
     actualizarContadores();
     
     // Oculto la carga cuando todo esté listo
-    window.addEventListener('load', ocultarCarga);
+    
     
     // Por si acaso, oculto la carga después de 3 segundos como máximo
-    setTimeout(ocultarCarga, 3000);
+    
 }
 
 // Función para actualizar el estado de un producto individual
