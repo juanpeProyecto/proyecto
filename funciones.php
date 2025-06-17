@@ -305,15 +305,12 @@ function obtenerPedidosPendientesArea($area = '') {
         
         // Filtrar por área si se especifica
         if ($area === 'cocina') {
-            // MODIFICADO: Ahora aceptamos cualquier valor de QuienLoAtiende (para diagnóstico)
-            $consulta = "SELECT DISTINCT p.codPedido, p.numMesa, p.Fecha, p.Observaciones, p.Estado, p.Total,
-                        pr.QuienLoAtiende 
+            // SOLUCIÓN: Durante la fase de depuración, retornamos TODOS los pedidos pendientes
+            // aunque no tengan productos asignados al cocinero, para ver qué está pasando
+            // Luego podemos volver a filtrar por QuienLoAtiende cuando se arregle la asignación
+            $consulta = "SELECT DISTINCT p.codPedido, p.numMesa, p.Fecha, p.Observaciones, p.Estado, p.Total
                         FROM Pedidos p
-                        JOIN DetallePedidos d ON p.codPedido = d.codPedido
-                        JOIN Productos pr ON d.codProducto = pr.codProducto
-                        WHERE d.estado IN ('pendiente', 'preparando')
-                        AND p.Estado != 'listo'
-                        GROUP BY p.codPedido
+                        WHERE p.Estado IN ('pendiente', 'preparando')
                         ORDER BY p.Fecha DESC";
             
             // DEPURACIÓN: También obtener todos los pedidos con sus productos

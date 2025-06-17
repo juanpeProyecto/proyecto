@@ -463,12 +463,17 @@ function cargarPedidosCocina() {
                 if (data.diagnostico.pedidosSinFiltro) {
                     console.log('%cPedidos sin filtro de área:', 'font-weight: bold; color: blue;');
                     console.table(data.diagnostico.pedidosSinFiltro);
-                    document.getElementById('sin-pedidos').innerHTML += `
-                        <div class="mt-4 p-4 bg-orange-100 border border-orange-300 rounded">
-                            <p class="font-medium">DIAGNÓSTICO: Hay ${data.diagnostico.pedidosSinFiltro.length} pedidos en la base de datos</p>
-                            <p>Pero ninguno tiene productos asignados al área de cocina.</p>
-                        </div>
-                    `;
+                    
+                    // Verificamos si existe el elemento antes de modificarlo
+                    const sinPedidos = document.getElementById('sin-pedidos');
+                    if (sinPedidos) {
+                        sinPedidos.innerHTML += `
+                            <div class="mt-4 p-4 bg-orange-100 border border-orange-300 rounded">
+                                <p class="font-medium">DIAGNÓSTICO: Hay ${data.diagnostico.pedidosSinFiltro.length} pedidos en la base de datos</p>
+                                <p>Pero ninguno tiene productos asignados al área de cocina.</p>
+                            </div>
+                        `;
+                    }
                 }
                 
                 // Mostrar detalles de productos por pedido
