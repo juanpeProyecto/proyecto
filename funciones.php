@@ -270,6 +270,17 @@ function obtenerPedidosPendientesArea($area = '') {
             return ['exito' => false, 'mensaje' => 'Error de conexión'];
         }
         
+        // DEPURACIÓN: Comprobemos qué valores de QuienLoAtiende existen
+        $consultaDebug = "SELECT DISTINCT QuienLoAtiende FROM Productos";
+        $stmtDebug = $conexion->prepare($consultaDebug);
+        $stmtDebug->execute();
+        $resultadoDebug = $stmtDebug->get_result();
+        $valoresLoAtiende = [];
+        while ($fila = $resultadoDebug->fetch_assoc()) {
+            $valoresLoAtiende[] = $fila['QuienLoAtiende'];
+        }
+        error_log("Valores de QuienLoAtiende en la base de datos: " . json_encode($valoresLoAtiende));
+        
         // Consulta que hago para obtener los pedidos pendientes o en preparación
         $consulta = "SELECT p.codPedido, p.numMesa, p.Fecha, p.Observaciones, p.Estado, p.Total 
                     FROM Pedidos p
@@ -277,16 +288,33 @@ function obtenerPedidosPendientesArea($area = '') {
                     
         // Filtrar por área si se especifica
         if ($area === 'cocina') {
-            // consulto  los pedidos que tengan al menos un producto pendiente o en preparación
+            // MODIFICADO: Ahora aceptamos tanto 'cocinero' como 'Cocinero' (case insensitive)
             $consulta = "SELECT DISTINCT p.codPedido, p.numMesa, p.Fecha, p.Observaciones, p.Estado, p.Total 
                         FROM Pedidos p
                         JOIN DetallePedidos d ON p.codPedido = d.codPedido
                         JOIN Productos pr ON d.codProducto = pr.codProducto
                         WHERE d.estado IN ('pendiente', 'preparando')
-                        AND pr.QuienLoAtiende = 'cocinero'
+                        AND LOWER(pr.QuienLoAtiende) IN ('cocinero', 'cocina')
                         AND p.Estado != 'listo'
                         GROUP BY p.codPedido
                         ORDER BY p.Fecha DESC";
+            
+            // DEPURACIÓN: También probemos una consulta más amplia
+            error_log("Ejecutando consulta más amplia para depurar");
+            $consultaAmplia = "SELECT DISTINCT p.codPedido, p.Estado, pr.QuienLoAtiende, d.estado as estadoDetalle
+                            FROM Pedidos p 
+                            JOIN DetallePedidos d ON p.codPedido = d.codPedido
+                            JOIN Productos pr ON d.codProducto = pr.codProducto
+                            WHERE p.Estado IN ('pendiente', 'preparando')";
+            $stmtAmplio = $conexion->prepare($consultaAmplia);
+            $stmtAmplio->execute();
+            $resultadoAmplio = $stmtAmplio->get_result();
+            $pedidosAmplia = [];
+            while ($fila = $resultadoAmplio->fetch_assoc()) {
+                $pedidosAmplia[] = $fila;
+            }
+            error_log("Pedidos encontrados sin filtro de área: " . json_encode($pedidosAmplia));
+            
         } else {
             // Ordeno por fecha
             $consulta .= " ORDER BY p.Fecha DESC";
